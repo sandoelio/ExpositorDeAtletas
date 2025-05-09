@@ -19,18 +19,26 @@ class AtletaController extends Controller
     public function index()
     {
         try {
-            return response()->json($this->atletaService->listarTodos());
+            $atletas = $this->atletaService->listarTodos();
+    
+            return view('atletas.index', compact('atletas'));
         } catch (\Exception $ex) {
-            return response()->json(['erro' => $ex->getMessage()], 500);
+            return response()->json(['erro' => 'Erro ao carregar a lista de atletas.', 'detalhes' => $ex->getMessage()], 500);
         }
     }
 
     public function show($id)
     {
         try {
-            return response()->json($this->atletaService->buscarPorId($id));
+            $atleta = $this->atletaService->buscarPorId($id);
+
+            if (!$atleta) {
+                return redirect()->route('atletas.index')->with('error', 'Atleta não encontrado.');
+            }
+
+            return view('atletas.show', compact('atleta')); // Retorna a view com detalhes
         } catch (\Exception $ex) {
-            return response()->json(['erro' => $ex->getMessage()], 404);
+            return redirect()->back()->with('error', 'Erro ao carregar atleta: ' . $ex->getMessage());
         }
     }
 
@@ -49,7 +57,7 @@ class AtletaController extends Controller
                 'posicao_jogo' => 'required|string|max:50',
                 'cidade' => 'required|string|max:255', 
                 'entidade' => 'required|string|max:255',
-                'imagem_base64' => 'nullable|string', 
+                'imagem' => 'nullable|image|max:2048', 
             ];
 
             // Definição das mensagens de erro personalizadas
@@ -71,19 +79,27 @@ class AtletaController extends Controller
                 'cidade.string' => 'O campo "Cidade" deve ser uma string.',
                 'entidade.required' => 'O campo "Entidade" é obrigatório.',
                 'entidade.string' => 'O campo "Entidade" deve ser uma string.',
-                'imagem_base64.string' => 'O campo "Imagem" deve ser uma string Base64 válida.',
+                'imagem.image' => 'O arquivo enviado deve ser uma imagem.',
+                'imagem.max' => 'O tamanho da imagem não pode ser maior que 2MB.',
             ];
 
             // Aplicando a validação
             $validatedData = $request->validate($rules, $messages);
 
+            // Convertendo imagem para Base64 se houver uma imagem
+            $imagemBase64 = null;
+            if ($request->hasFile('imagem')) {
+                $imagemBase64 = base64_encode(file_get_contents($request->file('imagem')->getPathname()));
+            }
+
+            // Adicionando a imagem convertida aos dados validados
+            $validatedData['imagem_base64'] = $imagemBase64;
+
             // Criando o atleta
             $atleta = $this->atletaService->criarAtleta($validatedData);
 
-            return response()->json([
-                'mensagem' => 'Atleta cadastrado com sucesso!',
-                'atleta' => $atleta
-            ], 201);
+            // Redireciona para a listagem com mensagem de sucesso
+            return redirect()->route('atletas.index')->with('success', 'Atleta cadastrado com sucesso!');
 
         } catch (\Illuminate\Validation\ValidationException $ex) {
             // Captura erros de validação e retorna as mensagens
