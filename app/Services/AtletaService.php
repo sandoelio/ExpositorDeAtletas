@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\AtletaRepository;
 
+use Illuminate\Http\Request;
+
 class AtletaService
 {
     protected $atletaRepository;
@@ -57,5 +59,32 @@ class AtletaService
             throw new \Exception($ex->getMessage());
         }
     }
+
+    public function buscarAtletas(Request $request)
+    {
+        try {
+            $filtros = $request->only(['idade_min', 'idade_max', 'posicao_jogo', 'cidade', 'entidade']);
+            return $this->atletaRepository->buscarAtletas($filtros);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'erro' => 'Erro ao buscar atletas.',
+                'detalhes' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
+    public function buscarPorCpf(Request $request)
+    {
+        try {
+            return $this->atletaRepository->buscarPorCpf($request->cpf);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'erro' => 'Erro ao buscar atleta pelo CPF.',
+                'detalhes' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
+
 }
 

@@ -57,5 +57,38 @@ class AtletaRepository
             throw new \Exception("Erro ao excluir atleta: " . $ex->getMessage());
         }
     }
+
+    public function buscarAtletas(array $filtros)
+    {
+        $query = Atleta::query();
+
+        // Se idade for passada, calculamos e filtramos na aplicação
+        if (isset($filtros['idade_min']) && isset($filtros['idade_max'])) {
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) BETWEEN ? AND ?', [$filtros['idade_min'], $filtros['idade_max']]);
+        }
+
+        if (isset($filtros['posicao_jogo'])) {
+            $query->where('posicao_jogo', 'LIKE', '%' . $filtros['posicao_jogo'] . '%');
+        }
+
+        if (isset($filtros['cidade'])) {
+            $query->where('cidade', 'LIKE', '%' . $filtros['cidade'] . '%');
+        }
+
+        if (isset($filtros['entidade'])) {
+            $query->where('entidade', 'LIKE', '%' . $filtros['entidade'] . '%');
+        }
+
+        return $query->get();
+    }
+
+    public function buscarPorCpf($cpf)
+    {
+        $cpfSomenteNumeros = preg_replace('/\D/', '', $cpf); // Remove todos os caracteres não numéricos
+
+        return Atleta::whereRaw("REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ', '') = ?", [$cpfSomenteNumeros])
+                    ->first();
+    }
+
 }
 
