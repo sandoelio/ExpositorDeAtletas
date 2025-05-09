@@ -10,7 +10,7 @@ class AtletaRepository
     public function listarTodos()
     {
         try {
-            return Atleta::paginate(8);
+            return Atleta::paginate(6);
         } catch (\Exception $ex) {
             throw new \Exception("Erro ao listar atletas: " . $ex->getMessage());
         }

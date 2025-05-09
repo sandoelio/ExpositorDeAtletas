@@ -3,140 +3,239 @@
 @section('content')
 <div class="container">
 
-{{-- Formulário de filtro --}}
-
-<form id="filtro-form" action="#" method="GET" class="mb-4">
-    <div class="row">
-        <div class="col-md-3">
-            <label for="idade_min">Idade Mínima:</label>
-            <input type="number" name="idade_min" id="idade_min" class="form-control">
-        </div>
-        <div class="col-md-3">
-            <label for="idade_max">Idade Máxima:</label>
-            <input type="number" name="idade_max" id="idade_max" class="form-control">
-        </div>
-        <div class="col-md-3">
-            <label for="posicao_jogo">Posição:</label>
-            <select name="posicao_jogo" id="posicao_jogo" class="form-control">
-                <option value="">Todas</option>
-                <option value="Armador">Armador</option>
-                <option value="Ala">Ala</option>
-                <option value="Ala-pivo">Ala-pivo</option>
-                <option value="Ala-armador">Ala-armador</option>
-                <option value="Pivo">Pivo</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label for="cidade">Cidade:</label>
-            <input type="text" name="cidade" id="cidade" class="form-control">
-        </div>
-    </div>
-    <div class="text-center mt-3">
-        <button type="button" class="btn btn-primary" onclick="buscarAtletas()">Filtrar</button>
-        <button type="button" class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
-    </div>
-</form>
-
-<div class="row justify-content-center">
-    @foreach ($atletas as $atleta)
-        <div class="col-md-4 mb-4">
-            <div class="card-flip" onclick="this.classList.toggle('flipped')">
-                <div class="card front card-body text-center">
-                    <img src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,'.$atleta->imagem_base64 : asset('img/avatar.png') }}" class="avatar-img" alt="Imagem do atleta" 
-                        class="rounded-circle mb-3" width="100" height="100" alt="Avatar">
-                    <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
-                    <p class="card-text">Idade: {{ $atleta->idade }}</p>
-                    <button class="btn btn-primary">
-                    Clique para ver mais
-                    </button>
-                </div>
-                <div class="card back card-body text-center">
-                    <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
-                    <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
-                    <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
-                    <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
-                    <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
-                    <p><strong>CPF:</strong> {{ $atleta->cpf }}</p>
-                    <button class="btn btn-primary">
-                    Voltar
-                    </button>
-                </div>
+    {{-- Filtros --}}
+    <form class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <label>Idade Mínima:</label>
+                <input type="number" id="idade_min" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label>Idade Máxima:</label>
+                <input type="number" id="idade_max" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label>Posição:</label>
+                <select id="posicao_jogo" class="form-control">
+                    <option value="">Todas</option>
+                    <option value="Armador">Armador</option>
+                    <option value="Ala">Ala</option>
+                    <option value="Ala-pivo">Ala-pivo</option>
+                    <option value="Ala-armador">Ala-armador</option>
+                    <option value="Pivo">Pivo</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label>Cidade:</label>
+                <input type="text" id="cidade" class="form-control">
             </div>
         </div>
-    @endforeach
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-primary" onclick="buscarAtletas()">Filtrar</button>
+            <button type="button" class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+        </div>
+    </form>
+    {{-- Contador de atletas sem filtro --}}
+    <p id="contagem-original" class="pagination-text">
+        Mostrando {{ $atletas->lastItem() }} de {{ $atletas->total() }} atletas
+    </p>
 
-    <div id="filtro-resultados" class="row row-cols-2 row-cols-md-4 g-1"> 
-        <!-- Aqui os resultados filtrados serão exibidos -->
+    {{-- Contador de atletas filtrados (oculto inicialmente) --}}
+    <p id="filtro-contagem" class="pagination-text" style="display: none;"></p>
+
+    {{-- Lista original (oculta após filtrar) --}}
+    <div id="lista-atletas" class="row row-cols-1 row-cols-md-3 g-3">
+        @foreach ($atletas as $atleta)
+            <div class="col mb-4">
+                <div class="card-flip" onclick="this.classList.toggle('flipped')">
+                    <div class="card front card-body text-center">
+                        <img src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,'.$atleta->imagem_base64 : asset('img/avatar.png') }}"
+                             class="avatar-img rounded-circle mb-3" width="100" height="100" alt="Avatar">
+                        <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
+                        <p class="card-text">Idade: {{ $atleta->idade }}</p>
+                        <button class="btn btn-primary">Clique para ver mais</button>
+                    </div>
+                    <div class="card back card-body text-center">
+                        <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
+                        <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
+                        <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
+                        <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
+                        <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                        <p><strong>CPF:</strong> {{ $atleta->cpf }}</p>
+                        <button class="btn btn-primary">Voltar</button>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 
+    <div id="filtro-resultados" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3" style="display: none;">
+
+        <!-- Cards filtrados via JS -->
+    </div>
+
+    <div id="paginacao-filtrada" class="d-flex justify-content-center mt-4"></div>
+
+    {{-- Paginação --}}
     <div class="d-flex justify-content-center mt-4">
         {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
     </div>
-        <!-- Texto informativo abaixo da paginação -->
-        <p class="pagination-text">Mostrando {{ $atletas->firstItem() }} a {{ $atletas->lastItem() }} de {{ $atletas->total() }} resultados</p>  
-    </div>
-</div>
-@endsection
 
+</div>
 <script>
 
-// Função para buscar atletas com base nos filtros aplicados
+    let atletasFiltrados = [];
+    let paginaAtual = 1;
+    const itensPorPagina = 6;
 
-function buscarAtletas() {
-    let idadeMin = document.getElementById('idade_min').value;
-    let idadeMax = document.getElementById('idade_max').value;
-    let posicao = document.getElementById('posicao_jogo').value;
-    let cidade = document.getElementById('cidade').value;
- 
-    // Monta a URL com os parâmetros do filtro
-    let url = `/atletas/buscar?idade_min=${idadeMin}&idade_max=${idadeMax}&posicao_jogo=${posicao}&cidade=${cidade}`;
+    function buscarAtletas() {
+        const idadeMin = document.getElementById('idade_min').value;
+        const idadeMax = document.getElementById('idade_max').value;
+        const posicao = document.getElementById('posicao_jogo').value;
+        const cidade = document.getElementById('cidade').value;
 
-    // Faz a requisição para a API
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            exibirAtletas(data); // Atualiza a lista com os atletas filtrados
-        })
-        .catch(error => console.error('Erro ao buscar atletas:', error));
-}
+        const url = `/atletas/buscar?idade_min=${idadeMin}&idade_max=${idadeMax}&posicao_jogo=${posicao}&cidade=${cidade}`;
 
-function limparFiltros() {
-    document.getElementById('idade_min').value = '';
-    document.getElementById('idade_max').value = '';
-    document.getElementById('posicao_jogo').value = '';
-    document.getElementById('cidade').value = '';
-    buscarAtletas(); // Atualiza a lista removendo os filtros
-}
-
-function exibirAtletas(atletas) {
-    let listaOriginal = document.getElementById('lista-atletas');
-    listaOriginal.style.display = 'none'; // Esconde a lista original
-
-    let container = document.getElementById('filtro-resultados');
-    container.innerHTML = ''; // Limpa a área dos filtros
-
-    if (atletas.length === 0) {
-        container.innerHTML = '<p class="text-center text-white">Nenhum atleta encontrado com os filtros aplicados.</p>';
-        return;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                atletasFiltrados = data;
+                paginaAtual = 1;
+                renderPaginaFiltrada();
+            })
+            .catch(error => console.error("Erro ao buscar atletas:", error));
     }
 
-    atletas.forEach(atleta => {
-        container.innerHTML += `
-            <div class="card">
-                <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}" class="avatar-img">
-                <div class="card-body text-center">
-                    <h5 class="card-title">${atleta.nome_completo}</h5>
-                    <p class="card-text">Idade: ${atleta.idade}</p>
-                    <p class="card-text">Cidade: ${atleta.cidade}</p>
-                    <button class="btn btn-primary abrir-modal" data-id="${atleta.id}" 
-                        data-nome="${atleta.nome_completo}" data-cidade="${atleta.cidade}" 
-                        data-posicao="${atleta.posicao_jogo}" data-entidade="${atleta.entidade}" 
-                        data-contato="${atleta.contato}" data-cpf="${atleta.cpf}">
-                        Mais...
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-}
+    function exibirAtletas(atletas) {
+        const listaOriginal = document.getElementById('lista-atletas');
+        const container = document.getElementById('filtro-resultados');
+
+        listaOriginal.style.display = 'none';
+        container.style.display = 'flex';
+        container.innerHTML = '';
+
+        if (atletas.length === 0) {
+            container.innerHTML = '<p class="text-center text-white">Nenhum atleta encontrado com os filtros aplicados.</p>';
+            return;
+        }
+
+        atletas.forEach(atleta => {
+            container.innerHTML += `
+                <div class="col-md-4 mb-4">
+                    <div class="card-flip" onclick="this.classList.toggle('flipped')">
+                        <div class="card front card-body text-center">
+                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}"
+                                    class="avatar-img rounded-circle mb-3" width="100" height="100">
+                            <h5 class="card-title">${atleta.nome_completo}</h5>
+                            <p class="card-text">Idade: ${atleta.idade}</p>
+                            <button class="btn btn-primary">Clique para ver mais</button>
+                        </div>
+                        <div class="card back card-body text-center">
+                            <h5 class="card-title">${atleta.nome_completo}</h5>
+                            <p><strong>Cidade:</strong> ${atleta.cidade}</p>
+                            <p><strong>Posição:</strong> ${atleta.posicao_jogo}</p>
+                            <p><strong>Entidade:</strong> ${atleta.entidade}</p>
+                            <p><strong>Contato:</strong> ${atleta.contato}</p>
+                            <p><strong>CPF:</strong> ${atleta.cpf}</p>
+                            <button class="btn btn-primary">Voltar</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function limparFiltros() {
+
+        // Limpa os campos de filtro
+        document.getElementById('idade_min').value = '';
+        document.getElementById('idade_max').value = '';
+        document.getElementById('posicao_jogo').value = '';
+        document.getElementById('cidade').value = '';
+
+        document.getElementById('filtro-resultados').style.display = 'none';
+        document.getElementById('filtro-resultados').innerHTML = '';
+        document.getElementById('paginacao-filtrada').innerHTML = '';
+        document.getElementById('filtro-contagem').style.display = 'none';
+
+        document.getElementById('lista-atletas').style.display = 'flex';
+        document.getElementById('contagem-original').style.display = 'block';
+    }
+
+    // Oculta contagem original
+    document.getElementById('contagem-original').style.display = 'none';
+
+    function renderPaginaFiltrada() {
+
+        const container = document.getElementById('filtro-resultados');
+        const listaOriginal = document.getElementById('lista-atletas');
+        const paginacao = document.getElementById('paginacao-filtrada');
+
+        // Esconde lista original e sua contagem
+        listaOriginal.style.display = 'none';
+        document.getElementById('contagem-original').style.display = 'none';
+
+        // Mostra contagem do filtro
+        const contagemFiltro = document.getElementById('filtro-contagem');
+        contagemFiltro.style.display = 'block';
+
+        container.style.display = 'flex';
+        container.innerHTML = '';
+        paginacao.innerHTML = '';
+
+        const total = atletasFiltrados.length;
+        const totalPaginas = Math.ceil(total / itensPorPagina);
+        const inicio = (paginaAtual - 1) * itensPorPagina;
+        const fim = inicio + itensPorPagina;
+
+        const atletasPagina = atletasFiltrados.slice(inicio, fim);
+
+        if (atletasPagina.length === 0) {
+            container.innerHTML = '<p class="text-center text-white">Nenhum atleta encontrado com os filtros aplicados.</p>';
+            contagemFiltro.innerText = 'Nenhum atleta encontrado.';
+            return;
+        }
+
+        // Atualiza contagem dos atletas filtrados
+        const inicioExibicao = inicio + 1;
+        const fimExibicao = Math.min(fim, total);
+        contagemFiltro.innerText = `Mostrando ${fimExibicao} de ${total} atletas encontrados com os filtros aplicados.`;
+
+        atletasPagina.forEach(atleta => {
+            container.innerHTML += `
+                <div class="col mb-4">
+                    <div class="card-flip" onclick="this.classList.toggle('flipped')">
+                        <div class="card front card-body text-center">
+                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}"
+                                class="avatar-img rounded-circle mb-3" width="100" height="100">
+                            <h5 class="card-title">${atleta.nome_completo}</h5>
+                            <p class="card-text">Idade: ${atleta.idade}</p>
+                            <button class="btn btn-primary">Clique para ver mais</button>
+                        </div>
+                        <div class="card back card-body text-center">
+                            <h5 class="card-title">${atleta.nome_completo}</h5>
+                            <p><strong>Cidade:</strong> ${atleta.cidade}</p>
+                            <p><strong>Posição:</strong> ${atleta.posicao_jogo}</p>
+                            <p><strong>Entidade:</strong> ${atleta.entidade}</p>
+                            <p><strong>Contato:</strong> ${atleta.contato}</p>
+                            <p><strong>CPF:</strong> ${atleta.cpf}</p>
+                            <button class="btn btn-primary">Voltar</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        for (let i = 1; i <= totalPaginas; i++) {
+            paginacao.innerHTML += `
+                <button class="btn btn-sm ${i === paginaAtual ? 'btn-primary' : 'btn-secondary'} mx-1"
+                        onclick="mudarPagina(${i})">${i}</button>`;
+        }
+    }
+   
+    function mudarPagina(numero) {
+        paginaAtual = numero;
+        renderPaginaFiltrada();
+    }
+
 </script>
+@endsection
+

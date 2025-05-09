@@ -117,11 +117,13 @@ h1 {
     margin: 10px;
 }
 
-#filtro-resultados .card {
-    margin: 1px;
-    padding: 1px;
-
+#filtro-resultados {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1px; /* Espaçamento entre os cards */
 }
+
 
 .basquete-img {
     width: 20%; /* Reduzindo para melhor encaixe */
@@ -163,4 +165,8 @@ h1 {
 .card-flip.flipped .back {
   z-index: 2;
   transform: rotateY(0deg);
+}
+
+body {
+    overflow-x: hidden;
 }
