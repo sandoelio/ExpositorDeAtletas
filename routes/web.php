@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\AtletaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AtletaController;
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/atletas/buscar', [AtletaController::class, 'buscar'])->name('atletas.buscar');
 Route::get('/atletas/buscar-cpf', [AtletaController::class, 'buscarPorCpf'])->name('atletas.buscar-cpf');
 Route::get('/atletas', [AtletaController::class, 'index'])->name('atletas.index'); 
