@@ -70,12 +70,15 @@
                     </div>
                     <div class="card back card-body text-center">
                         <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
-                        <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
-                        <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
-                        <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
-                        <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
-                        <p><strong>CPF:</strong> {{ $atleta->cpf }}</p>
-                        <button class="btn btn-primary">Voltar</button>
+                        <div class="info-grid">
+                            <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
+                            <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
+                            <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
+                            <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
+                            <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
+                            <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                        </div>
+                        <button class="btn btn-primary mt-2">Voltar</button>
                     </div>
                 </div>
             </div>
@@ -145,13 +148,16 @@
                             <button class="btn btn-primary">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-center">
-                            <h5 class="card-title">${atleta.nome_completo}</h5>
-                            <p><strong>Cidade:</strong> ${atleta.cidade}</p>
-                            <p><strong>Posição:</strong> ${atleta.posicao_jogo}</p>
-                            <p><strong>Entidade:</strong> ${atleta.entidade}</p>
-                            <p><strong>Contato:</strong> ${atleta.contato}</p>
-                            <p><strong>CPF:</strong> ${atleta.cpf}</p>
-                            <button class="btn btn-primary">Voltar</button>
+                            <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
+                            <div class="info-grid">
+                                <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
+                                <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
+                                <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
+                                <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
+                                <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
+                                <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                            </div>
+                            <button class="btn btn-primary mt-2">Voltar</button>
                         </div>
                     </div>
                 </div>`;
@@ -227,13 +233,16 @@
                             <button class="btn btn-primary">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-center">
-                            <h5 class="card-title">${atleta.nome_completo}</h5>
-                            <p><strong>Cidade:</strong> ${atleta.cidade}</p>
-                            <p><strong>Posição:</strong> ${atleta.posicao_jogo}</p>
-                            <p><strong>Entidade:</strong> ${atleta.entidade}</p>
-                            <p><strong>Contato:</strong> ${atleta.contato}</p>
-                            <p><strong>CPF:</strong> ${atleta.cpf}</p>
-                            <button class="btn btn-primary">Voltar</button>
+                            <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
+                            <div class="info-grid">
+                                <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
+                                <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
+                                <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
+                                <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
+                                <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
+                                <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                            </div>
+                            <button class="btn btn-primary mt-2">Voltar</button>
                         </div>
                     </div>
                 </div>`;
