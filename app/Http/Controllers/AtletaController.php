@@ -62,7 +62,8 @@ class AtletaController extends Controller
                 'posicao_jogo' => 'required|string|max:50',
                 'cidade' => 'required|string|max:255', 
                 'entidade' => 'required|string|max:255',
-                'imagem' => 'nullable|image|max:2048', 
+                'imagem_base64' => 'nullable|image|max:2048', 
+                'resumo' => 'nullable|string|max:1000',
             ];
 
             // Definição das mensagens de erro personalizadas
@@ -84,8 +85,10 @@ class AtletaController extends Controller
                 'cidade.string' => 'O campo "Cidade" deve ser uma string.',
                 'entidade.required' => 'O campo "Entidade" é obrigatório.',
                 'entidade.string' => 'O campo "Entidade" deve ser uma string.',
-                'imagem.image' => 'O arquivo enviado deve ser uma imagem.',
-                'imagem.max' => 'O tamanho da imagem não pode ser maior que 2MB.',
+                'imagem_base64.image' => 'O arquivo enviado deve ser uma imagem.',
+                'imagem_base64.max' => 'O tamanho da imagem não pode ser maior que 2MB.',
+                'resumo.string' => 'O campo "Resumo" deve ser uma string.',
+                'resumo.max' => 'O campo "Resumo" não pode ter mais de 1000 caracteres.',
             ];
 
             // Aplicando a validação

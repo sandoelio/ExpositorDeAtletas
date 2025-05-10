@@ -22,7 +22,8 @@ class Atleta extends Model
         'cidade',
         'entidade',
         'posicao_jogo',
-        'contato'
+        'contato',
+        'resumo'
     ];
 
     public function getIdadeAttribute()

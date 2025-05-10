@@ -77,6 +77,7 @@
                             <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
                             <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
                             <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                            <p><strong>Resumo:</strong> {{ $atleta->resumo }}</p>
                         </div>
                         <button class="btn btn-primary mt-2">Voltar</button>
                     </div>
@@ -156,6 +157,7 @@
                                 <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
                                 <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
                                 <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                                <p><strong>Resumo:</strong> {{ $atleta->resumo }}</p>
                             </div>
                             <button class="btn btn-primary mt-2">Voltar</button>
                         </div>
@@ -241,6 +243,7 @@
                                 <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
                                 <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
                                 <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                                <p><strong>Resumo:</strong> {{ $atleta->resumo }}</p>
                             </div>
                             <button class="btn btn-primary mt-2">Voltar</button>
                         </div>

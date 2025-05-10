@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('entidade')->default('Indefinido');// Escola ou instituição de treinamento
             $table->string('posicao_jogo'); // Posição que o atleta joga (Ex: Armador, Ala, Pivô)
             $table->string('contato'); // Contato telefônico ou e-mail
+            $table->text('resumo')->nullable(); // Resumo ou biografia do atleta
             $table->timestamps();
         });
     }
