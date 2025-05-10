@@ -16,31 +16,27 @@
 
 </head>
 <body class="pagina-tema">
-
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
             <!-- Adicionando a logo -->
-            <a class="navbar-brand " href="#">
+            <a class="navbar-brand" href="#">
                 <img src="{{ asset('img/logo.png') }}" alt="Logo" class="logo-img"> 
-                <spam class="spam-text"> Gestão de Atletas</spam><br>
+                <span class="spam-text"> Gestão de Atletas</span><br>
             </a>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        @yield('content')
+    <div class="d-flex flex-column flex-grow-1" style="flex: 1;">
+        <div class="container mt-4">
+            @yield('content')
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
-
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <p>&copy; {{ date('Y') }} Gestão de Atletas. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 </body>
-
-<footer class="footer">
-    <div class="container text-center">
-        <p>&copy; {{ date('Y') }} Gestão de Atletas. Todos os direitos reservados.</p>
-    </div>
-</footer>
-
 </html>
 
