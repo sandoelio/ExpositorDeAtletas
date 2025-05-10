@@ -37,6 +37,7 @@
 .btn-success {
     background-color: #27AE60; 
     border: none;
+    
 }
 .btn-voltar {
     background-color: #bdbbb6; 
@@ -72,12 +73,13 @@
 .footer {
     background-color: #e69500;
     color: #141313;
-    padding: 20px 0;   
+    padding: 10px 0;   
     bottom: 0;
     width: 100%;
     height: 60px;
     font-size: 15px;
     text-align: center;
+    margin-top: 20px;
 }
 
 /*botoes paginação*/
@@ -181,4 +183,9 @@ h1 {
     flex: 1 1 45%; /* Dois por linha */
     margin: 0;
     text-align: left;
+}
+
+.botao-container {
+    display: flex;
+    justify-content: center;
 }

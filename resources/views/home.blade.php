@@ -8,7 +8,7 @@
 
     <div class="mt-4">
         <a href="{{ route('atletas.index') }}" class="btn btn-primary btn-lg">Listar Atletas</a>
-        <a href="" class="btn btn-success btn-lg">Administração</a>
+        <a href="{{ route('atletas.create') }}" class="btn btn-success btn-lg">Administração</a>
     </div>
 </div>
 @endsection

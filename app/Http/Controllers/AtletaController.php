@@ -47,6 +47,12 @@ class AtletaController extends Controller
         }
     }
 
+    public function create()
+    {
+        return view('atletas.create'); 
+       
+    }
+
     public function store(Request $request)
     {
         try {
@@ -57,7 +63,7 @@ class AtletaController extends Controller
                 'altura' => 'required|numeric|min:0.50|max:2.50',
                 'peso' => 'required|numeric|min:30|max:150',
                 'cpf' => 'required|unique:atletas,cpf|regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/',
-                'sexo' => 'required|string|in:masculino,feminino',
+                'sexo' => 'required|string|in:Masculino,Feminino',
                 'contato' => 'required|string|max:20',
                 'posicao_jogo' => 'required|string|max:50',
                 'cidade' => 'required|string|max:255', 
