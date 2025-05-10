@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AtletaRepository
 {
+    protected $model;
+
+    public function __construct()
+    {
+        $this->model = new Atleta();
+    }
+
+
     public function listarTodos()
     {
         try {
@@ -64,7 +72,11 @@ class AtletaRepository
 
         // Se idade for passada, calculamos e filtramos na aplicação
         if (isset($filtros['idade_min']) && isset($filtros['idade_max'])) {
-            $query->whereRaw('TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) BETWEEN ? AND ?', [$filtros['idade_min'], $filtros['idade_max']]);
+             $hoje = now();
+            $dataMax = $hoje->copy()->subYears($filtros['idade_min'])->endOfDay(); // mais jovem
+            $dataMin = $hoje->copy()->subYears($filtros['idade_max'])->startOfDay(); // mais velho
+
+            $query->whereBetween('data_nascimento', [$dataMin, $dataMax]);
         }
 
         if (isset($filtros['posicao_jogo'])) {
@@ -88,6 +100,20 @@ class AtletaRepository
 
         return Atleta::whereRaw("REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ', '') = ?", [$cpfSomenteNumeros])
                     ->first();
+    }
+
+    public function listarPosicoesUnicas()
+    {
+        return $this->model->select('posicao_jogo')->distinct()->get();
+    }
+
+    public function listarCidadesUnicas()
+    {
+        return $this->model->select('cidade')->distinct()->get();
+    }
+    public function listarEntidadesUnicas()
+    {
+        return $this->model->select('entidade')->distinct()->get();
     }
 
 }

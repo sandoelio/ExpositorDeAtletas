@@ -6,11 +6,11 @@
     {{-- Filtros --}}
     <form class="mb-4">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label>Idade Mínima:</label>
                 <input type="number" id="idade_min" class="form-control">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label>Idade Máxima:</label>
                 <input type="number" id="idade_max" class="form-control">
             </div>
@@ -18,16 +18,28 @@
                 <label>Posição:</label>
                 <select id="posicao_jogo" class="form-control">
                     <option value="">Todas</option>
-                    <option value="Armador">Armador</option>
-                    <option value="Ala">Ala</option>
-                    <option value="Ala-pivo">Ala-pivo</option>
-                    <option value="Ala-armador">Ala-armador</option>
-                    <option value="Pivo">Pivo</option>
+                    @foreach ($posicoes as $posicao)
+                        <option value="{{ $posicao->posicao_jogo }}">{{ $posicao->posicao_jogo }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3">
                 <label>Cidade:</label>
-                <input type="text" id="cidade" class="form-control">
+                <select id="cidade" class="form-control">
+                    <option value="">Todas</option>
+                    @foreach ($cidades as $cidade)
+                        <option value="{{ $cidade->cidade }}">{{ $cidade->cidade }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label>Entidade:</label>
+                <select id="entidade" class="form-control">
+                    <option value="">Todas</option>
+                    @foreach ($entidades as $entidade)
+                        <option value="{{ $entidade->entidade }}">{{ $entidade->entidade }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
         <div class="text-center mt-3">
@@ -35,6 +47,7 @@
             <button type="button" class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
         </div>
     </form>
+
     {{-- Contador de atletas sem filtro --}}
     <p id="contagem-original" class="pagination-text">
         Mostrando {{ $atletas->lastItem() }} de {{ $atletas->total() }} atletas
@@ -77,7 +90,7 @@
     <div id="paginacao-filtrada" class="d-flex justify-content-center mt-4"></div>
 
     {{-- Paginação --}}
-    <div class="d-flex justify-content-center mt-4">
+    <div class="d-flex justify-content-center mt-1">
         {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
     </div>
 
@@ -93,8 +106,9 @@
         const idadeMax = document.getElementById('idade_max').value;
         const posicao = document.getElementById('posicao_jogo').value;
         const cidade = document.getElementById('cidade').value;
+        const entidade = document.getElementById('entidade').value;
 
-        const url = `/atletas/buscar?idade_min=${idadeMin}&idade_max=${idadeMax}&posicao_jogo=${posicao}&cidade=${cidade}`;
+        const url = `/atletas/buscar?idade_min=${idadeMin}&idade_max=${idadeMax}&posicao_jogo=${posicao}&cidade=${cidade}&entidade=${entidade}`;
 
         fetch(url)
             .then(response => response.json())
@@ -151,6 +165,7 @@
         document.getElementById('idade_max').value = '';
         document.getElementById('posicao_jogo').value = '';
         document.getElementById('cidade').value = '';
+        document.getElementById('entidade').value = '';
 
         document.getElementById('filtro-resultados').style.display = 'none';
         document.getElementById('filtro-resultados').innerHTML = '';

@@ -19,9 +19,14 @@ class AtletaController extends Controller
     public function index()
     {
         try {
+
             $atletas = $this->atletaService->listarTodos();
+            $posicoes = $this->atletaService->listarPosicoesUnicas();
+            $cidades = $this->atletaService->listarCidadesUnicas();
+            $entidades = $this->atletaService->listarEntidadesUnicas();
     
-            return view('atletas.index', compact('atletas'));
+            return view('atletas.index', compact('atletas', 'posicoes', 'cidades', 'entidades')); // Retorna a view com a lista de atletas
+
         } catch (\Exception $ex) {
             return response()->json(['erro' => 'Erro ao carregar a lista de atletas.', 'detalhes' => $ex->getMessage()], 500);
         }

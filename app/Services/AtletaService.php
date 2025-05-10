@@ -85,6 +85,19 @@ class AtletaService
         }
     }
 
+    public function listarPosicoesUnicas()
+    {
+        return $this->atletaRepository->listarPosicoesUnicas();
+    }
 
+    public function listarCidadesUnicas()
+    {
+        return $this->atletaRepository->listarCidadesUnicas();
+    }
+    
+    public function listarEntidadesUnicas()
+    {
+        return $this->atletaRepository->listarEntidadesUnicas();
+    }
 }
 
