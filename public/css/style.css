@@ -38,6 +38,11 @@
     background-color: #27AE60; 
     border: none;
 }
+.btn-voltar {
+    background-color: #bdbbb6; 
+    border: none;
+    margin-bottom: 2%;
+}
 
 /* Define o fundo laranja */
 .navbar {
@@ -75,7 +80,7 @@
     text-align: center;
 }
 
-/*botoes*/
+/*botoes paginação*/
 .pagination .page-item .page-link {
     color: #070707; 
     background-color: #FFA500; 

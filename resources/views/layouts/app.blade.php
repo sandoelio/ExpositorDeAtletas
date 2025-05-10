@@ -22,7 +22,7 @@
             <!-- Adicionando a logo -->
             <a class="navbar-brand " href="#">
                 <img src="{{ asset('img/logo.png') }}" alt="Logo" class="logo-img"> 
-                <spam class="spam-text"> Gestão de Atletas </spam>
+                <spam class="spam-text"> Gestão de Atletas: Encontre aqui seus atletas.</spam><br>
             </a>
         </div>
     </nav>

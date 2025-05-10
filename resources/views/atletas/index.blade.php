@@ -3,6 +3,12 @@
 @section('content')
 <div class="container">
 
+    <div class="mb-3">
+        <a href="{{ route('home') }}" class="btn btn-outline-secondary">
+            ← Voltar para a Home
+        </a>
+    </div>
+        
     {{-- Filtros --}}
     <form class="mb-4">
         <div class="row">
