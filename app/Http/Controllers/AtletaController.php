@@ -110,10 +110,10 @@ class AtletaController extends Controller
             $validatedData['imagem_base64'] = $imagemBase64;
 
             // Criando o atleta
-            $atleta = $this->atletaService->criarAtleta($validatedData);
+            $this->atletaService->criarAtleta($validatedData);
 
             // Redireciona para a listagem com mensagem de sucesso
-            return redirect()->route('atletas.index')->with('success', 'Atleta cadastrado com sucesso!');
+            return redirect()->back()->with('success', 'Atleta cadastrado com sucesso!');
 
         } catch (\Illuminate\Validation\ValidationException $ex) {
             // Captura erros de validação e retorna as mensagens
@@ -126,75 +126,32 @@ class AtletaController extends Controller
 
     public function update(Request $request, $id)
     {
+        
         try {
-            // Definição das regras de validação
-            $rules = [
-                'nome_completo' => 'sometimes|string|max:255',
-                'data_nascimento' => 'sometimes|date',
-                'altura' => 'sometimes|numeric|min:0.50|max:2.50',
-                'peso' => 'sometimes|numeric|min:30|max:150',
-                'cpf' => 'sometimes|regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/' . '|unique:atletas,cpf,' . $id,
-                'contato' => 'sometimes|string|max:20',
-                'posicao_jogo' => 'sometimes|string|max:50',
-                'cidade' => 'sometimes|string|max:255',
-                'entidade' => 'sometimes|string|max:255',
-                'imagem_base64' => 'nullable|string',
-            ];
-    
-            // Definição das mensagens de erro personalizadas
-            $messages = [
-                'nome_completo.string' => 'O campo "Nome Completo" deve ser uma string.',
-                'data_nascimento.date' => 'O campo "Data de Nascimento" deve ser uma data válida.',
-                'altura.numeric' => 'O campo "Altura" deve ser um número.',
-                'peso.numeric' => 'O campo "Peso" deve ser um número.',
-                'cpf.regex' => 'O CPF deve estar no formato xxx.xxx.xxx-xx.',
-                'cpf.unique' => 'O CPF informado já está cadastrado.',
-                'contato.string' => 'O campo "Contato" deve ser uma string.',
-                'posicao_jogo.string' => 'O campo "Posição no Jogo" deve ser uma string.',
-                'cidade.required' => 'O campo "Cidade" é obrigatório.',
-                'cidade.string' => 'O campo "Cidade" deve ser uma string.',
-                'entidade.required' => 'O campo "Entidade" é obrigatório.',
-                'entidade.string' => 'O campo "Entidade" deve ser uma string.',
-                'imagem_base64.string' => 'O campo "Imagem" deve ser uma string Base64 válida.',
-            ];
-    
-            // Aplicando a validação
-            $validatedData = $request->validate($rules, $messages);
-    
+            
+            $data = $request->all();
+        
             // Atualizando o atleta
-            $atletaAtualizado = $this->atletaService->atualizarAtleta($id, $validatedData);
-    
-            return response()->json([
-                'mensagem' => 'Atleta atualizado com sucesso!',
-                'atleta' => $atletaAtualizado
-            ], 200);
-    
+            $this->atletaService->atualizarAtleta($id, $data);
+
+            // Redireciona para a listagem com mensagem de sucesso
+            return redirect()->back()->with('success', 'Atleta atualizado com sucesso!');
+        
         } catch (\Illuminate\Validation\ValidationException $ex) {
-            // Captura erros de validação e retorna as mensagens
-            return response()->json(['erro' => $ex->errors()], 422);
-        } catch (\Exception $ex) {
-            // Captura erros inesperados
-            return response()->json(['erro' => 'Erro interno ao atualizar atleta.', 'detalhes' => $ex->getMessage()], 500);
+           return redirect()->back()->with('error', 'Erro ao atualizar atleta: ' . $ex->getMessage());
         }
-    }
-    
+    }   
 
     public function destroy($id)
     {
         try {
-            $atleta = $this->atletaService->buscarPorId($id);
-
-            if (!$atleta) {
-                return response()->json(['erro' => 'Atleta não encontrado.'], 404);
-            }
-
+            
             $exclusao = $this->atletaService->excluirAtleta($id);
 
-            if ($exclusao) {
-                return response()->json(['mensagem' => 'Atleta excluído com sucesso!'], 200);
-            } else {
-                return response()->json(['erro' => 'Erro ao excluir atleta.'], 500);
-            }
+            if ($exclusao) {       
+                return redirect()->back()->with('success', 'Atleta atualizado com sucesso!');
+            } 
+
         } catch (\Exception $ex) {
             return response()->json(['erro' => 'Erro interno ao excluir atleta.', 'detalhes' => $ex->getMessage()], 500);
         }
@@ -216,19 +173,26 @@ class AtletaController extends Controller
     }
 
     public function buscarPorCpf(Request $request)
-    {
-        try {
-            $atleta = $this->atletaService->buscarPorCpf($request);
-            
-            if (!$atleta) {
-                return response()->json(['erro' => 'Atleta não encontrado.'], 404);
-            }
+    { 
+        $atleta = $this->atletaService->buscarPorCpf($request);
 
-            return response()->json($atleta);
-
-        } catch (\Exception $ex) {
-            return response()->json(['erro' => 'Erro ao buscar atleta.', 'detalhes' => $ex->getMessage()], 500);
+        if (!$atleta) {
+            return response()->json(['erro' => 'Atleta não encontrado'], 404);
         }
-    }
 
+        return response()->json([
+            'id' => $atleta->id,
+            'nome_completo' => $atleta->nome_completo,
+            'data_nascimento' => $atleta->data_nascimento,
+            'cidade' => $atleta->cidade,
+            'posicao_jogo' => $atleta->posicao_jogo,
+            'entidade' => $atleta->entidade,
+            'contato' => $atleta->contato,
+            'peso' => $atleta->peso,
+            'altura' => $atleta->altura,
+            'sexo' => $atleta->sexo,
+            'resumo' => $atleta->resumo,
+            'imagem' => $atleta->imagem_base64
+        ]);
+    }
 }

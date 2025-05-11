@@ -44,12 +44,28 @@ class AtletaService
 
     public function atualizarAtleta($id, array $dados)
     {
-        try {
-            return $this->atletaRepository->atualizar($id, $dados);
-        } catch (\Exception $ex) {
-            throw new \Exception($ex->getMessage());
+        
+        $atleta = $this->atletaRepository->buscarPorId($id);
+        
+        if (!$atleta) {
+            throw new \Exception("Atleta não encontrado");
         }
+        
+        // Se houver nova imagem, substitui a existente
+        if (isset($dados['imagem'])) {
+            $dados['imagem_base64'] = base64_encode(file_get_contents($dados['imagem']->getPathname()));
+        }
+        // Se não houver nova imagem, mantém a existente
+        else {
+            $dados['imagem_base64'] = $atleta->imagem_base64;
+        }
+
+        // Remove a imagem do array de dados para não sobrescrever o campo
+        unset($dados['imagem']);
+    
+        return $this->atletaRepository->atualizar($id, $dados);
     }
+
 
     public function excluirAtleta($id)
     {
