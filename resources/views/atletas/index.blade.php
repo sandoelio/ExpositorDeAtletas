@@ -10,7 +10,7 @@
         </div>
 
         {{-- Filtros --}}
-        <form class="mb-4">
+        <form class="mb-4" onsubmit="event.preventDefault(); buscarAtletas();">
             <div class="row">
                 <div class="col-md-2">
                     <label>Idade Mínima:</label>
@@ -53,7 +53,7 @@
                 <button type="button" class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
             </div>
         </form>
-        
+
         {{-- Aqui será exibido o resultado --}}
         <div id="resultado-atletas" class="mt-4"></div>
 
@@ -163,18 +163,18 @@
                             <button class="btn btn-primary">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-center">
-                            <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
-                            <div class="info-grid">
-                                <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
-                                <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
-                                <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
-                                <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
-                                <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
-                                <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
-                                <p><strong>Resumo:</strong> {{ $atleta->resumo }}</p>
-                            </div>
-                            <button class="btn btn-primary mt-2">Voltar</button>
+                        <h5 class="card-title">${atleta.nome_completo}</h5>
+                        <div class="info-grid">
+                            <p><strong>Cidade:</strong> ${atleta.cidade}</p>
+                            <p><strong>Posição:</strong> ${atleta.posicao_jogo}</p>
+                            <p><strong>Entidade:</strong> ${atleta.entidade}</p>
+                            <p><strong>Altura:</strong> ${atleta.altura}</p>
+                            <p><strong>Peso:</strong> ${atleta.peso}</p>
+                            <p><strong>Contato:</strong> ${atleta.contato}</p>
+                            <p><strong>Resumo:</strong> ${atleta.resumo}</p>
                         </div>
+                        <button class="btn btn-primary mt-2">Voltar</button>
+                    </div>
                     </div>
                 </div>`;
             });
@@ -250,18 +250,17 @@
                             <button class="btn btn-primary">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-center">
-                            <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
-                            <div class="info-grid">
-                                <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
-                                <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
-                                <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
-                                <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
-                                <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
-                                <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
-                                <p><strong>Resumo:</strong> {{ $atleta->resumo }}</p>
-                            </div>
-                            <button class="btn btn-primary mt-2">Voltar</button>
+                        <h5 class="card-title">${atleta.nome_completo}</h5>
+                        <div class="info-grid">
+                            <p><strong>Cidade:</strong> ${atleta.cidade}</p>
+                            <p><strong>Posição:</strong> ${atleta.posicao_jogo}</p>
+                            <p><strong>Entidade:</strong> ${atleta.entidade}</p>
+                            <p><strong>Altura:</strong> ${atleta.altura}</p>
+                            <p><strong>Peso:</strong> ${atleta.peso}</p>
+                            <p><strong>Contato:</strong> ${atleta.contato}</p>
+                            <p><strong>Resumo:</strong> ${atleta.resumo}</p>
                         </div>
+                        <button class="btn btn-primary mt-2">Voltar</button>
                     </div>
                 </div>`;
             });
