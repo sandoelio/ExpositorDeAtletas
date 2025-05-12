@@ -5,17 +5,17 @@
 <div class="container">
     <h2 class="text-center my-4">Cadastro de Atleta</h2>
 
-        @if (session('success'))
-            <div id="success-message" class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div id="error-message" class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
-    
+    @if (session('success'))
+        <div id="success-message" class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div id="error-message" class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <form id="formAtleta" action="{{ route('atletas.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -35,13 +35,11 @@
             <input type="file" class="form-control" name="imagem" id="imagem" accept="image/*">
         </div>
 
-
-
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="cpf" class="form-label">CPF</label>
                 <input type="text" class="form-control" name="cpf" id="cpf" placeholder="000.000.000-00" required>
-            </div>          
+            </div>
             <div class="col-md-6 mb-3">
                 <label for="nome_completo" class="form-label">Nome Completo</label>
                 <input type="text" class="form-control" name="nome_completo" id="nome_completo" placeholder="Ex: João da Silva" required>
@@ -49,7 +47,6 @@
         </div>
 
         <div class="row">
-
             <div class="col-md-6 mb-3">
                 <label for="peso" class="form-label">Peso (Kg)</label>
                 <input type="number" class="form-control" name="peso" id="peso" placeholder="Ex: 75" required>
@@ -118,7 +115,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
 
     const cpfInput = document.querySelector('input[name="cpf"]');
     const form = document.getElementById('formAtleta');
@@ -128,9 +125,6 @@
 
     cpfInput.addEventListener('blur', function () {
         const cpf = this.value.trim();
-        const isEditing = document.querySelector('input[name="_method"]')?.value === 'PUT';
-
-        // Só busca se já estiver no modo edição
         if (cpf.length === 14) {
             fetch(`/atletas/buscar-cpf?cpf=${cpf}`)
                 .then(response => {
@@ -139,7 +133,6 @@
                 })
                 .then(data => {
                     if (data.id) {
-                        // Preenche os campos do formulário com os dados do atleta
                         document.querySelector('input[name="nome_completo"]').value = data.nome_completo || '';
                         document.querySelector('input[name="data_nascimento"]').value = data.data_nascimento || '';
                         document.querySelector('input[name="cidade"]').value = data.cidade || '';
@@ -152,19 +145,10 @@
                         document.querySelector('textarea[name="resumo"]').value = data.resumo || '';
                         document.getElementById('atleta_id').value = data.id;
 
-                        const imagemInput = document.querySelector('input[name="imagem"]');
                         const imagemPreview = document.getElementById('imagem-preview');
-                        
-                        if (data.imagem) {
-                           
-                            imagemPreview.src = data.imagem.startsWith('data:image') ? data.imagem : `data:image/jpeg;base64,${data.imagem}`;
+                        imagemPreview.src = data.imagem ? `data:image/jpeg;base64,${data.imagem}` : '/img/avatar.png';
+                        imagemPreview.style.display = 'block';
 
-                        } else {
-                            imagemPreview.src = '/img/avatar.png'; // caminho da imagem padrão
-                        }
-                        imagemPreview.style.display = 'block';                        
-
-                        // Atualiza o formulário para o modo de atualização
                         form.action = `/atletas/${data.id}`;
                         if (!document.querySelector('input[name="_method"]')) {
                             const methodInput = document.createElement('input');
@@ -199,14 +183,31 @@
             })
             .then(response => response.json())
             .then(data => {
-                alert(data.mensagem || data.erro);
                 if (data.mensagem) {
+                    let successDiv = document.getElementById('success-message');
+                    if (!successDiv) {
+                        successDiv = document.createElement('div');
+                        successDiv.id = 'success-message';
+                        successDiv.className = 'alert alert-success';
+                        form.parentNode.insertBefore(successDiv, form);
+                    }
+                    successDiv.textContent = data.mensagem;
+                    successDiv.style.display = 'block';
+
+                    setTimeout(() => {
+                        successDiv.style.display = 'none';
+                    }, 3000);
+
                     form.reset();
                     form.action = '{{ route('atletas.store') }}';
+
                     if (document.querySelector('input[name="_method"]')) {
                         document.querySelector('input[name="_method"]').remove();
-                        document.getElementById('imagem-preview').style.display = 'none';
                     }
+
+                    document.getElementById('imagem-preview').src = '/img/avatar.png';
+                    document.getElementById('imagem-preview').style.display = 'block';
+
                     btnSalvar.textContent = 'Cadastrar Atleta';
                     btnExcluir.style.display = 'none';
                 }
@@ -216,23 +217,18 @@
             });
         }
     });
-});
 
     // Exibir mensagem de sucesso por 3 segundos
-    document.addEventListener('DOMContentLoaded', function () {
-        const successMsg = document.getElementById('success-message');
-        if (successMsg) {
-            setTimeout(() => {
-                successMsg.style.display = 'none';
-            }, 3000);
-        }
-    });
+    const successMsg = document.getElementById('success-message');
+    if (successMsg) {
+        setTimeout(() => {
+            successMsg.style.display = 'none';
+        }, 3000);
+    }
 
-    
     document.getElementById('imagem').addEventListener('change', function (event) {
         const preview = document.getElementById('imagem-preview');
         const file = event.target.files[0];
-        
         if (file) {
             const reader = new FileReader();
             reader.onload = function (e) {
@@ -241,7 +237,7 @@
             reader.readAsDataURL(file);
         }
     });
-
+});
 </script>
 
 @endsection

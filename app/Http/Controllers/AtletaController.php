@@ -145,19 +145,21 @@ class AtletaController extends Controller
     public function destroy($id)
     {
         try {
-            
             $exclusao = $this->atletaService->excluirAtleta($id);
 
-            if ($exclusao) {       
-                return redirect()->back()->with('success', 'Atleta atualizado com sucesso!');
-            } 
+            if ($exclusao) {
+                return response()->json(['mensagem' => 'Atleta excluído com sucesso!']);
+            }
 
+            return response()->json(['erro' => 'Não foi possível excluir o atleta.'], 400);
         } catch (\Exception $ex) {
-            return response()->json(['erro' => 'Erro interno ao excluir atleta.', 'detalhes' => $ex->getMessage()], 500);
+            return response()->json([
+                'erro' => 'Erro interno ao excluir atleta.',
+                'detalhes' => $ex->getMessage()
+            ], 500);
         }
-        
     }
-    
+
     public function buscar(Request $request)
     {
         try {
