@@ -115,5 +115,6 @@ class AtletaService
     {
         return $this->atletaRepository->listarEntidadesUnicas();
     }
+
 }
 

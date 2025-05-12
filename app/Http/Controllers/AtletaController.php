@@ -24,7 +24,7 @@ class AtletaController extends Controller
             $posicoes = $this->atletaService->listarPosicoesUnicas();
             $cidades = $this->atletaService->listarCidadesUnicas();
             $entidades = $this->atletaService->listarEntidadesUnicas();
-    
+
             return view('atletas.index', compact('atletas', 'posicoes', 'cidades', 'entidades')); // Retorna a view com a lista de atletas
 
         } catch (\Exception $ex) {
@@ -49,8 +49,7 @@ class AtletaController extends Controller
 
     public function create()
     {
-        return view('atletas.create'); 
-       
+        return view('atletas.create');
     }
 
     public function store(Request $request)
@@ -66,9 +65,9 @@ class AtletaController extends Controller
                 'sexo' => 'required|string|in:Masculino,Feminino',
                 'contato' => 'required|string|max:20',
                 'posicao_jogo' => 'required|string|max:50',
-                'cidade' => 'required|string|max:255', 
+                'cidade' => 'required|string|max:255',
                 'entidade' => 'required|string|max:255',
-                'imagem_base64' => 'nullable|image|max:2048', 
+                'imagem_base64' => 'nullable|image|max:2048',
                 'resumo' => 'nullable|string|max:1000',
             ];
 
@@ -114,7 +113,6 @@ class AtletaController extends Controller
 
             // Redireciona para a listagem com mensagem de sucesso
             return redirect()->back()->with('success', 'Atleta cadastrado com sucesso!');
-
         } catch (\Illuminate\Validation\ValidationException $ex) {
             // Captura erros de validação e retorna as mensagens
             return response()->json(['erro' => $ex->errors()], 422);
@@ -126,21 +124,20 @@ class AtletaController extends Controller
 
     public function update(Request $request, $id)
     {
-        
+
         try {
-            
+
             $data = $request->all();
-        
+
             // Atualizando o atleta
             $this->atletaService->atualizarAtleta($id, $data);
 
             // Redireciona para a listagem com mensagem de sucesso
             return redirect()->back()->with('success', 'Atleta atualizado com sucesso!');
-        
         } catch (\Illuminate\Validation\ValidationException $ex) {
-           return redirect()->back()->with('error', 'Erro ao atualizar atleta: ' . $ex->getMessage());
+            return redirect()->back()->with('error', 'Erro ao atualizar atleta: ' . $ex->getMessage());
         }
-    }   
+    }
 
     public function destroy($id)
     {
@@ -161,21 +158,20 @@ class AtletaController extends Controller
     }
 
     public function buscar(Request $request)
-    {
+    {   
         try {
             $atletas = $this->atletaService->buscarAtletas($request);
-            
             return response()->json($atletas);
         } catch (\Exception $ex) {
             return response()->json([
                 'erro' => 'Erro ao buscar atletas.',
                 'detalhes' => $ex->getMessage()
             ], 500);
-        }
+        }   
     }
 
     public function buscarPorCpf(Request $request)
-    { 
+    {
         $atleta = $this->atletaService->buscarPorCpf($request);
 
         if (!$atleta) {

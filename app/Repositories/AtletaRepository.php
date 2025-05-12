@@ -115,6 +115,5 @@ class AtletaRepository
     {
         return $this->model->select('entidade')->distinct()->get();
     }
-
 }
 
