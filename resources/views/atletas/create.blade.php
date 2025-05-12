@@ -228,6 +228,7 @@
         }
     });
 
+    
     document.getElementById('imagem').addEventListener('change', function (event) {
         const preview = document.getElementById('imagem-preview');
         const file = event.target.files[0];
