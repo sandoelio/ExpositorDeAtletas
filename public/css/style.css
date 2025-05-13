@@ -132,39 +132,87 @@ h1 {
 
 /* Estilização do card flip */
 
+.card p {
+    word-break: break-word; /* quebra palavras longas */
+    white-space: pre-wrap;  /* respeita quebras de linha e espaços */
+    overflow-wrap: break-word;
+    margin-bottom: 2px; /* tira o espaçamento grande de baixo */
+}
+
+.card .btn {
+    margin-top: auto;
+    align-self: center; /* centraliza se quiser */
+}
+
+
+.card.front,
+.card.back {
+    min-height: 320px; /* ajuste conforme necessário */
+    display: flex;
+    flex-direction: column;
+
+}
 .card-flip {
-  perspective: 1000px;
-  position: relative;
-  width: 100%;
-  height: 360px;
+    perspective: 1000px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
 }
+
 .card-flip .card {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  backface-visibility: hidden;
-  transition: transform 0.6s;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    transition: transform 0.6s ease-in-out;
+    border: none;
+    border-radius: 12px;
+    color: #141313;
 }
+
 .card-flip .front {
-  z-index: 2;
-  transform: rotateY(0deg);
-  background-color: #ffffff;
-  color: black;
+    z-index: 2;
+    transform: rotateY(0deg);
+
 }
+
 .card-flip .back {
-  transform: rotateY(180deg);
-  background-color: #FFA500;
-  color: #093b6d;
- 
+    transform: rotateY(180deg);
+    overflow-y: auto;
+    max-height: 100%;
+    padding-right: 10px;
+    color: #141313;
+    text-align: left;
 }
+
 .card-flip.flipped .front {
-  transform: rotateY(180deg);
+    transform: rotateY(-180deg);
 }
+
 .card-flip.flipped .back {
-  z-index: 2;
-  transform: rotateY(0deg);
+    z-index: 3;
+    transform: rotateY(0deg);
+}
+
+.scrollable-info {
+    overflow-y: auto;
+    max-height: 300px;
+    padding-right: 10px;
+    text-align: left;
+    gap: 4px; /* Espaço compacto entre os <p> */
+    white-space: pre-wrap; /* quebra automática respeitando \n */
+    display: flex;
+    flex-direction: column;
+}
+
+.scrollable-info::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scrollable-info::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
 }
 
 /* Estilização do grid de informações */
@@ -194,4 +242,11 @@ html, body {
     margin: 0;
     display: flex;
     flex-direction: column;
+
+}
+
+select.disabled, input.disabled {
+    background-color: #eee !important;
+    color: #999 !important;
+    cursor: not-allowed;
 }

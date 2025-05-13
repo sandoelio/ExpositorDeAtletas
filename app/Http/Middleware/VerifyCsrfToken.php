@@ -12,6 +12,13 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        //
+        // 'atletas/buscar',
+        // 'atletas/buscar-cpf',
+        // 'atletas',
+        // 'atletas/{id}',
+        // 'atletas/create',
+        // 'atletas/store',
+        // 'atletas/update',
+        // 'atletas/destroy'
     ];
 }
