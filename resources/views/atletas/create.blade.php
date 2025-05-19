@@ -25,7 +25,7 @@
             <label>Imagem Atual:</label>
             <img
                 id="imagem-preview"
-                src="{{ !empty($atleta) && !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
+                src="{{ !empty($atleta) && !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/slogan.png') }}"
                 alt="Imagem do Atleta"
                 style="max-width: 100px; border: 1px solid #ccc; padding: 4px; border-radius: 8px; display: block;">
         </div>
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('atleta_id').value = data.id;
 
                         const imagemPreview = document.getElementById('imagem-preview');
-                        imagemPreview.src = data.imagem ? `data:image/jpeg;base64,${data.imagem}` : '/img/avatar.png';
+                        imagemPreview.src = data.imagem ? `data:image/jpeg;base64,${data.imagem}` : '/img/slogan.png';
                         imagemPreview.style.display = 'block';
 
                         form.action = `/atletas/${data.id}`;
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.querySelector('input[name="_method"]').remove();
                     }
 
-                    document.getElementById('imagem-preview').src = '/img/avatar.png';
+                    document.getElementById('imagem-preview').src = '/img/slogan.png';
                     document.getElementById('imagem-preview').style.display = 'block';
 
                     btnSalvar.textContent = 'Cadastrar Atleta';

@@ -20,7 +20,7 @@
         <div class="container">
             <!-- Adicionando a logo -->
             <a class="navbar-brand" href="#">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="logo-img"> 
+                <img src="{{ asset('img/slogan.png') }}" alt="Logo" class="logo-img"> 
                 <span class="spam-text"> Gestão de Atletas</span><br>
             </a>
         </div>
@@ -34,7 +34,7 @@
 
     <footer class="footer mt-auto">
         <div class="container text-center">
-            <p>&copy; {{ date('Y') }} Gestão de Atletas. Todos os direitos reservados.</p>
+            <p>&copy; {{ date('Y') }} Desenvolvido por Basquete Piraja. Todos os direitos reservados.</p>
         </div>
     </footer>
 </body>
