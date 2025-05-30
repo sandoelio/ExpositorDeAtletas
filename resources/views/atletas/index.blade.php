@@ -70,13 +70,13 @@
             @foreach ($atletas as $atleta)
                 <div class="col mb-4 h-100">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
-                        <div class="card front card-body text-center" onclick="registrarVisualizacao({{ $atleta->id }})">
+                        <div class="card front card-body text-center">
                             <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/slogan.png') }}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100" alt="Avatar">
                             <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
                             <p class="card-text">Idade: {{ $atleta->idade }}</p>
-                            <p class="text-muted small">👁️ Visualizações: <span id="viz-{{ $atleta->id }}">{{ $atleta->visualizacoes }}</span></p>
-                            <button class="btn btn-primary">Clique para ver mais</button>
+                            <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="{{ $atleta->id }}">{{ $atleta->visualizacoes }}</span></p>
+                            <button class="btn btn-primary" onclick="registrarVisualizacao({{ $atleta->id }})">Clique para ver mais</button>
                         </div>
 
                         <div class="card back card-body text-center d-flex flex-column">
@@ -174,7 +174,8 @@
                                     class="avatar-img rounded-circle mb-3" width="100" height="100">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
-                            <button class="btn btn-primary">Clique para ver mais</button>
+                            <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="${atleta.id}">${atleta.visualizacoes}</span></p>
+                            <button class="btn btn-primary" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-start d-flex flex-column">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
@@ -271,12 +272,13 @@
                 container.innerHTML += `
                 <div class="col mb-4">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
-                        <div class="card front card-body">
+                       <div class="card front card-body text-center">
                             <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/slogan.png'}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
-                            <button class="btn btn-primary">Clique para ver mais</button>
+                            <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="${atleta.id}">${atleta.visualizacoes}</span></p>
+                            <button class="btn btn-primary" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-start">
                         <h5 class="card-title">${atleta.nome_completo}</h5>
@@ -376,21 +378,32 @@
             }
         }
 
-        function registrarVisualizacao(atletaId) {
-            fetch(`/atleta/visualizar/${atletaId}`, {
+        function registrarVisualizacao(id) {
+            fetch(`/atleta/visualizar/${id}`, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Content-Type': 'application/json'
                 }
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'ok') {
-                    document.getElementById(`viz-${atletaId}`).innerText = data.visualizacoes;
+            .then(response => {
+                if (response.ok) {
+                    // Seleciona todos os contadores com a classe e data-id correspondente
+                    const counters = document.querySelectorAll(`.viz-counter[data-id="${id}"]`);
+                    counters.forEach(counter => {
+                        counter.innerText = parseInt(counter.innerText) + 1;
+                    });
+
+                    // Se você mantém um array global de atletas filtrados, atualize-o também, se necessário:
+                    const index = atletasFiltrados.findIndex(a => a.id === id);
+                    if (index !== -1) {
+                        atletasFiltrados[index].visualizacoes += 1;
+                    }
+                } else {
+                    console.error('Erro ao registrar visualização');
                 }
             })
-            .catch(error => console.error('Erro ao registrar visualização:', error));
+            .catch(error => console.error('Erro:', error));
         }
 
     </script>
