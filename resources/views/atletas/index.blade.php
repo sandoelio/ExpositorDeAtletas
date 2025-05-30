@@ -170,7 +170,7 @@
                 <div class="col-md-4 mb-4">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
                         <div class="card front card-body text-center">
-                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}"
+                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/slogan.png'}"
                                     class="avatar-img rounded-circle mb-3" width="100" height="100">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
@@ -272,7 +272,7 @@
                 <div class="col mb-4">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
                         <div class="card front card-body">
-                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}"
+                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/slogan.png'}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
