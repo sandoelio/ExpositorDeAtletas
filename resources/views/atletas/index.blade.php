@@ -70,13 +70,15 @@
             @foreach ($atletas as $atleta)
                 <div class="col mb-4 h-100">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
-                        <div class="card front card-body text-center">
+                        <div class="card front card-body text-center" onclick="registrarVisualizacao({{ $atleta->id }})">
                             <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/slogan.png') }}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100" alt="Avatar">
                             <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
                             <p class="card-text">Idade: {{ $atleta->idade }}</p>
+                            <p class="text-muted small">👁️ Visualizações: <span id="viz-{{ $atleta->id }}">{{ $atleta->visualizacoes }}</span></p>
                             <button class="btn btn-primary">Clique para ver mais</button>
                         </div>
+
                         <div class="card back card-body text-center d-flex flex-column">
                         <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
                         <div class="scrollable-info flex-grow-1 overflow-auto">
@@ -374,6 +376,22 @@
             }
         }
 
+        function registrarVisualizacao(atletaId) {
+            fetch(`/atleta/visualizar/${atletaId}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    document.getElementById(`viz-${atletaId}`).innerText = data.visualizacoes;
+                }
+            })
+            .catch(error => console.error('Erro ao registrar visualização:', error));
+        }
 
     </script>
 @endsection

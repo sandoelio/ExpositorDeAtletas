@@ -116,5 +116,18 @@ class AtletaService
         return $this->atletaRepository->listarEntidadesUnicas();
     }
 
+    public function registrarVisualizacao($id)
+    {
+        try {
+            $atleta = $this->atletaRepository->buscarPorId($id);
+            if (!$atleta) {
+                throw new \Exception("Atleta não encontrado");
+            }
+            return $this->atletaRepository->registrarVisualizacao($id);
+        } catch (\Exception $ex) {
+            throw new \Exception($ex->getMessage());
+        }
+    }
+
 }
 

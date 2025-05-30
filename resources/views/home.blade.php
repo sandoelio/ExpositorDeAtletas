@@ -25,8 +25,8 @@
 
                 <button onclick="fecharModal()" style="background-color: #f44336; color: white; padding: 10px 15px; border: none; border-radius: 5px; font-size: 14px; margin-top: 10px;">Cancelar</button>
             </div>
+        </div>
 </div>
-@endsection
 
 <script>
      function abrirModal() {
@@ -66,3 +66,4 @@
             }
         });
 </script>
+@endsection

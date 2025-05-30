@@ -115,5 +115,16 @@ class AtletaRepository
     {
         return $this->model->select('entidade')->distinct()->get();
     }
+
+    public function registrarVisualizacao($id)
+    {
+        try {
+            $atleta = $this->buscarPorId($id);
+            $atleta->increment('visualizacoes');
+            return $atleta->fresh(); // Retorna o valor atualizado do banco
+        } catch (\Exception $ex) {
+            throw new \Exception("Erro ao registrar visualização: " . $ex->getMessage());
+        }
+    }
 }
 

@@ -193,4 +193,22 @@ class AtletaController extends Controller
             'imagem' => $atleta->imagem_base64
         ]);
     }
+
+    public function registrarVisualizacao($id)
+    {
+        try {
+            $atleta = $this->atletaService->registrarVisualizacao($id);
+
+            return response()->json([
+                'status' => 'ok',
+                'visualizacoes' => $atleta->visualizacoes
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'erro' => 'Erro ao registrar visualização.',
+                'detalhes' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
 }

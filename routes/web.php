@@ -12,6 +12,7 @@ Route::get('/atletas/buscar-cpf', [AtletaController::class, 'buscarPorCpf'])->na
 Route::get('/atletas', [AtletaController::class, 'index'])->name('atletas.index'); 
 Route::get('/atletas/{id}', [AtletaController::class, 'show'])->name('atletas.show'); 
 Route::post('/atletas', [AtletaController::class, 'store'])->name('atletas.store'); 
+Route::post('/atleta/visualizar/{id}', [AtletaController::class, 'registrarVisualizacao']);
 Route::put('/atletas/{id}', [AtletaController::class, 'update'])->name('atletas.update');
 Route::delete('/atletas/{id}', [AtletaController::class, 'destroy'])->name('atletas.destroy');
 
