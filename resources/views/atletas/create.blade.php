@@ -97,12 +97,24 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12 mb-3">
-                <label for="resumo" class="form-label">Resumo</label>
-                <textarea class="form-control" name="resumo" rows="3" placeholder="Descreva informações adicionais sobre o atleta"></textarea>
+       <div class="col-md-12 mb-3">
+            <p class="video-instructions">
+                Para o cadastro do atleta, é necessário que o vídeo esteja hospedado em uma plataforma como YouTube ou Vimeo.
+                Insira o link do vídeo do atleta demonstrando:
+            </p>
+            <ul class="video-requirements">
+                <li>05 arremessos da zona morta</li>
+                <li>05 arremessos do garrafão</li>
+                <li>05 arremessos da linha de 03 pontos</li>
+                <li>01 bandeja do lado esquerdo</li>
+                <li>01 bandeja do lado direito</li>
+                <li>Domínio de bola pelos cones</li>
+            </ul>
+            <div class="form-group">
+                <input type="url" class="form-control" name="resumo" id="resumo" placeholder="https://exemplo.com/video">
             </div>
         </div>
+
 
         <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="{{ route('home') }}" class="btn btn-outline-secondary">
@@ -142,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.querySelector('input[name="peso"]').value = data.peso || '';
                         document.querySelector('input[name="altura"]').value = data.altura || '';
                         document.querySelector('select[name="sexo"]').value = (data.sexo || '').charAt(0).toUpperCase() + (data.sexo || '').slice(1).toLowerCase();
-                        document.querySelector('textarea[name="resumo"]').value = data.resumo || '';
+                        document.querySelector('input[name="resumo"]').value = data.resumo || '';
                         document.getElementById('atleta_id').value = data.id;
 
                         const imagemPreview = document.getElementById('imagem-preview');

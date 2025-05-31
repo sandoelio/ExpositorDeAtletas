@@ -136,12 +136,12 @@ h1 {
     word-break: break-word; /* quebra palavras longas */
     white-space: pre-wrap;  /* respeita quebras de linha e espaços */
     overflow-wrap: break-word;
-    margin-bottom: 2px; /* tira o espaçamento grande de baixo */
+    margin-bottom: 2px; 
 }
 
 .card .btn {
     margin-top: auto;
-    align-self: center; /* centraliza se quiser */
+    align-self: center;
 }
 
 
@@ -201,9 +201,9 @@ h1 {
     padding-right: 10px;
     text-align: left;
     gap: 4px; /* Espaço compacto entre os <p> */
-    white-space: pre-wrap; /* quebra automática respeitando \n */
     display: flex;
     flex-direction: column;
+    
 }
 
 .scrollable-info::-webkit-scrollbar {
@@ -215,22 +215,6 @@ h1 {
     border-radius: 4px;
 }
 
-/* Estilização do grid de informações */
-
-.info-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-    padding: 0 10px;
-}
-
-.info-grid p {
-    flex: 1 1 45%; /* Dois por linha */
-    margin: 0;
-    text-align: left;
-}
 
 .botao-container {
     display: flex;
@@ -250,3 +234,31 @@ select.disabled, input.disabled {
     color: #999 !important;
     cursor: not-allowed;
 }
+
+  /* Remove underline*/
+  a.video-link {
+      text-decoration: none;    
+  }
+  
+  a.video-link:hover {
+      color: #0056b3;
+  }
+  
+  /* Ajustes para as instruções de vídeo */
+  p.video-instructions {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: #ffffff;
+  }
+  
+  ul.video-requirements {
+      margin: 0 0 1rem 1rem;
+      padding: 0;
+      list-style-type: disc;
+  }
+  
+  ul.video-requirements li {
+      margin-bottom: 0.3rem;
+      font-size: 0.95rem;
+  }
+

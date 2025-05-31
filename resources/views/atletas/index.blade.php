@@ -81,15 +81,16 @@
 
                         <div class="card back card-body text-center d-flex flex-column">
                         <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
-                        <div class="scrollable-info flex-grow-1 overflow-auto">
-                            <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
-                            <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
-                            <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
-                            <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
-                            <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
-                            <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
-                            <p><strong>Resumo:</strong> {!! nl2br(e($atleta->resumo)) !!}</p>
-                        </div>
+                            <div class="scrollable-info flex-grow-1 overflow-auto">
+                                <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
+                                <p><strong>Posição:</strong> {{ $atleta->posicao_jogo }}</p>
+                                <p><strong>Entidade:</strong> {{ $atleta->entidade }}</p>
+                                <p><strong>Altura:</strong> {{ $atleta->altura }}</p>
+                                <p><strong>Peso:</strong> {{ $atleta->peso }}</p>
+                                <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                                <p><strong>Link:</strong> <a href="{{ $atleta->resumo }}" target="_blank" rel="noopener noreferrer" class="video-link">{{ $atleta->resumo }}</a></p>
+
+                            </div>
                         <button class="btn btn-primary mt-2">Voltar</button>
                     </div>
                     </div>
@@ -186,7 +187,7 @@
                                 <p><strong>Altura:</strong> ${atleta.altura}</p>
                                 <p><strong>Peso:</strong> ${atleta.peso}</p>
                                 <p><strong>Contato:</strong> ${atleta.contato}</p>
-                               <p><strong>Resumo:</strong> ${atleta.resumo.replace(/\n/g, '<br>')}</p>
+                                <p><strong>Link:</strong> <a href="${atleta.resumo}" target="_blank" rel="noopener noreferrer" class="video-link">${atleta.resumo}</a></p>
                             </div>
                             <button class="btn btn-primary mt-2">Voltar</button>
                         </div>
@@ -289,7 +290,7 @@
                             <p><strong>Altura:</strong> ${atleta.altura}</p>
                             <p><strong>Peso:</strong> ${atleta.peso}</p>
                             <p><strong>Contato:</strong> ${atleta.contato}</p>
-                            <p><strong>Resumo:</strong> ${atleta.resumo.replace(/\n/g, '<br>')}</p>
+                            <p><strong>Link:</strong> <a href="${atleta.resumo}" target="_blank" rel="noopener noreferrer" class="video-link">${atleta.resumo}</a></p>
                         </div>
                         <button class="btn btn-primary mt-2">Voltar</button>
                     </div>
