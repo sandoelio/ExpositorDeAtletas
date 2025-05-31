@@ -48,7 +48,7 @@
 /* Define o fundo laranja */
 .navbar {
     width: 100%; /* Define uma largura menor */
-    height: 85px; /* Define uma altura fixa */
+    height: auto; /* Define uma altura fixa */
     margin: 0 auto; /* Centraliza na tela */
     background-color: #FFA500; 
 
