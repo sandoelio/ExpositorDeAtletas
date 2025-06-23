@@ -27,7 +27,7 @@ Para configurar e executar o projeto localmente, siga os passos abaixo:
 1.  **Clone o repositório:**
 
     ```bash
-    git clone https://github.com/sandoelio/cestaBaiana.git
+    git clone https://github.com/sandoelio/ExpositorDeAtletas.git
     cd cestaBaiana
     ```
 
