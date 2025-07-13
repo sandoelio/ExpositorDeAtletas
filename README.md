@@ -1,4 +1,4 @@
-# Cesta Baiana: sistema web para Atletas
+# ExpositorDeAtletas: sistema web para Atletas
 
 ## Descrição do Projeto
 
