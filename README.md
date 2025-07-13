@@ -1,4 +1,4 @@
-# ExpositorDeAtletas: sistema web para Atletas
+# Expositor de Atletas: sistema web para Atletas
 
 ## Descrição do Projeto
 
