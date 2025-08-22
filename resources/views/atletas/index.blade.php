@@ -4,8 +4,8 @@
     <div class="container">
 
         <div class="mb-3">
-            <a href="{{ route('home') }}" class="btn btn-outline-secondary">
-                ← Voltar para a Home
+            <a href="{{ route('home') }}" class="btn btn-outline-secondary" style="background:#e66000;color:white">
+                Voltar para a Home
             </a>
         </div>
 
@@ -49,8 +49,8 @@
                 </div>
             </div>
             <div class="text-center mt-3">
-                <button type="button" class="btn btn-primary" onclick="buscarAtletas()">Filtrar</button>
-                <button type="button" class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+                <button type="button" class="btn btn-primary" style="background:#e66000" onclick="buscarAtletas()">Filtrar</button>
+                <button type="button" class="btn btn-secondary"style="background:#e66000" onclick="limparFiltros()">Limpar</button>
             </div>
         </form>
 
@@ -76,7 +76,7 @@
                             <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
                             <p class="card-text">Idade: {{ $atleta->idade }}</p>
                             <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="{{ $atleta->id }}">{{ $atleta->visualizacoes }}</span></p>
-                            <button class="btn btn-primary" onclick="registrarVisualizacao({{ $atleta->id }})">Clique para ver mais</button>
+                            <button class="btn btn-primary" style="background:#e66000 " onclick="registrarVisualizacao({{ $atleta->id }})">Clique para ver mais</button>
                         </div>
 
                         <div class="card back card-body text-center d-flex flex-column">
@@ -91,7 +91,7 @@
                                 <p><strong>Link:</strong> <a href="{{ $atleta->resumo }}" target="_blank" rel="noopener noreferrer" class="video-link">{{ $atleta->resumo }}</a></p>
 
                             </div>
-                        <button class="btn btn-primary mt-2">Voltar</button>
+                        <button class="btn btn-primary mt-2" style="background:#e66000">Voltar</button>
                     </div>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
                             <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="${atleta.id}">${atleta.visualizacoes}</span></p>
-                            <button class="btn btn-primary" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
+                            <button class="btn btn-primary" style="background:#e66000" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-start d-flex flex-column">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
@@ -189,7 +189,7 @@
                                 <p><strong>Contato:</strong> ${atleta.contato}</p>
                                 <p><strong>Link:</strong> <a href="${atleta.resumo}" target="_blank" rel="noopener noreferrer" class="video-link">${atleta.resumo}</a></p>
                             </div>
-                            <button class="btn btn-primary mt-2">Voltar</button>
+                            <button class="btn btn-primary mt-2" style="background:#e66000 ">Voltar</button>
                         </div>
                     </div>
                 </div>`;
@@ -279,7 +279,7 @@
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
                             <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="${atleta.id}">${atleta.visualizacoes}</span></p>
-                            <button class="btn btn-primary" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
+                            <button class="btn btn-primary" style="background:#e66000" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-start">
                         <h5 class="card-title">${atleta.nome_completo}</h5>
@@ -292,7 +292,7 @@
                             <p><strong>Contato:</strong> ${atleta.contato}</p>
                             <p><strong>Link:</strong> <a href="${atleta.resumo}" target="_blank" rel="noopener noreferrer" class="video-link">${atleta.resumo}</a></p>
                         </div>
-                        <button class="btn btn-primary mt-2">Voltar</button>
+                        <button class="btn btn-primary mt-2" style="background:#e66000 " >Voltar</button>
                     </div>
                 </div>`;
             });
