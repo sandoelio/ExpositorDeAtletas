@@ -14,6 +14,8 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name(
 // submissão do formulário de login
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
 
+Route::post('/logout', [App\Http\Controllers\AdminAuthController::class, 'logout'])->name('logout');
+
 // área protegida de administração
 Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('/atletas/create', [AtletaController::class, 'create'])->name('atletas.create');

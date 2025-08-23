@@ -25,4 +25,16 @@ class AdminAuthController extends Controller
 
         return back()->withErrors(['email' => 'Credenciais inválidas.']);
     }
+
+    // monta o logout
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+
+        // invalida sessão e regenera token CSRF
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('home');
+    }
 }

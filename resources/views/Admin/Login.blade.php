@@ -39,7 +39,7 @@
                   style="background:#e66000; border:none">
             Entrar
           </button>
-          <a href="{{ route('admin.dashboard') }}"
+          <a href="{{ route('home') }}"
              class="btn btn-secondary flex-fill"
              style="background:#FF7209; color:white">
             Voltar
