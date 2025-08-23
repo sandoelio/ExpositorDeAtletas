@@ -16,8 +16,8 @@ Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.
 // área protegida de administração
 Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('/atletas/create', [AtletaController::class, 'create'])->name('atletas.create');
-    Route::get('/atletas/buscar-cpf', [AtletaController::class, 'buscarPorCpf'])->name('atletas.buscar-cpf');
-    Route::post('/atletas', [AtletaController::class, 'store'])->name('atletas.store'); 
+    Route::post('/atletas', [AtletaController::class, 'store'])->name('atletas.store');
+    Route::get('/atletas/{id}/edit', [AtletaController::class, 'edit'])->name('atletas.edit');
     Route::put('/atletas/{id}', [AtletaController::class, 'update'])->name('atletas.update');
     Route::delete('/atletas/{id}', [AtletaController::class, 'destroy'])->name('atletas.destroy');    
 });

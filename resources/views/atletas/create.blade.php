@@ -27,16 +27,10 @@
                     style="max-width: 100px; border: 1px solid #ccc; padding: 4px; border-radius: 8px; display: block;">
             </div>
 
-            <div class="mb-3">
-                <label for="imagem" class="form-label">Imagem do Atleta</label>
-                <input type="file" class="form-control" name="imagem" id="imagem" accept="image/*">
-            </div>
-
-            <div class="row">
+            <div class="row" style="margin-top: 15px;">
                 <div class="col-md-6 mb-3">
-                    <label for="cpf" class="form-label">CPF</label>
-                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="000.000.000-00"
-                        required>
+                    <label for="imagem" class="form-label">Imagem do Atleta</label>
+                    <input type="file" class="form-control" name="imagem" id="imagem" accept="image/*">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="nome_completo" class="form-label">Nome Completo</label>
@@ -71,7 +65,7 @@
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="entidade" class="form-label">Entidade</label>
+                    <label for="entidade" class="form-label">Instituição</label>
                     <input type="text" class="form-control" name="entidade" id="entidade"
                         placeholder="Nome da equipe ou instituição" required>
                 </div>
@@ -113,7 +107,6 @@
                     Insira o link do vídeo do atleta demonstrando:
                 </p>
                 <ul class="video-requirements">
-                    <li>03 arremessos da zona morta</li>
                     <li>03 arremessos do garrafão</li>
                     <li>03 arremessos da linha de 03 pontos</li>
                     <li>01 bandeja do lado esquerdo</li>
@@ -127,181 +120,66 @@
                 <a href="{{ route('home') }}" class="btn btn-custom" style="background:#e66000; color:white">
                     Voltar para a Home
                 </a>
-                <button type="submit" class="btn btn-custom" style="background:#e66000; color:white" id="btnSalvar">Cadastrar
+                <button type="submit" class="btn btn-custom" style="background:#e66000; color:white"
+                    id="btnSalvar">Cadastrar
                     Atleta</button>
-                <button type="button" class="btn btn-custom btn-danger" id="btnExcluir" style="display: none;">Excluir Atleta</button>
-                <button type="button" class="btn btn-secondary btn-custom"onclick="window.location.href='{{ route('atletas.create') }}'">Limpar</button>
-             </div><br>
+                <button type="button"
+                    class="btn btn-secondary btn-custom"onclick="window.location.href='{{ route('atletas.create') }}'">Limpar</button>
+            </div><br>
         </form>
     </div>
 
     <script>
+        // Exibir mensagem de sucesso por 3 segundos
         document.addEventListener('DOMContentLoaded', function() {
-
-            const cpfInput = document.querySelector('input[name="cpf"]');
-            const form = document.getElementById('formAtleta');
-            const btnSalvar = document.getElementById('btnSalvar');
-            const btnExcluir = document.getElementById('btnExcluir');
-            const token = document.querySelector('input[name="_token"]').value;
-
-            cpfInput.addEventListener('blur', function() {
-                const cpf = this.value.trim();
-                if (cpf.length === 14) {
-                    fetch(`{{ route('atletas.buscar-cpf') }}?cpf=${cpf}`)
-                        .then(response => {
-                            if (!response.ok) throw new Error('CPF não encontrado');
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.id) {
-                                document.querySelector('input[name="nome_completo"]').value = data
-                                    .nome_completo || '';
-                                document.querySelector('input[name="data_nascimento"]').value = data
-                                    .data_nascimento || '';
-                                document.querySelector('input[name="cidade"]').value = data.cidade ||
-                                    '';
-                                document.querySelector('input[name="posicao_jogo"]').value = data
-                                    .posicao_jogo || '';
-                                document.querySelector('input[name="entidade"]').value = data
-                                    .entidade || '';
-                                document.querySelector('input[name="contato"]').value = data.contato ||
-                                    '';
-                                document.querySelector('input[name="peso"]').value = data.peso || '';
-                                document.querySelector('input[name="altura"]').value = data.altura ||
-                                    '';
-                                document.querySelector('select[name="sexo"]').value = (data.sexo || '')
-                                    .charAt(0).toUpperCase() + (data.sexo || '').slice(1).toLowerCase();
-                                document.querySelector('input[name="resumo"]').value = data.resumo ||
-                                    '';
-                                document.getElementById('atleta_id').value = data.id;
-
-                                const imagemPreview = document.getElementById('imagem-preview');
-                                imagemPreview.src = data.imagem ?
-                                    `data:image/jpeg;base64,${data.imagem}` : '/img/avatar.png';
-                                imagemPreview.style.display = 'block';
-
-                                form.action = `/admin/atletas/${data.id}`;
-                                if (!document.querySelector('input[name="_method"]')) {
-                                    const methodInput = document.createElement('input');
-                                    methodInput.type = 'hidden';
-                                    methodInput.name = '_method';
-                                    methodInput.value = 'PUT';
-                                    form.appendChild(methodInput);
-                                } else {
-                                    document.querySelector('input[name="_method"]').value = 'PUT';
-                                }
-
-                                btnSalvar.textContent = 'Atualizar Atleta';
-                                btnExcluir.style.display = 'inline-block';
-                                btnExcluir.dataset.id = data.id;
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro ao buscar atleta:', error.message);
-                        });
-                }
-            });
-
-            btnExcluir.addEventListener('click', function() {
-                const id = this.dataset.id;
-                if (confirm('Deseja realmente excluir este atleta?')) {
-                    fetch(`/admin/atletas/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': token,
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.mensagem) {
-                                let successDiv = document.getElementById('success-message');
-                                if (!successDiv) {
-                                    successDiv = document.createElement('div');
-                                    successDiv.id = 'success-message';
-                                    successDiv.className = 'alert alert-success';
-                                    form.parentNode.insertBefore(successDiv, form);
-                                }
-                                successDiv.textContent = data.mensagem;
-                                successDiv.style.display = 'block';
-
-                                setTimeout(() => {
-                                    successDiv.style.display = 'none';
-                                }, 3000);
-
-                                form.reset();
-                                form.action = '{{ route('atletas.store') }}';
-
-                                if (document.querySelector('input[name="_method"]')) {
-                                    document.querySelector('input[name="_method"]').remove();
-                                }
-
-                                document.getElementById('imagem-preview').src = '/img/avatar.png';
-                                document.getElementById('imagem-preview').style.display = 'block';
-
-                                btnSalvar.textContent = 'Cadastrar Atleta';
-                                btnExcluir.style.display = 'none';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro ao excluir atleta:', error);
-                        });
-                }
-            });
-
-            // Exibir mensagem de sucesso por 3 segundos
             const successMsg = document.getElementById('success-message');
             if (successMsg) {
                 setTimeout(() => {
                     successMsg.style.display = 'none';
                 }, 3000);
             }
-
-            document.getElementById('imagem').addEventListener('change', function(event) {
-                const preview = document.getElementById('imagem-preview');
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+        });
+        document.getElementById('imagem').addEventListener('change', function(event) {
+            const preview = document.getElementById('imagem-preview');
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 @endsection
 <style>
+    /* Botões padronizados */
+    .btn-custom {
+        flex: 1 1 220px;
+        /* largura mínima 220px, todos iguais */
+        max-width: 220px;
+        /* largura máxima */
+        text-align: center;
+        background: #e66000;
+        color: white;
+        border: none;
+    }
 
-  /* Botões padronizados */
-        .btn-custom {
-            flex: 1 1 220px;   /* largura mínima 220px, todos iguais */
-            max-width: 220px;  /* largura máxima */
-            text-align: center;
-            background: #e66000;
-            color: white;
-            border: none;
-        }
+    .btn-custom:hover {
+        background: #cc5200;
+        color: white;
+    }
 
-        .btn-custom:hover {
-            background: #cc5200;
-            color: white;
-        }
+    .btn-secondary.btn-custom {
+        background: #6c757d;
+    }
 
-        .btn-danger.btn-custom {
-            background: #dc3545;
-        }
-
-        .btn-secondary.btn-custom {
-            background: #6c757d;
-        }
-
-        /* Espaçamento dos botões */
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 20px;
-        }
-    </style>
+    /* Espaçamento dos botões */
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+    }
+</style>
