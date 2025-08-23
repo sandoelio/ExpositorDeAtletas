@@ -152,7 +152,7 @@ class AtletaController extends Controller
             $exclusao = $this->atletaService->excluirAtleta($id);
 
             if ($exclusao) {
-                return response()->json(['mensagem' => 'Atleta excluído com sucesso!']);
+                return redirect()->back()->with('success', 'Atleta excluido com sucesso!');
             }
 
             return response()->json(['erro' => 'Não foi possível excluir o atleta.'], 400);

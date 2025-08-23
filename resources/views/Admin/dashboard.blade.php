@@ -12,6 +12,7 @@
         <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
             <a href="{{ route('atletas.create') }}" class="btn-custom">Criar Atletas</a>
             <a href="{{ route('admin.index') }}" class="btn-custom">Atualizar Atletas</a>
+            <a href="{{ route('home') }}" class="btn-custom">Sair</a>  
         </div>
     </div>
 </div>

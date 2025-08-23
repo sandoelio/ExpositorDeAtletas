@@ -3,6 +3,17 @@
 @section('content')
 <div class="container">
 
+    @if (session('success'))
+            <div id="success-message" class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div id="error-message" class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
   <h2 class="mb-4">Administração de Atletas</h2>
 
   {{-- Filtro por Entidade --}}
@@ -70,8 +81,20 @@
 </div>
 @endsection
 
+<script>
+     // Exibir mensagem de sucesso por 3 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const successMsg = document.getElementById('success-message');
+            if (successMsg) {
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 3000);
+            }
+        });
+</script>
+
 <style>
-    
+
  /* Estilização da tabela mobile */
   .table thead th {
     background-color: #FF7209;
