@@ -71,7 +71,7 @@
                 <div class="col mb-4 h-100">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
                         <div class="card front card-body text-center">
-                            <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/slogan.png') }}"
+                            <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100" alt="Avatar">
                             <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
                             <p class="card-text">Idade: {{ $atleta->idade }}</p>

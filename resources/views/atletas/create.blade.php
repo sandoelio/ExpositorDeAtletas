@@ -124,10 +124,10 @@
             </div>
 
             <div class="d-flex justify-content-center gap-3 flex-wrap btn-container">
-                <a href="{{ route('home') }}" class="btn btn-custom" style="background:#e66000;color:white">
+                <a href="{{ route('home') }}" class="btn btn-custom" style="background:#e66000; color:white">
                     Voltar para a Home
                 </a>
-                <button type="submit" class="btn btn-custom" style="background:#e66000" id="btnSalvar">Cadastrar
+                <button type="submit" class="btn btn-custom" style="background:#e66000; color:white" id="btnSalvar">Cadastrar
                     Atleta</button>
                 <button type="button" class="btn btn-custom btn-danger" id="btnExcluir" style="display: none;">Excluir Atleta</button>
                 <button type="button" class="btn btn-secondary btn-custom"onclick="window.location.href='{{ route('atletas.create') }}'">Limpar</button>
