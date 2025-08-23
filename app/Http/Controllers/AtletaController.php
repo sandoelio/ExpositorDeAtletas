@@ -122,11 +122,6 @@ class AtletaController extends Controller
     {
         $atleta = $this->atletaService->buscarPorId($id);
 
-        if (!$atleta) {
-            return redirect()->route('atletas.create')
-                ->with('error', 'Atleta não encontrado.');
-        }
-
         return view('atletas.edit', compact('atleta'));
     }
 
@@ -155,7 +150,7 @@ class AtletaController extends Controller
                 return redirect()->back()->with('success', 'Atleta excluido com sucesso!');
             }
 
-            return response()->json(['erro' => 'Não foi possível excluir o atleta.'], 400);
+            return redirect()->back()->with('error','Não foi possível excluir o atleta.');
         } catch (\Exception $ex) {
             return response()->json([
                 'erro' => 'Erro interno ao excluir atleta.',

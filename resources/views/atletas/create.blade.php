@@ -124,7 +124,7 @@
                     id="btnSalvar">Cadastrar
                     Atleta</button>
                 <button type="button"
-                    class="btn btn-secondary btn-custom" style="background:#e66000; color:white" onclick="window.location.href='{{ route('atletas.create') }}'">Limpar</button>
+                    class="btn btn-secondary btn-custom" style="background:#e66000; color:white" onclick="location.reload()">Limpar</button>
             </div><br>
         </form>
     </div>
