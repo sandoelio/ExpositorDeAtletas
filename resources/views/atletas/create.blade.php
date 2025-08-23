@@ -117,14 +117,14 @@
             </div>
 
             <div class="d-flex justify-content-center gap-3 flex-wrap btn-container">
-                <a href="{{ route('home') }}" class="btn btn-custom" style="background:#e66000; color:white">
-                    Voltar para a Home
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-custom" style="background:#e66000; color:white">
+                    Voltar
                 </a>
                 <button type="submit" class="btn btn-custom" style="background:#e66000; color:white"
                     id="btnSalvar">Cadastrar
                     Atleta</button>
                 <button type="button"
-                    class="btn btn-secondary btn-custom"onclick="window.location.href='{{ route('atletas.create') }}'">Limpar</button>
+                    class="btn btn-secondary btn-custom" style="background:#e66000; color:white" onclick="window.location.href='{{ route('atletas.create') }}'">Limpar</button>
             </div><br>
         </form>
     </div>

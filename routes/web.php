@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AtletaController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminAtletaController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -19,7 +20,9 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::post('/atletas', [AtletaController::class, 'store'])->name('atletas.store');
     Route::get('/atletas/{id}/edit', [AtletaController::class, 'edit'])->name('atletas.edit');
     Route::put('/atletas/{id}', [AtletaController::class, 'update'])->name('atletas.update');
-    Route::delete('/atletas/{id}', [AtletaController::class, 'destroy'])->name('atletas.destroy');    
+    Route::delete('/atletas/{id}', [AtletaController::class, 'destroy'])->name('atletas.destroy'); 
+    Route::get('/dashboard', function() {return view('admin.dashboard');})->name('admin.dashboard');
+    Route::get('/atletas', [AdminAtletaController::class, 'index'])->name('admin.index');   
 });
 
 Route::get('/atletas/buscar', [AtletaController::class, 'buscar'])->name('atletas.buscar');
