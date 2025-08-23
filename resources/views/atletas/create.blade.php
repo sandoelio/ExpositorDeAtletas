@@ -147,7 +147,7 @@
             cpfInput.addEventListener('blur', function() {
                 const cpf = this.value.trim();
                 if (cpf.length === 14) {
-                    fetch(`/atletas/buscar-cpf?cpf=${cpf}`)
+                    fetch(`{{ route('atletas.buscar-cpf') }}?cpf=${cpf}`)
                         .then(response => {
                             if (!response.ok) throw new Error('CPF não encontrado');
                             return response.json();
@@ -180,7 +180,7 @@
                                     `data:image/jpeg;base64,${data.imagem}` : '/img/avatar.png';
                                 imagemPreview.style.display = 'block';
 
-                                form.action = `/atletas/${data.id}`;
+                                form.action = `/admin/atletas/${data.id}`;
                                 if (!document.querySelector('input[name="_method"]')) {
                                     const methodInput = document.createElement('input');
                                     methodInput.type = 'hidden';
@@ -205,7 +205,7 @@
             btnExcluir.addEventListener('click', function() {
                 const id = this.dataset.id;
                 if (confirm('Deseja realmente excluir este atleta?')) {
-                    fetch(`/atletas/${id}`, {
+                    fetch(`/admin/atletas/${id}`, {
                             method: 'DELETE',
                             headers: {
                                 'X-CSRF-TOKEN': token,
@@ -236,7 +236,7 @@
                                     document.querySelector('input[name="_method"]').remove();
                                 }
 
-                                document.getElementById('imagem-preview').src = '/img/slogan.png';
+                                document.getElementById('imagem-preview').src = '/img/avatar.png';
                                 document.getElementById('imagem-preview').style.display = 'block';
 
                                 btnSalvar.textContent = 'Cadastrar Atleta';
