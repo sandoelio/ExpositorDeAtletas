@@ -15,7 +15,7 @@
     </div>
   @endif
 
-  <h2 class="mb-4">Administração de Atletas</h2>
+  <h2 class="mb-4"  style="text-align: center">Administração de Atletas</h2>
 
   {{-- wrapper comum para filtro + tabela --}}
   <div class="table-center mb-4">
