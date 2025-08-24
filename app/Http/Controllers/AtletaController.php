@@ -61,7 +61,6 @@ class AtletaController extends Controller
                 'data_nascimento' => 'required|date',
                 'altura' => 'required|numeric|min:0.50|max:2.50',
                 'peso' => 'required|numeric|min:30|max:150',
-                'cpf' => 'required|unique:atletas,cpf|regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/',
                 'sexo' => 'required|string|in:Masculino,Feminino',
                 'contato' => 'required|string|max:20',
                 'posicao_jogo' => 'required|string|max:50',
@@ -79,9 +78,6 @@ class AtletaController extends Controller
                 'altura.numeric' => 'O campo "Altura" deve ser um número.',
                 'peso.required' => 'O campo "Peso" é obrigatório.',
                 'peso.numeric' => 'O campo "Peso" deve ser um número.',
-                'cpf.required' => 'O campo "CPF" é obrigatório.',
-                'cpf.unique' => 'O CPF informado já está cadastrado.',
-                'cpf.regex' => 'O CPF deve estar no formato xxx.xxx.xxx-xx.',
                 'sexo.required' => 'O campo "Sexo" é obrigatório.',
                 'sexo.string' => 'O campo "Sexo" deve ser uma string.',
                 'contato.required' => 'O campo "Contato" é obrigatório.',
@@ -122,9 +118,15 @@ class AtletaController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        $atleta = $this->atletaService->buscarPorId($id);
+
+        return view('atletas.edit', compact('atleta'));
+    }
+
     public function update(Request $request, $id)
     {
-
         try {
 
             $data = $request->all();
@@ -145,10 +147,10 @@ class AtletaController extends Controller
             $exclusao = $this->atletaService->excluirAtleta($id);
 
             if ($exclusao) {
-                return response()->json(['mensagem' => 'Atleta excluído com sucesso!']);
+                return redirect()->back()->with('success', 'Atleta excluido com sucesso!');
             }
 
-            return response()->json(['erro' => 'Não foi possível excluir o atleta.'], 400);
+            return redirect()->back()->with('error','Não foi possível excluir o atleta.');
         } catch (\Exception $ex) {
             return response()->json([
                 'erro' => 'Erro interno ao excluir atleta.',
@@ -168,30 +170,6 @@ class AtletaController extends Controller
                 'detalhes' => $ex->getMessage()
             ], 500);
         }   
-    }
-
-    public function buscarPorCpf(Request $request)
-    {
-        $atleta = $this->atletaService->buscarPorCpf($request);
-
-        if (!$atleta) {
-            return response()->json(['erro' => 'Atleta não encontrado'], 404);
-        }
-
-        return response()->json([
-            'id' => $atleta->id,
-            'nome_completo' => $atleta->nome_completo,
-            'data_nascimento' => $atleta->data_nascimento,
-            'cidade' => $atleta->cidade,
-            'posicao_jogo' => $atleta->posicao_jogo,
-            'entidade' => $atleta->entidade,
-            'contato' => $atleta->contato,
-            'peso' => $atleta->peso,
-            'altura' => $atleta->altura,
-            'sexo' => $atleta->sexo,
-            'resumo' => $atleta->resumo,
-            'imagem' => $atleta->imagem_base64
-        ]);
     }
 
     public function registrarVisualizacao($id)

@@ -4,8 +4,8 @@
     <div class="container">
 
         <div class="mb-3">
-            <a href="{{ route('home') }}" class="btn btn-outline-secondary">
-                ← Voltar para a Home
+            <a href="{{ route('home') }}" class="btn btn-outline-secondary" style="background:#e66000;color:white">
+                Voltar para a Home
             </a>
         </div>
 
@@ -49,8 +49,8 @@
                 </div>
             </div>
             <div class="text-center mt-3">
-                <button type="button" class="btn btn-primary" onclick="buscarAtletas()">Filtrar</button>
-                <button type="button" class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+                <button type="button" class="btn btn-primary" style="background:#e66000" onclick="buscarAtletas()">Filtrar</button>
+                <button type="button" class="btn btn-secondary"style="background:#e66000" onclick="limparFiltros()">Limpar</button>
             </div>
         </form>
 
@@ -71,12 +71,12 @@
                 <div class="col mb-4 h-100">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
                         <div class="card front card-body text-center">
-                            <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/slogan.png') }}"
+                            <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100" alt="Avatar">
                             <h5 class="card-title">{{ $atleta->nome_completo }}</h5>
                             <p class="card-text">Idade: {{ $atleta->idade }}</p>
                             <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="{{ $atleta->id }}">{{ $atleta->visualizacoes }}</span></p>
-                            <button class="btn btn-primary" onclick="registrarVisualizacao({{ $atleta->id }})">Clique para ver mais</button>
+                            <button class="btn btn-primary" style="background:#e66000 " onclick="registrarVisualizacao({{ $atleta->id }})">Clique para ver mais</button>
                         </div>
 
                         <div class="card back card-body text-center d-flex flex-column">
@@ -91,7 +91,7 @@
                                 <p><strong>Link:</strong> <a href="{{ $atleta->resumo }}" target="_blank" rel="noopener noreferrer" class="video-link">{{ $atleta->resumo }}</a></p>
 
                             </div>
-                        <button class="btn btn-primary mt-2">Voltar</button>
+                        <button class="btn btn-primary mt-2" style="background:#e66000">Voltar</button>
                     </div>
                     </div>
                 </div>
@@ -171,12 +171,12 @@
                 <div class="col-md-4 mb-4">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
                         <div class="card front card-body text-center">
-                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/slogan.png'}"
+                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}"
                                     class="avatar-img rounded-circle mb-3" width="100" height="100">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
                             <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="${atleta.id}">${atleta.visualizacoes}</span></p>
-                            <button class="btn btn-primary" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
+                            <button class="btn btn-primary" style="background:#e66000" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-start d-flex flex-column">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
@@ -189,7 +189,7 @@
                                 <p><strong>Contato:</strong> ${atleta.contato}</p>
                                 <p><strong>Link:</strong> <a href="${atleta.resumo}" target="_blank" rel="noopener noreferrer" class="video-link">${atleta.resumo}</a></p>
                             </div>
-                            <button class="btn btn-primary mt-2">Voltar</button>
+                            <button class="btn btn-primary mt-2" style="background:#e66000 ">Voltar</button>
                         </div>
                     </div>
                 </div>`;
@@ -274,12 +274,12 @@
                 <div class="col mb-4">
                     <div class="card-flip" onclick="this.classList.toggle('flipped')">
                        <div class="card front card-body text-center">
-                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/slogan.png'}"
+                            <img src="${atleta.imagem_base64 ? 'data:image/png;base64,' + atleta.imagem_base64 : '/img/avatar.png'}"
                                 class="avatar-img rounded-circle mb-3" width="100" height="100">
                             <h5 class="card-title">${atleta.nome_completo}</h5>
                             <p class="card-text">Idade: ${atleta.idade}</p>
                             <p class="text-muted small">👁️ Visualizações: <span class="viz-counter" data-id="${atleta.id}">${atleta.visualizacoes}</span></p>
-                            <button class="btn btn-primary" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
+                            <button class="btn btn-primary" style="background:#e66000" onclick="registrarVisualizacao(${atleta.id})">Clique para ver mais</button>
                         </div>
                         <div class="card back card-body text-start">
                         <h5 class="card-title">${atleta.nome_completo}</h5>
@@ -292,7 +292,7 @@
                             <p><strong>Contato:</strong> ${atleta.contato}</p>
                             <p><strong>Link:</strong> <a href="${atleta.resumo}" target="_blank" rel="noopener noreferrer" class="video-link">${atleta.resumo}</a></p>
                         </div>
-                        <button class="btn btn-primary mt-2">Voltar</button>
+                        <button class="btn btn-primary mt-2" style="background:#e66000 " >Voltar</button>
                     </div>
                 </div>`;
             });

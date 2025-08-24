@@ -1,6 +1,6 @@
 /* Fundo geral da página */
 .pagina-tema {
-    background-color: #093b6d; 
+    background-color: #28365F; 
     color: #FFFFFF; 
     font-family: Arial, sans-serif;
 }
@@ -30,7 +30,7 @@
 
 /* Botões */
 .btn-primary {
-    background-color: #3498DB; 
+    background-color: #28365F; 
     border: none;
 }
 
@@ -50,12 +50,12 @@
     width: 100%; /* Define uma largura menor */
     height: auto; /* Define uma altura fixa */
     margin: 0 auto; /* Centraliza na tela */
-    background-color: #FFA500; 
+    background-color: #FF7209; 
 
 }
 /* Estilização do texto de spam */
 .spam-text {
-    background-color: #FFA500;
+    background-color: #FF7209;
     color: #020202; 
     padding: 10px;
     border-radius: 5px;
@@ -64,19 +64,20 @@
 
 /* Ajuste do tamanho da logo */
 .logo-img {
-    width: 80px; /* Reduzindo para melhor encaixe */
+    width: 90px; /* Reduzindo para melhor encaixe */
     height: auto;
     margin-right: 10px;
+    background-color: #28365F;
 }
 
 
 .footer {
-    background-color: #e69500;
+    background-color: #FF7209;
     color: #141313;
     padding: 10px 0;
     width: 100%;
     height: 60px;
-    font-size: 15px;
+    font-size: 20px;
     text-align: center;
 }
 
@@ -222,11 +223,10 @@ h1 {
 }
 
 html, body {
-    height: 100%;
+    height: 100vh;
     margin: 0;
     display: flex;
     flex-direction: column;
-
 }
 
 select.disabled, input.disabled {
@@ -262,3 +262,13 @@ select.disabled, input.disabled {
       font-size: 0.95rem;
   }
 
+@media (max-width: 576px) {
+    .centralizar {
+        text-align: center;
+        margin-top: 50%;
+    }
+    .cesta_img {
+        width: 100px; /* Ajuste para telas menores */
+        height: auto;
+    }
+}

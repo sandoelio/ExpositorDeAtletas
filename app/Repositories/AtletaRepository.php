@@ -94,14 +94,6 @@ class AtletaRepository
         return $query->get();
     }
 
-    public function buscarPorCpf($cpf)
-    {
-        $cpfSomenteNumeros = preg_replace('/\D/', '', $cpf); // Remove todos os caracteres não numéricos
-
-        return Atleta::whereRaw("REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ', '') = ?", [$cpfSomenteNumeros])
-                    ->first();
-    }
-
     public function listarPosicoesUnicas()
     {
         return $this->model->select('posicao_jogo')->distinct()->get();

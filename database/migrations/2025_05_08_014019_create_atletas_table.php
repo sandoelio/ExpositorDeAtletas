@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->longText('imagem_base64')->nullable(); // Campo para armazenar a imagem em Base64
             $table->string('nome_completo'); // Nome completo do atleta
             $table->date('data_nascimento'); // Data de nascimento
-            $table->string('cpf')->unique(); // CPF do atleta com restrição de unicidade
             $table->integer('idade')->nullable(); // Calculada posteriormente no Model
             $table->float('altura', 8, 2); // Altura em metros ou centímetros
             $table->float('peso', 8, 2); // Peso em kg

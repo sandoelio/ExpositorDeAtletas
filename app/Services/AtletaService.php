@@ -89,18 +89,6 @@ class AtletaService
         }
     }
 
-    public function buscarPorCpf(Request $request)
-    {
-        try {
-            return $this->atletaRepository->buscarPorCpf($request->cpf);
-        } catch (\Exception $ex) {
-            return response()->json([
-                'erro' => 'Erro ao buscar atleta pelo CPF.',
-                'detalhes' => $ex->getMessage()
-            ], 500);
-        }
-    }
-
     public function listarPosicoesUnicas()
     {
         return $this->atletaRepository->listarPosicoesUnicas();
