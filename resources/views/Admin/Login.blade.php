@@ -10,7 +10,7 @@
 
       <h4 class="mb-4 text-center">Login Administração</h4>
 
-      {{-- E-mail --}}
+      {{-- E-mail --}}     
       <div class="mb-3">
         <label for="email" class="form-label">E-mail</label>
         <input id="email"
