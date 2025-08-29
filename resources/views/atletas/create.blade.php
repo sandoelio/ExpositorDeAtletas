@@ -102,17 +102,8 @@
 
             <div class="col-md-12 mb-3">
                 <p class="video-instructions">
-                    Para o cadastro do atleta, é necessário que o vídeo esteja hospedado em uma plataforma como ex: YouTube,Instagram.
-                    Insira o link do vídeo do atleta demonstrando:
+                    Insira o link do vídeo do atleta demonstrando suas habilidades
                 </p>
-                <ul class="video-requirements">
-                    <li>01 arremessos do garrafão</li>
-                    <li>01 arremessos da linha de 03 pontos</li>
-                    <li>01 bandeja do lado esquerdo</li>
-                    <li>01 bandeja do lado direito</li>
-                    <li>Domínio de bola pelos cones</li>
-                </ul>
-
             </div>
 
             <div class="d-flex justify-content-center gap-3 flex-wrap btn-container">
