@@ -122,7 +122,7 @@
             const cidade = document.getElementById('cidade');
             const entidade = document.getElementById('entidade');
 
-            let url = '/atletas/buscar?';
+            let url = "{{ url('/atletas/buscar') }}?";
 
             if (entidade.value) url += 'entidade=' + entidade.value + '&';
             if (idadeMin.value) url += 'idade_min=' + idadeMin.value + '&';
@@ -380,7 +380,7 @@
         }
 
         function registrarVisualizacao(id) {
-            fetch(`/atleta/visualizar/${id}`, {
+            fetch("{{ url('/atleta/visualizar') }}/" + id, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
