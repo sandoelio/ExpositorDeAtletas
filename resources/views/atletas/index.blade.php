@@ -122,7 +122,9 @@
             const cidade = document.getElementById('cidade');
             const entidade = document.getElementById('entidade');
 
-            let url = "{{ url('/atletas/buscar') }}?";
+            let url = "{{ secure_url('/atletas/buscar') }}?";
+            //usado para local host
+            // let url = "{{ url('/atletas/buscar') }}?";
 
             if (entidade.value) url += 'entidade=' + entidade.value + '&';
             if (idadeMin.value) url += 'idade_min=' + idadeMin.value + '&';
@@ -380,13 +382,23 @@
         }
 
         function registrarVisualizacao(id) {
-            fetch("{{ url('/atleta/visualizar') }}/" + id, {
+
+            fetch("{{ secure_url('/atleta/visualizar') }}/" + id, {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Content-Type': 'application/json'
                 }
             })
+            // usado para localhost
+
+            // fetch("{{ url('/atleta/visualizar') }}/" + id, {
+            //     method: 'POST',
+            //     headers: {
+            //         'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            //         'Content-Type': 'application/json'
+            //     }
+            // })
             .then(response => {
                 if (response.ok) {
                     // Seleciona todos os contadores com a classe e data-id correspondente
