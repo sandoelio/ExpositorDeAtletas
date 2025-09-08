@@ -5,7 +5,7 @@
         /* ===== Flip Card ===== */
         .flip-card {
             perspective: 1000px;
-            height: 200px;
+            height: 240px;
             cursor: pointer;
             position: relative;
         }
@@ -170,7 +170,8 @@
 
         @media (max-width: 768px) {
             .flip-card {
-                height: 100%;
+                perspective: 1000px;
+                height: 240px;
             }
 
             .flip-front {
@@ -232,7 +233,7 @@
 
     <div class="container">
         <div class="mb-3">
-            <a href="{{ route('home') }}" class="btn btn-outline-secondary" style="background:#e66000;color:white">
+            <a href="{{ route('home') }}" class="btn btn-outline-secondary" style="background:#e66000; color:white">
                 Voltar para a Home
             </a>
         </div>
@@ -251,11 +252,11 @@
                 <label for="posicao">Posição</label>
                 <select id="posicao" class="form-control">
                     <option value="">Todas</option>
-                    @if (isset($posicoes) && count($posicoes))
-                        @foreach ($posicoes as $p)
-                            <option value="{{ is_object($p) ? $p->posicao_jogo : $p }}">
-                                {{ is_object($p) ? $p->posicao_jogo : $p }}
-                            </option>
+                    @if(isset($posicoes) && count($posicoes))
+                        @foreach($posicoes as $p)
+                        <option value="{{ is_object($p) ? $p->posicao_jogo : $p }}">
+                            {{ is_object($p) ? $p->posicao_jogo : $p }}
+                        </option>
                         @endforeach
                     @else
                         <option>Ala</option>
@@ -268,10 +269,11 @@
                 <label for="cidade">Cidade</label>
                 <select id="cidade" class="form-control">
                     <option value="">Todas</option>
-                    @if (isset($cidades) && count($cidades))
-                        @foreach ($cidades as $c)
-                            <option value="{{ is_object($c) ? $c->cidade : $c }}">{{ is_object($c) ? $c->cidade : $c }}
-                            </option>
+                    @if(isset($cidades) && count($cidades))
+                        @foreach($cidades as $c)
+                        <option value="{{ is_object($c) ? $c->cidade : $c }}">
+                            {{ is_object($c) ? $c->cidade : $c }}
+                        </option>
                         @endforeach
                     @endif
                 </select>
@@ -280,44 +282,52 @@
                 <label for="entidade">Entidade</label>
                 <select id="entidade" class="form-control">
                     <option value="">Todas</option>
-                    @if (isset($entidades) && count($entidades))
-                        @foreach ($entidades as $e)
-                            <option value="{{ is_object($e) ? $e->entidade : $e }}">{{ is_object($e) ? $e->entidade : $e }}
-                            </option>
+                    @if(isset($entidades) && count($entidades))
+                        @foreach($entidades as $e)
+                        <option value="{{ is_object($e) ? $e->entidade : $e }}">
+                            {{ is_object($e) ? $e->entidade : $e }}
+                        </option>
                         @endforeach
                     @endif
                 </select>
             </div>
             <div class="col-12 col-md-6 mt-2 d-flex gap-2">
-                <button type="button" class="btn flex-fill" style="background:#e66000;color:#fff"
-                    onclick="buscarAtletas()">Filtrar</button>
-                <button type="button" class="btn btn-outline-secondary flex-fill" onclick="limparFiltros()">Limpar</button>
+                <button type="button" class="btn flex-fill" style="background:#e66000; color:#fff"
+                        onclick="buscarAtletas()">Filtrar</button>
+                <button type="button" class="btn btn-outline-secondary flex-fill"
+                        onclick="limparFiltros()">Limpar</button>
             </div>
         </form>
 
         {{-- ===== CARDS ===== --}}
         <div class="row g-3" id="lista-atletas">
             @forelse($atletas as $atleta)
-                <div class="col-12 col-md-4 text-center atleta-card" data-idade="{{ $atleta->idade ?? '' }}"
-                    data-posicao="{{ strtolower($atleta->posicao_jogo ?? '') }}"
-                    data-cidade="{{ strtolower($atleta->cidade ?? '') }}"
-                    data-entidade="{{ strtolower($atleta->entidade ?? '') }}">
-                    <div class="flip-card visualizar-atleta" data-id="{{ $atleta->id }}"
-                        data-url-secure="{{ secure_url('/atleta/visualizar') }}"
-                        data-url-local="{{ url('/atleta/visualizar') }}">
+                <div class="col-12 col-md-4 text-center atleta-card"
+                     data-idade="{{ $atleta->idade ?? '' }}"
+                     data-posicao="{{ strtolower($atleta->posicao_jogo ?? '') }}"
+                     data-cidade="{{ strtolower($atleta->cidade ?? '') }}"
+                     data-entidade="{{ strtolower($atleta->entidade ?? '') }}">
+                    <div class="flip-card visualizar-atleta"
+                         data-id="{{ $atleta->id }}"
+                         data-url-secure="{{ secure_url('/atleta/visualizar') }}"
+                         data-url-local="{{ url('/atleta/visualizar') }}">
                         <div class="flip-card-inner">
                             <div class="flip-front">
                                 <div class="foto-front">
-                                    <img src="{{ !empty($atleta->imagem_base64) ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
-                                        alt="Foto de {{ $atleta->nome_completo }}">
+                                    <img src="{{ !empty($atleta->imagem_base64) 
+                                        ? 'data:image/png;base64,'.$atleta->imagem_base64 
+                                        : asset('img/avatar.png') }}"
+                                         alt="Foto de {{ $atleta->nome_completo }}">
                                 </div>
                                 <div class="info">
                                     <h3>{{ strtoupper($atleta->nome_completo) }}</h3>
                                     <div class="posicao">{{ $atleta->posicao_jogo }}</div>
                                     <small class="toque-detalhes">Toque para ver detalhes</small>
                                     <div class="viz-counter-wrapper badge-pos" style="margin-top:6px;">
-                                        👁️ <span class="viz-counter"
-                                            id="visualizacoes-{{ $atleta->id }}">{{ (int) ($atleta->visualizacoes ?? 0) }}</span>
+                                        👁️ 
+                                        <span class="viz-counter" id="visualizacoes-{{ $atleta->id }}">
+                                            {{ (int)($atleta->visualizacoes ?? 0) }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -325,18 +335,21 @@
                                 <div class="conteudo">
                                     <div class="foto-back">
                                         <img src="{{ asset('img/basket-silhouette.png') }}"
-                                            alt="Foto de {{ $atleta->nome_completo }}">
+                                             alt="Foto de {{ $atleta->nome_completo }}">
                                     </div>
                                     <div class="dados">
                                         <p class="badge-back"><strong>Idade:</strong> {{ $atleta->idade ?? '—' }}</p>
-                                        <p class="badge-back"><strong>Altura (cm):</strong> {{ $atleta->altura ?? '—' }}
-                                        </p>
+                                        <p class="badge-back"><strong>Altura (cm):</strong> {{ $atleta->altura ?? '—' }}</p>
                                         <p class="badge-back"><strong>Peso (kg):</strong> {{ $atleta->peso ?? '—' }}</p>
                                         <p class="badge-back"><strong>Cidade:</strong> {{ $atleta->cidade ?? '—' }}</p>
                                         <p class="badge-back"><strong>Treina:</strong> {{ $atleta->entidade ?? '—' }}</p>
                                         <p class="badge-back"><strong>Contato:</strong> {{ $atleta->contato ?? '—' }}</p>
-                                        <p><strong>Link:</strong> <a href="{{ $atleta->resumo }}" target="_blank"
-                                                rel="noopener noreferrer" class="video-link">{{ $atleta->resumo }}</a></p>
+                                        <p><strong>Link:</strong> 
+                                            <a href="{{ $atleta->resumo }}" target="_blank"
+                                               rel="noopener noreferrer" class="video-link">
+                                                {{ $atleta->resumo }}
+                                            </a>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -349,34 +362,50 @@
                 </div>
             @endforelse
         </div>
+
+        {{-- Paginação (servidor) --}}
+        <div id="paginacao-servidor" class="d-flex justify-content-center mt-2 mb-2">
+            @if($atletas->hasPages())
+                {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
+            @endif
+        </div>
+
+        {{-- Paginação (filtrada no client) --}}
+        <div id="paginacao-filtrada" class="d-flex justify-content-center mt-3" style="display:none;"></div>
     </div>
 
     <script>
+        // ===== Variáveis globais para paginação client-side =====
+        let paginaAtual     = 1;
+        const itensDesktop  = 6;
+        const itensMobile   = 4;
+        let filtrando       = false;
+        let listaFiltrada   = [];
+
+        // Retorna quantos itens por página, conforme breakpoint
+        function getItensPorPagina() {
+            return window.innerWidth < 768 ? itensMobile : itensDesktop;
+        }
+
         function getCsrf() {
             const meta = document.querySelector('meta[name="csrf-token"]');
             return meta ? meta.getAttribute('content') : '{{ csrf_token() }}';
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             // Flip + registro de visualização
             document.querySelectorAll('.flip-card.visualizar-atleta').forEach(card => {
                 card.addEventListener('click', async function() {
                     this.classList.toggle('is-flipped');
                     if (!this.classList.contains('is-flipped')) return;
 
-                    const id = this.dataset.id;
+                    const id        = this.dataset.id;
                     const counterEl = document.getElementById('visualizacoes-' + id);
-
-                    // Ajuste de URL localhost / servidor
-                    let base;
-                    const hostname = window.location.hostname;
-                    if (hostname === '127.0.0.1' || hostname === 'localhost') {
-                        base = this.dataset.urlLocal;
-                    } else {
-                        base = this.dataset.urlSecure;
-                    }
-
-                    const postUrl = base + '/' + id;
+                    const hostname  = window.location.hostname;
+                    const base      = (hostname === '127.0.0.1' || hostname === 'localhost')
+                                      ? this.dataset.urlLocal
+                                      : this.dataset.urlSecure;
+                    const postUrl   = base + '/' + id;
 
                     try {
                         const resp = await fetch(postUrl, {
@@ -392,50 +421,32 @@
                         } else {
                             counterEl.textContent = parseInt(counterEl.textContent) + 1;
                         }
-                    } catch (err) {
+                    } catch {
                         counterEl.textContent = parseInt(counterEl.textContent) + 1;
                     }
                 });
             });
 
-            // ===== Controle de desativação de filtros =====
+            // Controle de desativação de filtros
             const idadeMin = document.getElementById('idade_min');
             const idadeMax = document.getElementById('idade_max');
-            const posicao = document.getElementById('posicao');
-            const cidade = document.getElementById('cidade');
+            const posicao  = document.getElementById('posicao');
+            const cidade   = document.getElementById('cidade');
             const entidade = document.getElementById('entidade');
 
             function toggleFiltros() {
-                if (!idadeMin || !idadeMax || !posicao || !cidade || !entidade) return;
-
                 const min = idadeMin.value.trim();
                 const max = idadeMax.value.trim();
-
                 if (min && max) {
-                    posicao.disabled = true;
-                    cidade.disabled = true;
-                    entidade.disabled = true;
+                    posicao.disabled = cidade.disabled = entidade.disabled = true;
                 } else if (posicao.value) {
-                    idadeMin.disabled = true;
-                    idadeMax.disabled = true;
-                    cidade.disabled = true;
-                    entidade.disabled = true;
+                    idadeMin.disabled = idadeMax.disabled = cidade.disabled = entidade.disabled = true;
                 } else if (cidade.value) {
-                    idadeMin.disabled = true;
-                    idadeMax.disabled = true;
-                    posicao.disabled = true;
-                    entidade.disabled = true;
+                    idadeMin.disabled = idadeMax.disabled = posicao.disabled = entidade.disabled = true;
                 } else if (entidade.value) {
-                    idadeMin.disabled = true;
-                    idadeMax.disabled = true;
-                    posicao.disabled = true;
-                    cidade.disabled = true;
+                    idadeMin.disabled = idadeMax.disabled = posicao.disabled = cidade.disabled = true;
                 } else {
-                    idadeMin.disabled = false;
-                    idadeMax.disabled = false;
-                    posicao.disabled = false;
-                    cidade.disabled = false;
-                    entidade.disabled = false;
+                    idadeMin.disabled = idadeMax.disabled = posicao.disabled = cidade.disabled = entidade.disabled = false;
                 }
             }
 
@@ -445,39 +456,150 @@
                     el.addEventListener('change', toggleFiltros);
                 }
             });
-
             toggleFiltros();
+
+            // Bloqueia links de paginação do servidor enquanto filtrar
+            document.addEventListener('click', e => {
+                const link = e.target.closest('#paginacao-servidor a');
+                if (link && filtrando) e.preventDefault();
+            });
         });
 
-        // ===== FILTRAGEM =====
+        // ===== FILTRAGEM + PAGINAÇÃO CLIENT-SIDE =====
         function buscarAtletas() {
-            const min = document.getElementById('idade_min').value.trim();
-            const max = document.getElementById('idade_max').value.trim();
-            const pos = document.getElementById('posicao').value.trim().toLowerCase();
-            const cidade = document.getElementById('cidade').value.trim().toLowerCase();
-            const entidade = document.getElementById('entidade').value.trim().toLowerCase();
+            const min     = document.getElementById('idade_min').value.trim();
+            const max     = document.getElementById('idade_max').value.trim();
+            const pos     = document.getElementById('posicao').value.trim().toLowerCase();
+            const cidade  = document.getElementById('cidade').value.trim().toLowerCase();
+            const entidade= document.getElementById('entidade').value.trim().toLowerCase();
+            const cards   = Array.from(document.querySelectorAll('.atleta-card'));
+            const itensPorPagina = getItensPorPagina();
 
-            document.querySelectorAll('.atleta-card').forEach(card => {
-                const cardIdade = card.dataset.idade ? parseInt(card.dataset.idade) : null;
-                const cardPos = (card.dataset.posicao || '').toLowerCase();
-                const cardCidade = (card.dataset.cidade || '').toLowerCase();
-                const cardEntidade = (card.dataset.entidade || '').toLowerCase();
+            filtrando = !!(min || max || pos || cidade || entidade);
 
-                let ok = true;
-                if (min && !isNaN(min) && (cardIdade === null || cardIdade < parseInt(min))) ok = false;
-                if (max && !isNaN(max) && (cardIdade === null || cardIdade > parseInt(max))) ok = false;
-                if (pos && pos !== cardPos) ok = false;
-                if (cidade && !cardCidade.includes(cidade)) ok = false;
-                if (entidade && !cardEntidade.includes(entidade)) ok = false;
-
-                card.style.display = ok ? '' : 'none';
+            // Filtra elementos
+            listaFiltrada = cards.filter(card => {
+                const cardIdade   = card.dataset.idade ? parseInt(card.dataset.idade) : null;
+                const cardPos     = (card.dataset.posicao || '').toLowerCase();
+                const cardCidade  = (card.dataset.cidade  || '').toLowerCase();
+                const cardEntidade= (card.dataset.entidade|| '').toLowerCase();
+                if (min && !isNaN(min) && (cardIdade === null || cardIdade < parseInt(min))) return false;
+                if (max && !isNaN(max) && (cardIdade === null || cardIdade > parseInt(max))) return false;
+                if (pos && pos !== cardPos) return false;
+                if (cidade && !cardCidade.includes(cidade)) return false;
+                if (entidade && !cardEntidade.includes(entidade)) return false;
+                return true;
             });
+
+            // Esconde todos inicialmente
+            cards.forEach(c => c.style.display = 'none');
+            paginaAtual = 1;
+
+            if (filtrando) {
+                mostrarPaginacaoServidor(false);
+
+                if (listaFiltrada.length === 0) {
+                    mostrarPaginacaoFiltrada(false);
+                }
+                else if (listaFiltrada.length <= itensPorPagina) {
+                    listaFiltrada.forEach(el => el.style.display = '');
+                    mostrarPaginacaoFiltrada(false);
+                }
+                else {
+                    renderListaFiltrada();
+                }
+
+                document.getElementById('lista-atletas')?.scrollIntoView({
+                    behavior: 'smooth', block: 'start'
+                });
+            }
+            else {
+                // sem filtros: restaura tudo
+                cards.forEach(c => c.style.display = '');
+                mostrarPaginacaoFiltrada(false);
+                mostrarPaginacaoServidor(true);
+            }
+        }
+
+        function renderListaFiltrada() {
+            const total        = listaFiltrada.length;
+            const itensPorPagina= getItensPorPagina();
+            const totalPaginas = Math.ceil(total / itensPorPagina);
+
+            if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+            if (paginaAtual < 1) paginaAtual = 1;
+
+            const inicio = (paginaAtual - 1) * itensPorPagina;
+            const fim    = inicio + itensPorPagina;
+
+            listaFiltrada.forEach((el, idx) => {
+                el.style.display = (idx >= inicio && idx < fim) ? '' : 'none';
+            });
+
+            renderPaginacaoFiltrada(totalPaginas);
+        }
+
+        function renderPaginacaoFiltrada(totalPaginas) {
+            const pagDiv = document.getElementById('paginacao-filtrada');
+            pagDiv.innerHTML = '';
+
+            if (totalPaginas > 1) {
+                // Anterior
+                const prev = document.createElement('button');
+                prev.className = 'btn btn-sm btn-outline-secondary mx-1';
+                prev.textContent = 'Anterior';
+                prev.disabled   = paginaAtual === 1;
+                prev.onclick    = () => { paginaAtual--; renderListaFiltrada(); };
+                pagDiv.appendChild(prev);
+
+                // Números
+                for (let i = 1; i <= totalPaginas; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `btn btn-sm ${i === paginaAtual
+                                           ? 'btn-primary'
+                                           : 'btn-outline-secondary'} mx-1`;
+                    btn.textContent = i;
+                    btn.onclick     = () => { paginaAtual = i; renderListaFiltrada(); };
+                    pagDiv.appendChild(btn);
+                }
+
+                // Próximo
+                const next = document.createElement('button');
+                next.className = 'btn btn-sm btn-outline-secondary mx-1';
+                next.textContent = 'Próximo';
+                next.disabled   = paginaAtual === totalPaginas;
+                next.onclick    = () => { paginaAtual++; renderListaFiltrada(); };
+                pagDiv.appendChild(next);
+
+                mostrarPaginacaoFiltrada(true);
+            }
+            else {
+                mostrarPaginacaoFiltrada(false);
+            }
+        }
+
+        function mostrarPaginacaoServidor(visible) {
+            const el = document.getElementById('paginacao-servidor');
+            if (el) el.style.display = visible ? '' : 'none';
+        }
+
+        function mostrarPaginacaoFiltrada(visible) {
+            const el = document.getElementById('paginacao-filtrada');
+            if (el) el.style.display = visible ? 'flex' : 'none';
         }
 
         function limparFiltros() {
             document.getElementById('form-filtros').reset();
-            document.querySelectorAll('.atleta-card').forEach(card => card.style.display = '');
-            document.querySelectorAll('#form-filtros select, #form-filtros input').forEach(el => el.disabled = false);
+            document.querySelectorAll('.atleta-card').forEach(c => c.style.display = '');
+            document.querySelectorAll('#form-filtros select, #form-filtros input')
+                    .forEach(el => el.disabled = false);
+
+            filtrando     = false;
+            listaFiltrada = [];
+            paginaAtual   = 1;
+
+            mostrarPaginacaoFiltrada(false);
+            mostrarPaginacaoServidor(true);
         }
     </script>
 @endsection
