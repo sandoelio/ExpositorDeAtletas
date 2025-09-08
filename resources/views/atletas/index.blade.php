@@ -170,7 +170,6 @@
 
         @media (max-width: 768px) {
             .flip-card {
-                perspective: 1000px;
                 height: 240px;
             }
 
@@ -193,7 +192,7 @@
             }
 
             .flip-front .posicao {
-                font-size: 30px;
+                font-size: 28px;
             }
 
             .flip-back .foto-back {
@@ -212,10 +211,8 @@
             .atleta-card {
                 flex: 0 0 100%;
                 max-width: 100%;
-                /* margin-bottom: 1rem; */
             }
 
-            /* garante um extra só depois do último card */
             #lista-atletas .atleta-card:last-child {
                 margin-bottom: 4rem;
             }
@@ -223,7 +220,6 @@
             #form-filtros .col-12.d-flex.gap-2 button {
                 width: 50%;
             }
-
         }
 
         .filtros-row {
@@ -238,95 +234,88 @@
             </a>
         </div>
 
-        {{-- ===== FILTROS ===== --}}
-        <form id="form-filtros" class="row filtros-row g-2" onsubmit="event.preventDefault(); buscarAtletas();">
-            <div class="col-md-2">
-                <label for="idade_min">Idade Min</label>
-                <input type="number" id="idade_min" class="form-control" min="0" placeholder="Min">
+        {{-- FORMULÁRIO DE FILTROS --}}
+        <form method="GET" action="{{ route('atletas.index') }}" id="form-filtros" class="row filtros-row g-2 mb-4">
+            <div class="col-6 col-md-2">
+                <label for="idade_min">Idade Mín</label>
+                <input type="number" name="idade_min" id="idade_min" class="form-control" min="0"
+                    value="{{ request('idade_min') }}">
             </div>
-            <div class="col-md-2">
-                <label for="idade_max">Idade Max</label>
-                <input type="number" id="idade_max" class="form-control" min="0" placeholder="Max">
+            <div class="col-6 col-md-2">
+                <label for="idade_max">Idade Máx</label>
+                <input type="number" name="idade_max" id="idade_max" class="form-control" min="0"
+                    value="{{ request('idade_max') }}">
             </div>
             <div class="col-md-3">
                 <label for="posicao">Posição</label>
-                <select id="posicao" class="form-control">
+                <select name="posicao" id="posicao" class="form-control">
                     <option value="">Todas</option>
-                    @if(isset($posicoes) && count($posicoes))
-                        @foreach($posicoes as $p)
-                        <option value="{{ is_object($p) ? $p->posicao_jogo : $p }}">
-                            {{ is_object($p) ? $p->posicao_jogo : $p }}
+                    @foreach ($posicoes as $p)
+                        @php $val = is_object($p) ? $p->posicao_jogo : $p; @endphp
+                        <option value="{{ $val }}" {{ request('posicao') === $val ? 'selected' : '' }}>
+                            {{ $val }}
                         </option>
-                        @endforeach
-                    @else
-                        <option>Ala</option>
-                        <option>Armador</option>
-                        <option>Pivô</option>
-                    @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-3">
                 <label for="cidade">Cidade</label>
-                <select id="cidade" class="form-control">
+                <select name="cidade" id="cidade" class="form-control">
                     <option value="">Todas</option>
-                    @if(isset($cidades) && count($cidades))
-                        @foreach($cidades as $c)
-                        <option value="{{ is_object($c) ? $c->cidade : $c }}">
-                            {{ is_object($c) ? $c->cidade : $c }}
+                    @foreach ($cidades as $c)
+                        @php $val = is_object($c) ? $c->cidade : $c; @endphp
+                        <option value="{{ $val }}" {{ request('cidade') === $val ? 'selected' : '' }}>
+                            {{ $val }}
                         </option>
-                        @endforeach
-                    @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-md-2">
                 <label for="entidade">Entidade</label>
-                <select id="entidade" class="form-control">
+                <select name="entidade" id="entidade" class="form-control">
                     <option value="">Todas</option>
-                    @if(isset($entidades) && count($entidades))
-                        @foreach($entidades as $e)
-                        <option value="{{ is_object($e) ? $e->entidade : $e }}">
-                            {{ is_object($e) ? $e->entidade : $e }}
+                    @foreach ($entidades as $e)
+                        @php $val = is_object($e) ? $e->entidade : $e; @endphp
+                        <option value="{{ $val }}" {{ request('entidade') === $val ? 'selected' : '' }}>
+                            {{ $val }}
                         </option>
-                        @endforeach
-                    @endif
+                    @endforeach
                 </select>
             </div>
             <div class="col-12 col-md-6 mt-2 d-flex gap-2">
-                <button type="button" class="btn flex-fill" style="background:#e66000; color:#fff"
-                        onclick="buscarAtletas()">Filtrar</button>
-                <button type="button" class="btn btn-outline-secondary flex-fill"
-                        onclick="limparFiltros()">Limpar</button>
+                <button type="submit" class="btn flex-fill" style="background:#e66000; color:#fff">
+                    Filtrar
+                </button>
+                <a href="{{ route('atletas.index') }}" class="btn btn-outline-secondary flex-fill">
+                    Limpar
+                </a>
             </div>
         </form>
 
-        {{-- ===== CARDS ===== --}}
+        {{-- LISTA DE CARDS --}}
         <div class="row g-3" id="lista-atletas">
             @forelse($atletas as $atleta)
-                <div class="col-12 col-md-4 text-center atleta-card"
-                     data-idade="{{ $atleta->idade ?? '' }}"
-                     data-posicao="{{ strtolower($atleta->posicao_jogo ?? '') }}"
-                     data-cidade="{{ strtolower($atleta->cidade ?? '') }}"
-                     data-entidade="{{ strtolower($atleta->entidade ?? '') }}">
-                    <div class="flip-card visualizar-atleta"
-                         data-id="{{ $atleta->id }}"
-                         data-url-secure="{{ secure_url('/atleta/visualizar') }}"
-                         data-url-local="{{ url('/atleta/visualizar') }}">
+                <div class="col-12 col-md-4 text-center atleta-card" data-idade="{{ $atleta->idade }}"
+                    data-posicao="{{ strtolower($atleta->posicao_jogo) }}" data-cidade="{{ strtolower($atleta->cidade) }}"
+                    data-entidade="{{ strtolower($atleta->entidade) }}">
+                    <div class="flip-card visualizar-atleta" data-id="{{ $atleta->id }}"
+                        data-url="{{ url('/atleta/visualizar') }}">
                         <div class="flip-card-inner">
                             <div class="flip-front">
                                 <div class="foto-front">
-                                    <img src="{{ !empty($atleta->imagem_base64) 
-                                        ? 'data:image/png;base64,'.$atleta->imagem_base64 
-                                        : asset('img/avatar.png') }}"
-                                         alt="Foto de {{ $atleta->nome_completo }}">
+                                    <img src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
+                                        alt="Foto de {{ $atleta->nome_completo }}">
                                 </div>
                                 <div class="info">
                                     <h3>{{ strtoupper($atleta->nome_completo) }}</h3>
                                     <div class="posicao">{{ $atleta->posicao_jogo }}</div>
-                                    <small class="toque-detalhes">Toque para ver detalhes</small>
-                                    <div class="viz-counter-wrapper badge-pos" style="margin-top:6px;">
-                                        👁️ 
-                                        <span class="viz-counter" id="visualizacoes-{{ $atleta->id }}">
-                                            {{ (int)($atleta->visualizacoes ?? 0) }}
+                                    <small class="toque-detalhes">
+                                        Toque para ver detalhes
+                                    </small>
+                                    <div class="badge-pos viz-counter-wrapper" style="margin-top:6px;">
+                                        👁️
+                                        <span id="visualizacoes-{{ $atleta->id }}">
+                                            {{ (int) $atleta->visualizacoes }}
                                         </span>
                                     </div>
                                 </div>
@@ -335,18 +324,18 @@
                                 <div class="conteudo">
                                     <div class="foto-back">
                                         <img src="{{ asset('img/basket-silhouette.png') }}"
-                                             alt="Foto de {{ $atleta->nome_completo }}">
+                                            alt="Foto de {{ $atleta->nome_completo }}">
                                     </div>
                                     <div class="dados">
-                                        <p class="badge-back"><strong>Idade:</strong> {{ $atleta->idade ?? '—' }}</p>
-                                        <p class="badge-back"><strong>Altura (cm):</strong> {{ $atleta->altura ?? '—' }}</p>
-                                        <p class="badge-back"><strong>Peso (kg):</strong> {{ $atleta->peso ?? '—' }}</p>
-                                        <p class="badge-back"><strong>Cidade:</strong> {{ $atleta->cidade ?? '—' }}</p>
-                                        <p class="badge-back"><strong>Treina:</strong> {{ $atleta->entidade ?? '—' }}</p>
-                                        <p class="badge-back"><strong>Contato:</strong> {{ $atleta->contato ?? '—' }}</p>
-                                        <p><strong>Link:</strong> 
-                                            <a href="{{ $atleta->resumo }}" target="_blank"
-                                               rel="noopener noreferrer" class="video-link">
+                                        <p><strong>Idade:</strong> {{ $atleta->idade }}</p>
+                                        <p><strong>Altura (cm):</strong> {{ $atleta->altura }}</p>
+                                        <p><strong>Peso (kg):</strong> {{ $atleta->peso }}</p>
+                                        <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
+                                        <p><strong>Treina:</strong> {{ $atleta->entidade }}</p>
+                                        <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
+                                        <p><strong>Link:</strong>
+                                            <a href="{{ $atleta->resumo }}" target="_blank" rel="noopener noreferrer"
+                                                class="video-link">
                                                 {{ $atleta->resumo }}
                                             </a>
                                         </p>
@@ -358,248 +347,90 @@
                 </div>
             @empty
                 <div class="col-12">
-                    <div class="alert alert-secondary">Nenhum atleta encontrado.</div>
+                    <div class="alert alert-secondary">
+                        Nenhum atleta encontrado.
+                    </div>
                 </div>
             @endforelse
         </div>
 
-        {{-- Paginação (servidor) --}}
-        <div id="paginacao-servidor" class="d-flex justify-content-center mt-2 mb-2">
-            @if($atletas->hasPages())
-                {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
-            @endif
+        {{-- PAGINAÇÃO --}}
+        <div class="d-flex justify-content-center mt-4 mb-5">
+            {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
         </div>
-
-        {{-- Paginação (filtrada no client) --}}
-        <div id="paginacao-filtrada" class="d-flex justify-content-center mt-3" style="display:none;"></div>
     </div>
 
     <script>
-        // ===== Variáveis globais para paginação client-side =====
-        let paginaAtual     = 1;
-        const itensDesktop  = 6;
-        const itensMobile   = 4;
-        let filtrando       = false;
-        let listaFiltrada   = [];
-
-        // Retorna quantos itens por página, conforme breakpoint
-        function getItensPorPagina() {
-            return window.innerWidth < 768 ? itensMobile : itensDesktop;
-        }
-
+        // CSRF helper
         function getCsrf() {
-            const meta = document.querySelector('meta[name="csrf-token"]');
-            return meta ? meta.getAttribute('content') : '{{ csrf_token() }}';
+            const m = document.querySelector('meta[name="csrf-token"]');
+            return m ? m.getAttribute('content') : '{{ csrf_token() }}';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Flip + registro de visualização
-            document.querySelectorAll('.flip-card.visualizar-atleta').forEach(card => {
-                card.addEventListener('click', async function() {
-                    this.classList.toggle('is-flipped');
-                    if (!this.classList.contains('is-flipped')) return;
+            document.querySelectorAll('.flip-card.visualizar-atleta')
+                .forEach(card => {
+                    card.addEventListener('click', async () => {
+                        card.classList.toggle('is-flipped');
+                        if (!card.classList.contains('is-flipped')) return;
 
-                    const id        = this.dataset.id;
-                    const counterEl = document.getElementById('visualizacoes-' + id);
-                    const hostname  = window.location.hostname;
-                    const base      = (hostname === '127.0.0.1' || hostname === 'localhost')
-                                      ? this.dataset.urlLocal
-                                      : this.dataset.urlSecure;
-                    const postUrl   = base + '/' + id;
+                        const id = card.dataset.id;
+                        const counter = document.getElementById('visualizacoes-' + id);
+                        const baseUrl = window.location.origin + card.dataset.url;
 
-                    try {
-                        const resp = await fetch(postUrl, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': getCsrf(),
-                                'Content-Type': 'application/json'
+                        try {
+                            const resp = await fetch(`${baseUrl}/${id}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': getCsrf(),
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            const data = await resp.json();
+                            if (data.visualizacoes !== undefined) {
+                                counter.textContent = data.visualizacoes;
+                                return;
                             }
-                        });
-                        const data = await resp.json();
-                        if (data && data.visualizacoes !== undefined) {
-                            counterEl.textContent = data.visualizacoes;
-                        } else {
-                            counterEl.textContent = parseInt(counterEl.textContent) + 1;
+                        } catch {
+                            // fallback: incrementa
                         }
-                    } catch {
-                        counterEl.textContent = parseInt(counterEl.textContent) + 1;
-                    }
+                        counter.textContent = +counter.textContent + 1;
+                    });
                 });
-            });
 
             // Controle de desativação de filtros
             const idadeMin = document.getElementById('idade_min');
             const idadeMax = document.getElementById('idade_max');
-            const posicao  = document.getElementById('posicao');
-            const cidade   = document.getElementById('cidade');
-            const entidade = document.getElementById('entidade');
+            const posicaoEl = document.getElementById('posicao');
+            const cidadeEl = document.getElementById('cidade');
+            const entidadeEl = document.getElementById('entidade');
 
             function toggleFiltros() {
                 const min = idadeMin.value.trim();
                 const max = idadeMax.value.trim();
+
                 if (min && max) {
-                    posicao.disabled = cidade.disabled = entidade.disabled = true;
-                } else if (posicao.value) {
-                    idadeMin.disabled = idadeMax.disabled = cidade.disabled = entidade.disabled = true;
-                } else if (cidade.value) {
-                    idadeMin.disabled = idadeMax.disabled = posicao.disabled = entidade.disabled = true;
-                } else if (entidade.value) {
-                    idadeMin.disabled = idadeMax.disabled = posicao.disabled = cidade.disabled = true;
+                    posicaoEl.disabled = cidadeEl.disabled = entidadeEl.disabled = true;
+                } else if (posicaoEl.value) {
+                    idadeMin.disabled = idadeMax.disabled = cidadeEl.disabled = entidadeEl.disabled = true;
+                } else if (cidadeEl.value) {
+                    idadeMin.disabled = idadeMax.disabled = posicaoEl.disabled = entidadeEl.disabled = true;
+                } else if (entidadeEl.value) {
+                    idadeMin.disabled = idadeMax.disabled = posicaoEl.disabled = cidadeEl.disabled = true;
                 } else {
-                    idadeMin.disabled = idadeMax.disabled = posicao.disabled = cidade.disabled = entidade.disabled = false;
+                    idadeMin.disabled = idadeMax.disabled = posicaoEl.disabled = cidadeEl.disabled = entidadeEl
+                        .disabled = false;
                 }
             }
 
-            [idadeMin, idadeMax, posicao, cidade, entidade].forEach(el => {
+            [idadeMin, idadeMax, posicaoEl, cidadeEl, entidadeEl].forEach(el => {
                 if (el) {
                     el.addEventListener('input', toggleFiltros);
                     el.addEventListener('change', toggleFiltros);
                 }
             });
+
             toggleFiltros();
-
-            // Bloqueia links de paginação do servidor enquanto filtrar
-            document.addEventListener('click', e => {
-                const link = e.target.closest('#paginacao-servidor a');
-                if (link && filtrando) e.preventDefault();
-            });
         });
-
-        // ===== FILTRAGEM + PAGINAÇÃO CLIENT-SIDE =====
-        function buscarAtletas() {
-            const min     = document.getElementById('idade_min').value.trim();
-            const max     = document.getElementById('idade_max').value.trim();
-            const pos     = document.getElementById('posicao').value.trim().toLowerCase();
-            const cidade  = document.getElementById('cidade').value.trim().toLowerCase();
-            const entidade= document.getElementById('entidade').value.trim().toLowerCase();
-            const cards   = Array.from(document.querySelectorAll('.atleta-card'));
-            const itensPorPagina = getItensPorPagina();
-
-            filtrando = !!(min || max || pos || cidade || entidade);
-
-            // Filtra elementos
-            listaFiltrada = cards.filter(card => {
-                const cardIdade   = card.dataset.idade ? parseInt(card.dataset.idade) : null;
-                const cardPos     = (card.dataset.posicao || '').toLowerCase();
-                const cardCidade  = (card.dataset.cidade  || '').toLowerCase();
-                const cardEntidade= (card.dataset.entidade|| '').toLowerCase();
-                if (min && !isNaN(min) && (cardIdade === null || cardIdade < parseInt(min))) return false;
-                if (max && !isNaN(max) && (cardIdade === null || cardIdade > parseInt(max))) return false;
-                if (pos && pos !== cardPos) return false;
-                if (cidade && !cardCidade.includes(cidade)) return false;
-                if (entidade && !cardEntidade.includes(entidade)) return false;
-                return true;
-            });
-
-            // Esconde todos inicialmente
-            cards.forEach(c => c.style.display = 'none');
-            paginaAtual = 1;
-
-            if (filtrando) {
-                mostrarPaginacaoServidor(false);
-
-                if (listaFiltrada.length === 0) {
-                    mostrarPaginacaoFiltrada(false);
-                }
-                else if (listaFiltrada.length <= itensPorPagina) {
-                    listaFiltrada.forEach(el => el.style.display = '');
-                    mostrarPaginacaoFiltrada(false);
-                }
-                else {
-                    renderListaFiltrada();
-                }
-
-                document.getElementById('lista-atletas')?.scrollIntoView({
-                    behavior: 'smooth', block: 'start'
-                });
-            }
-            else {
-                // sem filtros: restaura tudo
-                cards.forEach(c => c.style.display = '');
-                mostrarPaginacaoFiltrada(false);
-                mostrarPaginacaoServidor(true);
-            }
-        }
-
-        function renderListaFiltrada() {
-            const total        = listaFiltrada.length;
-            const itensPorPagina= getItensPorPagina();
-            const totalPaginas = Math.ceil(total / itensPorPagina);
-
-            if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
-            if (paginaAtual < 1) paginaAtual = 1;
-
-            const inicio = (paginaAtual - 1) * itensPorPagina;
-            const fim    = inicio + itensPorPagina;
-
-            listaFiltrada.forEach((el, idx) => {
-                el.style.display = (idx >= inicio && idx < fim) ? '' : 'none';
-            });
-
-            renderPaginacaoFiltrada(totalPaginas);
-        }
-
-        function renderPaginacaoFiltrada(totalPaginas) {
-            const pagDiv = document.getElementById('paginacao-filtrada');
-            pagDiv.innerHTML = '';
-
-            if (totalPaginas > 1) {
-                // Anterior
-                const prev = document.createElement('button');
-                prev.className = 'btn btn-sm btn-outline-secondary mx-1';
-                prev.textContent = 'Anterior';
-                prev.disabled   = paginaAtual === 1;
-                prev.onclick    = () => { paginaAtual--; renderListaFiltrada(); };
-                pagDiv.appendChild(prev);
-
-                // Números
-                for (let i = 1; i <= totalPaginas; i++) {
-                    const btn = document.createElement('button');
-                    btn.className = `btn btn-sm ${i === paginaAtual
-                                           ? 'btn-primary'
-                                           : 'btn-outline-secondary'} mx-1`;
-                    btn.textContent = i;
-                    btn.onclick     = () => { paginaAtual = i; renderListaFiltrada(); };
-                    pagDiv.appendChild(btn);
-                }
-
-                // Próximo
-                const next = document.createElement('button');
-                next.className = 'btn btn-sm btn-outline-secondary mx-1';
-                next.textContent = 'Próximo';
-                next.disabled   = paginaAtual === totalPaginas;
-                next.onclick    = () => { paginaAtual++; renderListaFiltrada(); };
-                pagDiv.appendChild(next);
-
-                mostrarPaginacaoFiltrada(true);
-            }
-            else {
-                mostrarPaginacaoFiltrada(false);
-            }
-        }
-
-        function mostrarPaginacaoServidor(visible) {
-            const el = document.getElementById('paginacao-servidor');
-            if (el) el.style.display = visible ? '' : 'none';
-        }
-
-        function mostrarPaginacaoFiltrada(visible) {
-            const el = document.getElementById('paginacao-filtrada');
-            if (el) el.style.display = visible ? 'flex' : 'none';
-        }
-
-        function limparFiltros() {
-            document.getElementById('form-filtros').reset();
-            document.querySelectorAll('.atleta-card').forEach(c => c.style.display = '');
-            document.querySelectorAll('#form-filtros select, #form-filtros input')
-                    .forEach(el => el.disabled = false);
-
-            filtrando     = false;
-            listaFiltrada = [];
-            paginaAtual   = 1;
-
-            mostrarPaginacaoFiltrada(false);
-            mostrarPaginacaoServidor(true);
-        }
     </script>
 @endsection

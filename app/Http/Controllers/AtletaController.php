@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Atleta;
 use Illuminate\Http\Request;
 use App\Services\AtletaService;
 use App\Http\Controllers\Controller;
@@ -16,16 +17,42 @@ class AtletaController extends Controller
         $this->atletaService = $atletaService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
 
-            $atletas = $this->atletaService->listarTodos();
-            $posicoes = $this->atletaService->listarPosicoesUnicas();
-            $cidades = $this->atletaService->listarCidadesUnicas();
-            $entidades = $this->atletaService->listarEntidadesUnicas();
+            $query = Atleta::query();
 
-            return view('atletas.index', compact('atletas', 'posicoes', 'cidades', 'entidades')); // Retorna a view com a lista de atletas
+            // aplica filtros se vierem na URL
+            if ($request->filled('idade_min')) {
+                $query->where('idade', '>=', (int)$request->idade_min);
+            }
+            if ($request->filled('idade_max')) {
+                $query->where('idade', '<=', (int)$request->idade_max);
+            }
+            if ($request->filled('posicao')) {
+                $query->where('posicao_jogo', $request->posicao);
+            }
+            if ($request->filled('cidade')) {
+                $query->where('cidade', 'like', '%' . $request->cidade . '%');
+            }
+            if ($request->filled('entidade')) {
+                $query->where('entidade', 'like', '%' . $request->entidade . '%');
+            }
+
+            // paginar com appends para manter os filtros
+            $atletas = $query
+                ->paginate(6)                      // 6 items por página
+                ->appends($request->query());      // mantém ?idade_min=...&posicao=...
+
+            // repovoa os selects
+            $posicoes  = Atleta::select('posicao_jogo')->distinct()->get();
+            $cidades   = Atleta::select('cidade')->distinct()->get();
+            $entidades = Atleta::select('entidade')->distinct()->get();
+
+            return view(
+                'atletas.index',
+                compact('atletas', 'posicoes', 'cidades', 'entidades'));
 
         } catch (\Exception $ex) {
             return response()->json(['erro' => 'Erro ao carregar a lista de atletas.', 'detalhes' => $ex->getMessage()], 500);
