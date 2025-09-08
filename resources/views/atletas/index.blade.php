@@ -173,6 +173,11 @@
                 height: 100%;
             }
 
+            .flip-front {
+                justify-content: flex-start;
+                width: 118%;
+            }
+
             .flip-front .foto-front {
                 flex: 0 0 50%;
             }
