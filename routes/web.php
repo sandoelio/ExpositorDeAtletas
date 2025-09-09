@@ -18,6 +18,10 @@ Route::post('/logout', [App\Http\Controllers\AdminAuthController::class, 'logout
 
 // área protegida de administração
 Route::middleware('auth:admin')->prefix('admin')->group(function () {
+
+    Route::get('/atletas/template', [AtletaController::class, 'downloadTemplate'])->name('atletas.template');
+    Route::get('/atletas/importar',[AtletaController::class, 'showImportForm'])->name('atletas.import.form');
+    Route::post('/atletas/importar',[AtletaController::class, 'import'])->name('atletas.import');
     Route::get('/atletas/create', [AtletaController::class, 'create'])->name('atletas.create');
     Route::post('/atletas', [AtletaController::class, 'store'])->name('atletas.store');
     Route::get('/atletas/{id}/edit', [AtletaController::class, 'edit'])->name('atletas.edit');

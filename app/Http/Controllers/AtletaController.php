@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Atleta;
 use Illuminate\Http\Request;
 use App\Services\AtletaService;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AtletasTemplateExport;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
+use function Laravel\Prompts\error;
 
 class AtletaController extends Controller
 {
@@ -42,6 +47,7 @@ class AtletaController extends Controller
 
             // paginar com appends para manter os filtros
             $atletas = $query
+                ->orderBy('nome_completo', 'asc')
                 ->paginate(6)                      // 6 items por página
                 ->appends($request->query());      // mantém ?idade_min=...&posicao=...
 
@@ -216,4 +222,102 @@ class AtletaController extends Controller
         }
     }
 
+    public function showImportForm()
+    {
+        return view('atletas.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt,xls,xlsx',
+        ]);
+
+        $sheets   = Excel::toArray([], $request->file('file'));
+        $rows     = $sheets[0];
+        $header   = array_map('trim', array_shift($rows));
+        $report   = ['created' => 0, 'ignored' => 0];
+        $ignoredDetails = [];
+
+        foreach ($rows as $index => $row) {
+            $data     = array_combine($header, $row);
+            $nome     = trim($data['nome_completo'] ?? '');
+            $entidade = trim($data['entidade']     ?? '');
+
+            // 1) Falta nome ou entidade
+            if (!$nome || !$entidade) {
+                $report['ignored']++;
+                $ignoredDetails[] = [
+                    'row'     => $index + 2, // +2 porque o array slice pula 1 header e index começa em 0
+                    'nome'    => $nome ?: '(vazio)',
+                    'entidade' => $entidade ?: '(vazio)',
+                    'reason'  => 'Nome ou instituição ausente'
+                ];
+                continue;
+            }
+
+            // 2) Duplicata por nome+entidade
+            $exists = Atleta::where('nome_completo', $nome)
+                ->where('entidade',      $entidade)
+                ->exists();
+            if ($exists) {
+                $report['ignored']++;
+                $ignoredDetails[] = [
+                    'row'      => $index + 2,
+                    'nome'     => $nome,
+                    'entidade' => $entidade,
+                    'reason'   => 'Duplicata'
+                ];
+                continue;
+            }
+
+            // 3) Prepara atributos e cria
+            $attrs = [
+                'nome_completo'   => $nome,
+                'entidade'        => $entidade,
+                'data_nascimento' => $this->convertDate($data['data_nascimento'] ?? null),
+                'altura'          => $data['altura']       ?? null,
+                'peso'            => $data['peso']         ?? null,
+                'sexo'            => $data['sexo']         ?? null,
+                'cidade'          => $data['cidade']       ?? 'Indefinido',
+                'posicao_jogo'    => $data['posicao_jogo'] ?? null,
+                'contato'         => $data['contato']      ?? null,
+                'resumo'          => $data['resumo']       ?? null,
+                'imagem_base64'   => $data['imagem_base64'] ?? null,
+            ];
+
+            Atleta::create($attrs);
+            $report['created']++;
+        }
+
+        return view('atletas.import-report', compact('report', 'ignoredDetails'));
+    }
+
+    /**
+     * Transforma data Excel (serial ou string) em Y-m-d
+     */
+    private function convertDate($raw): ?string
+    {
+        if (!$raw) {
+            return null;
+        }
+
+        // serial number do Excel
+        if (is_numeric($raw)) {
+            return ExcelDate::excelToDateTimeObject($raw)
+                ->format('Y-m-d');
+        }
+
+        // string dd/mm/yyyy ou yyyy-mm-dd
+        try {
+            return Carbon::parse($raw)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+    public function downloadTemplate()
+    {
+        return Excel::download(new AtletasTemplateExport, 'atletas_template.xlsx');
+    }
 }
+
