@@ -3,7 +3,7 @@
 @section('content')
 <div class="d-flex justify-content-center align-items-center min-vh-90 text-center">
     <div>
-        <h2 class="my-4">Bem-vindo a vitrine de atletas</h2>
+        <h2 class="my-4">Bem-vindo a vitrine dos atletas</h2>
         <h6>Interessado em fazer parte! Entre em contato.</h6>
         
         <!-- Logo responsiva -->
