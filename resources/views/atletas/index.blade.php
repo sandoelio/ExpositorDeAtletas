@@ -229,10 +229,21 @@
 
     <div class="container">
         <div class="mb-3">
-            <a href="{{ route('home') }}" class="btn btn-outline-secondary" style="background:#e66000; color:white">
-                Voltar para a Home
-            </a>
+            <div class="mb-3">
+                <a href="{{ route('home') }}" class="btn btn-outline-secondary"
+                    style="background:#e66000; color:white; font-size: 1.4rem;" title="Voltar para a Home">
+                    <i class="fas fa-home"></i>
+                </a>
+            </div>
         </div>
+
+        @php $ordenandoPorVisualizacoes = request('ordenar') === 'visualizacoes'; @endphp
+
+        <a href="{{ route('atletas.index', array_merge(request()->query(), ['ordenar' => 'visualizacoes'])) }}"
+            class="btn w-100 {{ $ordenandoPorVisualizacoes ? 'btn-dark' : 'btn-outline-secondary' }}"
+            style="background:{{ $ordenandoPorVisualizacoes ? '#333' : '#e66000' }}; color:white">
+            Ordenar por Visualizações 👁️
+        </a>
 
         {{-- FORMULÁRIO DE FILTROS --}}
         <form method="GET" action="{{ route('atletas.index') }}" id="form-filtros" class="row filtros-row g-2 mb-4">
@@ -282,6 +293,7 @@
                     @endforeach
                 </select>
             </div>
+
             <div class="col-12 col-md-6 mt-2 d-flex gap-2">
                 <button type="submit" class="btn flex-fill" style="background:#e66000; color:#fff">
                     Filtrar

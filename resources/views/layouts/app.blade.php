@@ -6,11 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Vitrine de Atletas</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    
     <!-- CSS do Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <!-- JS do Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
     <link rel="icon" type="image/png" href="{{ asset('img/LOGO1.png') }}">
 

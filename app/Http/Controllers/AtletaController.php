@@ -44,6 +44,11 @@ class AtletaController extends Controller
             if ($request->filled('entidade')) {
                 $query->where('entidade', 'like', '%' . $request->entidade . '%');
             }
+            if ($request->get('ordenar') === 'visualizacoes') {
+                $query->orderByDesc('visualizacoes');
+            } else {
+                $query->orderBy('nome_completo', 'asc'); // padrão
+            }
 
             // paginar com appends para manter os filtros
             $atletas = $query
