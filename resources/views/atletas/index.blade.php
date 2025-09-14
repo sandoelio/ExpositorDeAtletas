@@ -168,6 +168,79 @@
             color: #28365F;
         }
 
+        .foto-front {
+            position: relative;
+        }
+
+        @keyframes pulseOuro {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 12px rgb(255, 251, 0);
+                /* dourado */
+            }
+        }
+
+        @keyframes pulsePrata {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 12px rgba(236, 234, 234, 0.705);
+                /* prata */
+            }
+        }
+
+        @keyframes pulseBronze {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 12px rgba(205, 127, 50, 0.6);
+                /* bronze */
+            }
+        }
+
+        .medalha-badge-img {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            font-size: 1.6rem;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            padding: 2px 4px;
+            z-index: 5;
+        }
+
+        .medalha-ouro {
+            animation: pulseOuro 1.8s infinite ease-in-out;
+        }
+
+        .medalha-prata {
+            animation: pulsePrata 1.8s infinite ease-in-out;
+        }
+
+        .medalha-bronze {
+            animation: pulseBronze 1.8s infinite ease-in-out;
+        }
+
+
         @media (max-width: 768px) {
             .flip-card {
                 height: 240px;
@@ -307,6 +380,20 @@
         {{-- LISTA DE CARDS --}}
         <div class="row g-3" id="lista-atletas">
             @forelse($atletas as $atleta)
+                @php
+                    $medalha = null;
+                    $classeAnimacao = '';
+                    if ($atleta->visualizacoes >= 1000) {
+                        $medalha = ['emoji' => '🥇', 'title' => 'Medalha de Ouro'];
+                        $classeAnimacao = 'medalha-ouro';
+                    } elseif ($atleta->visualizacoes >= 500) {
+                        $medalha = ['emoji' => '🥈', 'title' => 'Medalha de Prata'];
+                        $classeAnimacao = 'medalha-prata';
+                    } elseif ($atleta->visualizacoes >= 100) {
+                        $medalha = ['emoji' => '🥉', 'title' => 'Medalha de Bronze'];
+                        $classeAnimacao = 'medalha-bronze';
+                    }
+                @endphp
                 <div class="col-12 col-md-4 text-center atleta-card" data-idade="{{ $atleta->idade }}"
                     data-posicao="{{ strtolower($atleta->posicao_jogo) }}" data-cidade="{{ strtolower($atleta->cidade) }}"
                     data-entidade="{{ strtolower($atleta->entidade) }}">
@@ -314,7 +401,14 @@
                         data-url="{{ url('/atleta/visualizar') }}">
                         <div class="flip-card-inner">
                             <div class="flip-front">
-                                <div class="foto-front">
+                                <div class="foto-front position-relative">
+                                    {{-- Medalha sobre a imagem --}}
+                                    @if ($medalha)
+                                        <div class="medalha-badge-img {{ $classeAnimacao }}"
+                                            title="{{ $medalha['title'] }}">
+                                            {{ $medalha['emoji'] }}
+                                        </div>
+                                    @endif
                                     <img src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
                                         alt="Foto de {{ $atleta->nome_completo }}">
                                 </div>
