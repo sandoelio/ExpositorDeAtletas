@@ -25,7 +25,7 @@
                    required>
         </div>
         <button class="btn btn-primary">Importar</button>
-        <a href="{{ route('atletas.index') }}"
+        <a href="{{ route('admin.dashboard') }}"
            class="btn btn-secondary">Voltar</a>
     </form>
 </div>
