@@ -58,8 +58,19 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="posicao_jogo" class="form-label">Posição no Jogo</label>
-                    <input type="text" class="form-control" name="posicao_jogo" id="posicao_jogo"
-                        placeholder="Insira somente uma Ex: Amador" required>
+                    <select name="posicao_jogo" id="posicao_jogo"
+                        class="form-select @error('posicao_jogo') is-invalid @enderror" required>
+                        <option value="">Selecione...</option>
+                        <option value="Ala">Ala</option>
+                        <option value="Armador">Armador</option>
+                        <option value="Pivô">Pivô</option>
+                        <option value="Ala-Armador">Ala-Armador</option>
+                        <option value="Ala-Pivô">Ala-Pivô</option>
+                    </select>
+                    @error('posicao_jogo')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+
                 </div>
             </div>
 
@@ -113,8 +124,8 @@
                 <button type="submit" class="btn btn-custom" style="background:#e66000; color:white"
                     id="btnSalvar">Cadastrar
                     Atleta</button>
-                <button type="button"
-                    class="btn btn-secondary btn-custom" style="background:#e66000; color:white" onclick="location.reload()">Limpar</button>
+                <button type="button" class="btn btn-secondary btn-custom" style="background:#e66000; color:white"
+                    onclick="location.reload()">Limpar</button>
             </div><br>
         </form>
     </div>
