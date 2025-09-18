@@ -34,6 +34,6 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
 Route::get('/atletas/buscar', [AtletaController::class, 'buscar'])->name('atletas.buscar');
 Route::get('/atletas/{id}', [AtletaController::class, 'show'])->name('atletas.show'); 
 Route::get('/atletas', [AtletaController::class, 'index'])->name('atletas.index'); 
-Route::post('/atleta/visualizar/{id}', [AtletaController::class, 'registrarVisualizacao']);
+Route::post('/atleta/visualizar/{id}', [AtletaController::class, 'registrarVisualizacao'])->name('atleta.visualizar');
 
 

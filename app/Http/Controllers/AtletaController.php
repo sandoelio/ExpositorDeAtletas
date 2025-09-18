@@ -214,7 +214,6 @@ class AtletaController extends Controller
     {
         try {
             $atleta = $this->atletaService->registrarVisualizacao($id);
-
             return response()->json([
                 'status' => 'ok',
                 'visualizacoes' => $atleta->visualizacoes
