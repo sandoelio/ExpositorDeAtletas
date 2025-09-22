@@ -97,7 +97,7 @@
 
     {{-- PAGINAÇÃO --}}
     <div class="d-flex justify-content-center mt-3">
-      {{ $atletas->links('pagination::bootstrap-5') }}
+       {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
     </div>
   </div>
 </div>

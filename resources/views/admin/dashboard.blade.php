@@ -9,6 +9,7 @@
     <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
       <a href="{{ route('atletas.create') }}" class="btn-custom">Criar Atletas</a>
       <a href="{{ route('admin.index') }}" class="btn-custom">Atualizar Atletas</a>
+      <a href="{{ route('atletas.import.form') }}" class="btn-custom">Importar em lote</a>
 
       {{-- logout-form recebe classe específica --}}
       <form action="{{ route('logout') }}"
