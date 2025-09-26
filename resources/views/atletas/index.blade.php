@@ -49,9 +49,9 @@
         }
 
         .flip-front .foto-front img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 104%;
+            height: 106%;
+            object-fit: inherit;
             display: block;
             border-radius: 12px 0 0 12px;
         }
@@ -113,7 +113,7 @@
 
         .flip-back .conteudo {
             display: flex;
-            gap: 12px;
+            /* gap: 12px; */
             flex: 1;
             align-items: start;
         }
@@ -219,8 +219,9 @@
 
         .medalha-badge-img {
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 7px;
+            /* right: 6px; */
+            left: 8px;
             font-size: 1.6rem;
             background: rgba(255, 255, 255, 0.85);
             border-radius: 50%;
@@ -265,7 +266,7 @@
             }
 
             .flip-front .posicao {
-                font-size: 28px;
+                font-size: 25px;
             }
 
             .flip-back .foto-back {
@@ -292,6 +293,22 @@
 
             #form-filtros .col-12.d-flex.gap-2 button {
                 width: 50%;
+            }
+
+            #form-filtros,
+            #lista-atletas {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            #form-filtros input,
+            #form-filtros select,
+            #form-filtros button,
+            .atleta-card {
+                width: 100%;
+                /* ocupa toda a largura disponível */
+                max-width: 100%;
+                /* garante que não encolha demais */
             }
         }
 
