@@ -3,13 +3,14 @@
 @section('content')
 <div class="d-flex justify-content-center align-items-center min-vh-90 text-center">
   <div>
-    <h2 class="text-center my-5">Bem-vindo ao Painel de Administração</h2>
+    <h2 class="text-center">Painel de Administração</h2>
     <img src="{{ asset('img/LOGO1.png') }}" alt="Logo" class="basquete-img">
 
     <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
       <a href="{{ route('atletas.create') }}" class="btn-custom">Criar Atletas</a>
       <a href="{{ route('admin.index') }}" class="btn-custom">Atualizar Atletas</a>
       <a href="{{ route('atletas.import.form') }}" class="btn-custom">Importar em lote</a>
+      <a href="{{ route('relatorios.index') }}" class="btn-custom">Relatório</a>
 
       {{-- logout-form recebe classe específica --}}
       <form action="{{ route('logout') }}"
@@ -61,7 +62,7 @@
       font-size: 1.2rem;
     }
     .basquete-img {
-      width: 90%;
+      width: 65%;
       max-width: 500px;
     }
   }
