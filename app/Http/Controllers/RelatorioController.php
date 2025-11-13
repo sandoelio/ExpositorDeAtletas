@@ -74,6 +74,77 @@ class RelatorioController extends Controller
 
         $crescimentoPct = round($deltaPct, 1);
 
+        // Atletas por faixa de altura (intervalos de 10 cm) — compatível com only_full_group_by
+        $porAltura = DB::table('atletas')
+            ->select(DB::raw("
+        /* bucket em passos de 10 cm: cm = altura*100; bucket = FLOOR(cm/10) */
+        FLOOR((CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) * 100) / 10) AS bucket_10cm,
+        COUNT(*) AS total,
+        MIN(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS min_h,
+        MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS max_h
+    "))
+            ->whereNotNull('altura')
+            ->whereRaw('TRIM(altura) <> ""')
+            ->groupBy('bucket_10cm')
+            ->orderBy('bucket_10cm', 'asc')
+            ->get();
+
+        /*
+ * Montar faixa a partir do bucket:
+ * low_cm  = bucket*10
+ * high_cm = bucket*10 + 9
+ * faixa   = "x,xx - y,yy" (vírgula, 2 casas)
+ */
+        $porAltura = $porAltura->map(function ($r) {
+            $lowCm = (int)$r->bucket_10cm * 10;
+            $highCm = $lowCm + 9;
+
+            $lowM = $lowCm / 100;
+            $highM = $highCm / 100;
+
+            return (object)[
+                'faixa' => number_format($lowM, 2, ',', '') . ' - ' . number_format($highM, 2, ',', ''),
+                'total' => (int)$r->total,
+                'min_h' => (float)$r->min_h,
+                'max_h' => (float)$r->max_h,
+            ];
+        });
+
+        // Maior altura absoluta no banco
+        $alturaMaxRow = DB::table('atletas')
+            ->select(DB::raw("MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS altura_max"))
+            ->whereNotNull('altura')
+            ->whereRaw('TRIM(altura) <> ""')
+            ->first();
+
+        $alturaMax = $alturaMaxRow && $alturaMaxRow->altura_max !== null
+            ? (float)$alturaMaxRow->altura_max
+            : null;
+
+        // Determinar a faixa da maior altura e total na faixa
+        $faixaDaMaior = null;
+        $totalDaFaixaMaior = 0;
+
+        if ($alturaMax !== null) {
+            $cm = (int)round($alturaMax * 100);
+            $bucketLowCm = floor($cm / 10) * 10;   // ex.: 167 -> 160
+            $bucketHighCm = $bucketLowCm + 9;      // ex.: 160 -> 169
+
+            $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') . ' - ' . number_format($bucketHighCm / 100, 2, ',', '');
+
+            $totalRow = DB::table('atletas')
+                ->select(DB::raw('COUNT(*) AS total'))
+                ->whereNotNull('altura')
+                ->whereRaw('TRIM(altura) <> ""')
+                ->whereRaw(
+                    "CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) BETWEEN ? AND ?",
+                    [$bucketLowCm / 100, $bucketHighCm / 100]
+                )
+                ->first();
+
+            $totalDaFaixaMaior = $totalRow ? (int)$totalRow->total : 0;
+        }
+        
         return view('relatorios.index', compact(
             'instituicoesCount',
             'atletasCount',
@@ -85,7 +156,11 @@ class RelatorioController extends Controller
             'visualizacoesTotais',
             'novosHoje',
             'novosOntem',
-            'crescimentoPct'
+            'crescimentoPct',
+            'porAltura',
+            'alturaMax',
+            'faixaDaMaior',
+            'totalDaFaixaMaior'
         ));
     }
 }
