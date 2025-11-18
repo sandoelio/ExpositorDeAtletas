@@ -93,6 +93,18 @@
                                                 <span class="badge bg-primary-subtle text-primary fw-semibold">
                                                     Maior altura: {{ number_format($alturaMax ?? 0, 2, ',', '') }} m
                                                 </span>
+
+                                                @if(!empty($faixaDaMaior))
+                                                    <span class="badge bg-info-subtle text-info fw-semibold">
+                                                        Faixa da maior: {{ $faixaDaMaior }}
+                                                    </span>
+                                                @endif
+
+                                                {{-- @if(isset($totalDaFaixaMaior))
+                                                    <span class="badge bg-secondary-subtle text-secondary fw-semibold">
+                                                        Total na faixa: {{ $totalDaFaixaMaior }}
+                                                    </span>
+                                                @endif --}}
                                             </div>
                                         </div>
                                     @endif
@@ -118,7 +130,11 @@
                                             <tbody>
                                                 @forelse($t['data'] as $r)
                                                     @php
-                                                        $isMaiorFaixa = $t['key'] === 'porAltura' && isset($faixaDaMaior) && $r->faixa === $faixaDaMaior;
+                                                        // Destaque da linha da faixa da maior altura
+                                                        $isMaiorFaixa = $t['key'] === 'porAltura'
+                                                            && isset($faixaDaMaior)
+                                                            && isset($r->faixa)
+                                                            && $r->faixa === $faixaDaMaior;
                                                     @endphp
                                                     <tr class="{{ $isMaiorFaixa ? 'row-maior-faixa' : '' }}">
                                                         @if($t['key'] === 'posicao')
@@ -253,5 +269,7 @@
         .bg-primary-subtle { background-color: rgba(13,110,253,0.12) !important; color: #0d6efd !important; }
         .bg-info-subtle    { background-color: rgba(13,202,240,0.12) !important; color: #0aa2c0 !important; }
         .bg-secondary-subtle { background-color: rgba(108,117,125,0.12) !important; color: #6c757d !important; }
+        .text-info { color: #0aa2c0 !important; }
+        .text-secondary { color: #6c757d !important; }
     </style>
 @endpush
