@@ -77,24 +77,17 @@ class RelatorioController extends Controller
         // Atletas por faixa de altura (intervalos de 10 cm) — compatível com only_full_group_by
         $porAltura = DB::table('atletas')
             ->select(DB::raw("
-        /* bucket em passos de 10 cm: cm = altura*100; bucket = FLOOR(cm/10) */
-        FLOOR((CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) * 100) / 10) AS bucket_10cm,
-        COUNT(*) AS total,
-        MIN(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS min_h,
-        MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS max_h
-    "))
+            FLOOR((CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) * 100) / 10) AS bucket_10cm,
+            COUNT(*) AS total,
+            MIN(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS min_h,
+            MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS max_h
+        "))
             ->whereNotNull('altura')
-            ->whereRaw('TRIM(altura) <> ""')
+            ->whereRaw("TRIM(altura) <> ''")
             ->groupBy('bucket_10cm')
             ->orderBy('bucket_10cm', 'asc')
             ->get();
 
-        /*
- * Montar faixa a partir do bucket:
- * low_cm  = bucket*10
- * high_cm = bucket*10 + 9
- * faixa   = "x,xx - y,yy" (vírgula, 2 casas)
- */
         $porAltura = $porAltura->map(function ($r) {
             $lowCm = (int)$r->bucket_10cm * 10;
             $highCm = $lowCm + 9;
@@ -114,7 +107,7 @@ class RelatorioController extends Controller
         $alturaMaxRow = DB::table('atletas')
             ->select(DB::raw("MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS altura_max"))
             ->whereNotNull('altura')
-            ->whereRaw('TRIM(altura) <> ""')
+            ->whereRaw("TRIM(altura) <> ''")
             ->first();
 
         $alturaMax = $alturaMaxRow && $alturaMaxRow->altura_max !== null
@@ -135,7 +128,7 @@ class RelatorioController extends Controller
             $totalRow = DB::table('atletas')
                 ->select(DB::raw('COUNT(*) AS total'))
                 ->whereNotNull('altura')
-                ->whereRaw('TRIM(altura) <> ""')
+                ->whereRaw("TRIM(altura) <> ''")
                 ->whereRaw(
                     "CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) BETWEEN ? AND ?",
                     [$bucketLowCm / 100, $bucketHighCm / 100]
