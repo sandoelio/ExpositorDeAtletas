@@ -79,7 +79,7 @@ class RelatorioController extends Controller
 
         if ($driver === 'pgsql') {
             // PostgreSQL — normaliza uma vez com CTE usando DECIMAL(5,2) para evitar overflow
-            $porAltura = DB::select(DB::raw("
+            $porAltura = DB::select("
         WITH cleaned AS (
           SELECT
             id,
@@ -101,10 +101,10 @@ class RelatorioController extends Controller
         FROM cleaned
         GROUP BY faixa
         ORDER BY faixa ASC
-    "));
+    ");
 
             // Maior altura, faixa correspondente e total da faixa (usando a mesma cleaned CTE)
-            $alturaMaxRow = DB::selectOne(DB::raw("
+            $alturaMaxRow = DB::selectOne("
         WITH cleaned AS (
           SELECT
             CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
@@ -124,7 +124,7 @@ class RelatorioController extends Controller
               AND ((FLOOR(MAX(altura_num) * 100 / 10) * 10 + 9) / 100)
           ) AS total_da_faixa_maior
         FROM cleaned
-    "));
+    ");
         } else {
             // MySQL — usa DECIMAL(5,2) e duas queries para evitar uso inválido de funções de agregação
             $porAltura = DB::table('atletas')
