@@ -74,11 +74,13 @@ class RelatorioController extends Controller
 
         $crescimentoPct = round($deltaPct, 1);
 
+        ///-----------------------------------------------------------
+
         // Atletas por faixa de altura (intervalos de 10 cm) — compatível com only_full_group_by
         $driver = DB::getDriverName();
 
         if ($driver === 'pgsql') {
-            // PostgreSQL — normaliza uma vez com CTE usando DECIMAL(5,2) para evitar overflow
+            // PostgreSQL: CTE para normalizar alturas e agrupar por faixa
             $porAltura = DB::select("
         WITH cleaned AS (
           SELECT
@@ -103,30 +105,47 @@ class RelatorioController extends Controller
         ORDER BY faixa ASC
     ");
 
-            // Maior altura, faixa correspondente e total da faixa (usando a mesma cleaned CTE)
+            // Buscar apenas a maior altura (valor numérico)
             $alturaMaxRow = DB::selectOne("
-        WITH cleaned AS (
-          SELECT
-            CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
+        SELECT MAX(altura_num) AS altura_max
+        FROM (
+          SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
           FROM atletas
           WHERE altura IS NOT NULL
             AND TRIM(altura::text) <> ''
-        )
-        SELECT
-          MAX(altura_num) AS altura_max,
-          CONCAT(
-            TO_CHAR(FLOOR(MAX(altura_num) * 100 / 10) * 10 / 100, 'FM9.99'),
-            ' - ',
-            TO_CHAR(((FLOOR(MAX(altura_num) * 100 / 10) * 10 + 9) / 100), 'FM9.99')
-          ) AS faixa_da_maior,
-          COUNT(*) FILTER (
-            WHERE altura_num BETWEEN FLOOR(MAX(altura_num) * 100 / 10) * 10 / 100
-              AND ((FLOOR(MAX(altura_num) * 100 / 10) * 10 + 9) / 100)
-          ) AS total_da_faixa_maior
-        FROM cleaned
+        ) AS sub
     ");
+
+            // Normaliza para uso parecido com MySQL branch
+            $alturaMax = $alturaMaxRow ? (float) $alturaMaxRow->altura_max : null;
+            $faixaDaMaior = null;
+            $totalDaFaixaMaior = 0;
+
+            if ($alturaMax !== null) {
+                // calcula faixa em cm / buckets de 10 cm
+                $cm = (int) round($alturaMax * 100);
+                $bucketLowCm = floor($cm / 10) * 10;
+                $bucketHighCm = $bucketLowCm + 9;
+
+                // faixa formatada no padrão PT-BR (vírgula) — mantém compat com view
+                $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') . ' - ' . number_format($bucketHighCm / 100, 2, ',', '');
+
+                // conta quantos estão nessa faixa usando mesma normalização (DECIMAL(5,2))
+                $totalRow = DB::selectOne("
+            SELECT COUNT(*) AS total
+            FROM (
+              SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
+              FROM atletas
+              WHERE altura IS NOT NULL
+                AND TRIM(altura::text) <> ''
+            ) AS sub
+            WHERE altura_num BETWEEN ? AND ?
+        ", [$bucketLowCm / 100, $bucketHighCm / 100]);
+
+                $totalDaFaixaMaior = $totalRow ? (int) $totalRow->total : 0;
+            }
         } else {
-            // MySQL — usa DECIMAL(5,2) e duas queries para evitar uso inválido de funções de agregação
+            // MySQL: Query builder para faixas e duas queries para maior faixa
             $porAltura = DB::table('atletas')
                 ->select(DB::raw("
             CONCAT(
@@ -144,25 +163,23 @@ class RelatorioController extends Controller
                 ->orderBy('faixa', 'asc')
                 ->get();
 
-            // Maior altura em query separada
+            // Maior altura numérica
             $alturaMaxRow = DB::table('atletas')
                 ->select(DB::raw("MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2))) AS altura_max"))
                 ->whereNotNull('altura')
                 ->whereRaw("TRIM(altura) <> ''")
                 ->first();
 
-            $alturaMax = $alturaMaxRow ? (float)$alturaMaxRow->altura_max : null;
+            $alturaMax = $alturaMaxRow ? (float) $alturaMaxRow->altura_max : null;
             $faixaDaMaior = null;
             $totalDaFaixaMaior = 0;
 
             if ($alturaMax !== null) {
-                $cm = (int)round($alturaMax * 100);
+                $cm = (int) round($alturaMax * 100);
                 $bucketLowCm = floor($cm / 10) * 10;
                 $bucketHighCm = $bucketLowCm + 9;
 
-                $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') .
-                    ' - ' .
-                    number_format($bucketHighCm / 100, 2, ',', '');
+                $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') . ' - ' . number_format($bucketHighCm / 100, 2, ',', '');
 
                 $totalRow = DB::table('atletas')
                     ->select(DB::raw('COUNT(*) AS total'))
@@ -174,22 +191,16 @@ class RelatorioController extends Controller
                     )
                     ->first();
 
-                $totalDaFaixaMaior = $totalRow ? (int)$totalRow->total : 0;
+                $totalDaFaixaMaior = $totalRow ? (int) $totalRow->total : 0;
             }
         }
 
-        // Normalização para ambos os bancos: se $alturaMaxRow veio do select(DB::selectOne) ou query builder
-        if (!isset($alturaMax) && !empty($alturaMaxRow)) {
-            $alturaMax = isset($alturaMaxRow->altura_max) ? (float)$alturaMaxRow->altura_max : null;
-        }
-        $faixaDaMaior = $faixaDaMaior ?? ($alturaMaxRow->faixa_da_maior ?? null);
-        $totalDaFaixaMaior = $totalDaFaixaMaior ?? ($alturaMaxRow->total_da_faixa_maior ?? 0);
-
-        // Se $porAltura foi obtido via DB::select (array of stdClass), convert to Collection for consistency
+        // Se $porAltura foi obtido via DB::select (array), converte para Collection
         if (is_array($porAltura)) {
             $porAltura = collect($porAltura);
         }
 
+        // envia para a view
         return view('relatorios.index', compact(
             'instituicoesCount',
             'atletasCount',
