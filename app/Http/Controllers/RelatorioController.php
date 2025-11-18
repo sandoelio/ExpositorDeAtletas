@@ -77,13 +77,13 @@ class RelatorioController extends Controller
         // Atletas por faixa de altura (intervalos de 10 cm) — compatível com only_full_group_by
         $porAltura = DB::table('atletas')
             ->select(DB::raw("
-            FLOOR((CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) * 100) / 10) AS bucket_10cm,
-            COUNT(*) AS total,
-            MIN(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS min_h,
-            MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS max_h
-        "))
+                FLOOR((CAST(REPLACE(altura::text, ',', '.') AS DECIMAL(4,2)) * 100) / 10) AS bucket_10cm,
+                COUNT(*) AS total,
+                MIN(CAST(REPLACE(altura::text, ',', '.') AS DECIMAL(4,2))) AS min_h,
+                MAX(CAST(REPLACE(altura::text, ',', '.') AS DECIMAL(4,2))) AS max_h
+            "))
             ->whereNotNull('altura')
-            ->whereRaw("TRIM(altura) <> ''")
+            ->whereRaw("TRIM(altura::text) <> ''")
             ->groupBy('bucket_10cm')
             ->orderBy('bucket_10cm', 'asc')
             ->get();
@@ -105,9 +105,9 @@ class RelatorioController extends Controller
 
         // Maior altura absoluta no banco
         $alturaMaxRow = DB::table('atletas')
-            ->select(DB::raw("MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2))) AS altura_max"))
+            ->select(DB::raw("MAX(CAST(REPLACE(altura::text, ',', '.') AS DECIMAL(4,2))) AS altura_max"))
             ->whereNotNull('altura')
-            ->whereRaw("TRIM(altura) <> ''")
+            ->whereRaw("TRIM(altura::text) <> ''")
             ->first();
 
         $alturaMax = $alturaMaxRow && $alturaMaxRow->altura_max !== null
@@ -128,16 +128,15 @@ class RelatorioController extends Controller
             $totalRow = DB::table('atletas')
                 ->select(DB::raw('COUNT(*) AS total'))
                 ->whereNotNull('altura')
-                ->whereRaw("TRIM(altura) <> ''")
+                ->whereRaw("TRIM(altura::text) <> ''")
                 ->whereRaw(
-                    "CAST(REPLACE(altura, ',', '.') AS DECIMAL(4,2)) BETWEEN ? AND ?",
+                    "CAST(REPLACE(altura::text, ',', '.') AS DECIMAL(4,2)) BETWEEN ? AND ?",
                     [$bucketLowCm / 100, $bucketHighCm / 100]
                 )
                 ->first();
 
             $totalDaFaixaMaior = $totalRow ? (int)$totalRow->total : 0;
         }
-        
         return view('relatorios.index', compact(
             'instituicoesCount',
             'atletasCount',
