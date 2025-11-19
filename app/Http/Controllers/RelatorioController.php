@@ -80,82 +80,105 @@ class RelatorioController extends Controller
         $driver = DB::getDriverName();
 
         if ($driver === 'pgsql') {
-            // PostgreSQL: CTE para normalizar alturas e agrupar por faixa
+            // PostgreSQL: normaliza altura (detecta cm vs m) e agrupa por faixa
             $porAltura = DB::select("
         WITH cleaned AS (
           SELECT
             id,
             NULLIF(TRIM(altura::text), '') AS altura_txt,
-            CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
+            CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) AS altura_raw
           FROM atletas
           WHERE altura IS NOT NULL
             AND TRIM(altura::text) <> ''
+        ),
+        normalized AS (
+          SELECT
+            id,
+            altura_raw,
+            CASE
+              WHEN ABS(altura_raw) >= 10 THEN (altura_raw / 100.0) -- provavelmente cm
+              ELSE altura_raw                                   -- já em metros
+            END::NUMERIC(6,2) AS altura_m
+          FROM cleaned
         )
         SELECT
           CONCAT(
-            TO_CHAR(FLOOR((altura_num * 100) / 10) * 10 / 100, 'FM9.99'),
+            TO_CHAR(FLOOR((altura_m * 100) / 10) * 10 / 100, 'FM9.99'),
             ' - ',
-            TO_CHAR(((FLOOR((altura_num * 100) / 10) * 10 + 9) / 100), 'FM9.99')
+            TO_CHAR(((FLOOR((altura_m * 100) / 10) * 10 + 9) / 100), 'FM9.99')
           ) AS faixa,
           COUNT(*) AS total,
-          MIN(altura_num) AS min_h,
-          MAX(altura_num) AS max_h
-        FROM cleaned
+          MIN(altura_m) AS min_h,
+          MAX(altura_m) AS max_h
+        FROM normalized
         GROUP BY faixa
         ORDER BY faixa ASC
     ");
 
-            // Buscar apenas a maior altura (valor numérico)
+            // Buscar apenas a maior altura normalizada (metres)
             $alturaMaxRow = DB::selectOne("
-        SELECT MAX(altura_num) AS altura_max
-        FROM (
-          SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
+        WITH cleaned AS (
+          SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) AS altura_raw
           FROM atletas
           WHERE altura IS NOT NULL
             AND TRIM(altura::text) <> ''
-        ) AS sub
+        ),
+        normalized AS (
+          SELECT
+            CASE WHEN ABS(altura_raw) >= 10 THEN (altura_raw / 100.0) ELSE altura_raw END::NUMERIC(6,2) AS altura_m
+          FROM cleaned
+        )
+        SELECT MAX(altura_m) AS altura_max FROM normalized
     ");
 
-            // Normaliza para uso parecido com MySQL branch
-            $alturaMax = $alturaMaxRow ? (float) $alturaMaxRow->altura_max : null;
+            $alturaMax = $alturaMaxRow && isset($alturaMaxRow->altura_max) ? (float) $alturaMaxRow->altura_max : null;
             $faixaDaMaior = null;
             $totalDaFaixaMaior = 0;
 
             if ($alturaMax !== null) {
-                // calcula faixa em cm / buckets de 10 cm
+                // calcula bucket em centímetros e formata faixa em metros com vírgula (pt-BR)
                 $cm = (int) round($alturaMax * 100);
                 $bucketLowCm = floor($cm / 10) * 10;
                 $bucketHighCm = $bucketLowCm + 9;
-
-                // faixa formatada no padrão PT-BR (vírgula) — mantém compat com view
                 $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') . ' - ' . number_format($bucketHighCm / 100, 2, ',', '');
 
-                // conta quantos estão nessa faixa usando mesma normalização (DECIMAL(5,2))
+                // conta quantidade na faixa usando mesma normalização
                 $totalRow = DB::selectOne("
             SELECT COUNT(*) AS total
             FROM (
-              SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS DECIMAL(5,2)) AS altura_num
+              SELECT CASE WHEN ABS(CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC)) >= 10
+                   THEN (CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) / 100.0)
+                   ELSE CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC)
+              END::NUMERIC(6,2) AS altura_m
               FROM atletas
               WHERE altura IS NOT NULL
                 AND TRIM(altura::text) <> ''
             ) AS sub
-            WHERE altura_num BETWEEN ? AND ?
+            WHERE altura_m BETWEEN ? AND ?
         ", [$bucketLowCm / 100, $bucketHighCm / 100]);
 
                 $totalDaFaixaMaior = $totalRow ? (int) $totalRow->total : 0;
             }
         } else {
-            // MySQL: Query builder para faixas e duas queries para maior faixa
+            // MySQL: normaliza valores > 10 como cm -> /100 e agrupa por faixa (usa DECIMAL para segurança)
             $porAltura = DB::table('atletas')
                 ->select(DB::raw("
             CONCAT(
-                FORMAT(FLOOR((CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2)) * 100) / 10) * 10 / 100, 2),
+                FORMAT(FLOOR(( (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                    THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                    ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) END) * 100) / 10) * 10 / 100, 2),
                 ' - ',
-                FORMAT(((FLOOR((CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2)) * 100) / 10) * 10 + 9) / 100), 2)
+                FORMAT(((FLOOR(( (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                    THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                    ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) END) * 100) / 10) * 10 + 9) / 100), 2)
             ) AS faixa,
             COUNT(*) AS total,
-            MIN(CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2))) AS min_h,
-            MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2))) AS max_h
+            MIN( (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                    THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                    ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) END) ) AS min_h,
+            MAX( (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                    THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                    ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) END) ) AS max_h
         "))
                 ->whereNotNull('altura')
                 ->whereRaw("TRIM(altura) <> ''")
@@ -163,9 +186,16 @@ class RelatorioController extends Controller
                 ->orderBy('faixa', 'asc')
                 ->get();
 
-            // Maior altura numérica
+            // Maior altura normalizada (metros)
             $alturaMaxRow = DB::table('atletas')
-                ->select(DB::raw("MAX(CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2))) AS altura_max"))
+                ->select(DB::raw("
+            MAX(
+              CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))
+              END
+            ) AS altura_max
+        "))
                 ->whereNotNull('altura')
                 ->whereRaw("TRIM(altura) <> ''")
                 ->first();
@@ -178,24 +208,25 @@ class RelatorioController extends Controller
                 $cm = (int) round($alturaMax * 100);
                 $bucketLowCm = floor($cm / 10) * 10;
                 $bucketHighCm = $bucketLowCm + 9;
-
                 $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') . ' - ' . number_format($bucketHighCm / 100, 2, ',', '');
 
                 $totalRow = DB::table('atletas')
                     ->select(DB::raw('COUNT(*) AS total'))
                     ->whereNotNull('altura')
                     ->whereRaw("TRIM(altura) <> ''")
-                    ->whereRaw(
-                        "CAST(REPLACE(altura, ',', '.') AS DECIMAL(5,2)) BETWEEN ? AND ?",
-                        [$bucketLowCm / 100, $bucketHighCm / 100]
-                    )
+                    ->whereRaw("
+              (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))
+              END) BETWEEN ? AND ?
+            ", [$bucketLowCm / 100, $bucketHighCm / 100])
                     ->first();
 
                 $totalDaFaixaMaior = $totalRow ? (int) $totalRow->total : 0;
             }
         }
 
-        // Se $porAltura foi obtido via DB::select (array), converte para Collection
+        // Se $porAltura foi obtido via DB::select (array of stdClass), converte para Collection
         if (is_array($porAltura)) {
             $porAltura = collect($porAltura);
         }
