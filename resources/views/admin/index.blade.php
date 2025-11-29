@@ -67,7 +67,7 @@
                         <tr>
                             <td>{{ $a->nome_completo }}</td>
                             <td>{{ $a->entidade }}</td>
-                            <td class="text-center">
+                            <td class="text-center btn-acoes">
                                 <a href="{{ route('atletas.edit', $a->id) }}" class="btn btn-sm btn-primary"
                                     style="background:#28365F; border:none">
                                     Editar
@@ -99,29 +99,45 @@
 @push('styles')
     <style>
         /* wrapper que alinha a tabela e o select juntos */
+    .table-center {
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    @media (min-width: 992px) {
         .table-center {
-            width: 100%;
-            margin: 0 auto;
+            width: 80%;
             text-align: center;
         }
+    }
 
-        @media (min-width: 992px) {
-            .table-center {
-                width: 80%;
-                text-align: center;
-            }
+    .table-center .form-select {
+        width: 100%;
+    }
+
+    .table thead th {
+        background-color: #FF7209;
+        color: #28365F;
+    }
+
+    /* --- ESTILO DOS BOTÕES NO MOBILE --- */
+    @media (max-width: 576px) {
+
+        /* coloca os botões um embaixo do outro */
+        .btn-acoes {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px;
+            align-items: stretch !important;
         }
 
-        /* garante que o select tenha 100% da largura desse wrapper */
-        .table-center .form-select {
-            width: 100%;
+        /* faz os botões terem 100% da largura */
+        .btn-acoes .btn,
+        .btn-acoes form button {
+            width: 100% !important;
         }
-
-        /* cor do header da tabela */
-        .table thead th {
-            background-color: #FF7209;
-            color: #28365F;
-        }
+    }
     </style>
 @endpush
 
@@ -131,7 +147,6 @@
 
             let urlBuscar = "{{ route('admin.buscaAtletas') }}";
 
-            // garante que a URL comece com '/' para evitar caminhos relativos errados
             if (urlBuscar && !urlBuscar.startsWith('/') && !urlBuscar.startsWith('http')) {
                 urlBuscar = '/' + urlBuscar;
             }
@@ -139,8 +154,8 @@
             const campoBusca = document.getElementById('busca-ajax');
             const filtroEntidade = document.getElementById('entidade');
             const tabela = document.getElementById('tabela-atletas');
-
             const tbody = tabela.querySelector('tbody');
+
             let debounceTimer = null;
             const DEBOUNCE_MS = 300;
             const MIN_CHARS = 1;
@@ -164,7 +179,6 @@
                     });
 
                     if (!res.ok) {
-
                         let text = '';
                         try {
                             text = await res.text();
@@ -198,19 +212,18 @@
                     <tr>
                         <td>${nome}</td>
                         <td>${entTxt}</td>
-                        <td class="text-center">
-
-                            <a href="${a.edit_url}" class="btn btn-sm btn-primary" style="background:#28365F; border:none">
+                        <td class="text-center btn-acoes">
+                            <a href="${a.edit_url}" class="btn btn-sm btn-primary" 
+                               style="background:#28365F; border:none; width:100%">
                                 Editar
                             </a>
 
-                            <form action="${a.delete_url}" method="POST" class="d-inline" 
+                            <form action="${a.delete_url}" method="POST" class="d-inline"
                                   onsubmit="return confirm('Excluir este atleta?');">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-sm btn-danger">Excluir</button>
+                                <button class="btn btn-sm btn-danger" style="width:100%">Excluir</button>
                             </form>
-
                         </td>
                     </tr>
                 `;
@@ -223,7 +236,6 @@
                 }
             }
 
-            // Digitação do nome (AJAX)
             campoBusca.addEventListener('input', function() {
                 clearTimeout(debounceTimer);
                 const valor = campoBusca.value.trim();
@@ -235,7 +247,6 @@
                 debounceTimer = setTimeout(() => buscar(valor), DEBOUNCE_MS);
             });
 
-            // Mudança da entidade
             if (filtroEntidade) {
                 filtroEntidade.addEventListener('change', function() {
                     const valor = campoBusca.value.trim();
@@ -256,7 +267,7 @@
             }
 
         });
-        
+
         // oculta mensagens após 3s
         document.addEventListener('DOMContentLoaded', function() {
             ['success-message', 'error-message'].forEach(id => {
