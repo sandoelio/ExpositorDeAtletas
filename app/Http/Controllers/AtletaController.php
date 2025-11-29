@@ -323,5 +323,35 @@ class AtletaController extends Controller
     {
         return Excel::download(new AtletasTemplateExport, 'atletas_template.xlsx');
     }
+
+    public function buscaAtletas(Request $request)
+    {
+        $texto = $request->texto;
+        $entidade = $request->entidade;
+
+        $query = Atleta::query();
+
+        if ($texto) {
+            $query->where('nome_completo', 'LIKE', "%{$texto}%");
+        }
+
+        if ($entidade) {
+            $query->where('entidade', $entidade);
+        }
+
+        $atletas = $query->get();
+
+        $dados = $atletas->map(function ($a) {
+            return [
+                'id' => $a->id,
+                'nome_completo' => $a->nome_completo,
+                'entidade' => $a->entidade,
+                'edit_url' => route('atletas.edit', $a->id),
+                'delete_url' => route('atletas.destroy', $a->id),
+            ];
+        });
+
+        return response()->json($dados);
+    }
 }
 

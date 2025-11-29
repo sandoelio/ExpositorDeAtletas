@@ -24,7 +24,8 @@
 
     <!-- No <head> do layouts.app -->
     @stack('styles')
-
+    @stack('scripts')
+    
 </head>
 
 <body class="pagina-tema">
