@@ -31,6 +31,7 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('/dashboard', function() {return view('admin.dashboard');})->name('admin.dashboard');
     Route::get('/atletas', [AdminAtletaController::class, 'index'])->name('admin.index');
     Route::get('/relatorios', [RelatorioController::class, 'index'])->name('relatorios.index');
+    Route::get('/busca-atletas', [AtletaController::class, 'buscaAtletas'])->name('admin.buscaAtletas');
 });
 
 Route::get('/atletas/buscar', [AtletaController::class, 'buscar'])->name('atletas.buscar');
