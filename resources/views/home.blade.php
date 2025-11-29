@@ -145,9 +145,8 @@
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>👩 Feminino</span> 
-                                    <strong
-                                        class="{{ $estatisticas['feminino'] == $sexoMaior ? 'badge-destaque' : '' }}">
+                                    <span>👩 Feminino</span>
+                                    <strong class="{{ $estatisticas['feminino'] == $sexoMaior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['feminino'] }}
                                     </strong>
                                 </li>
@@ -275,13 +274,16 @@
                 scales: {
                     x: {
                         beginAtZero: true,
-                        max: 7000,
                         ticks: {
                             color: '#fff',
                             precision: 0
                         },
                         grid: {
-                            color: 'rgba(255,255,255,0.1)' // linhas discretas
+                            color: 'rgba(255,255,255,0.1)'
+                        },
+                        // margem automática para não cortar o valor
+                        afterDataLimits(scale) {
+                            scale.max += scale.max * 0.15; // adiciona 15% de espaço para o número
                         }
                     },
                     y: {
