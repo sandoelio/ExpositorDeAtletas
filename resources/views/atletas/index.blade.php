@@ -415,7 +415,7 @@
                     data-posicao="{{ strtolower($atleta->posicao_jogo) }}" data-cidade="{{ strtolower($atleta->cidade) }}"
                     data-entidade="{{ strtolower($atleta->entidade) }}">
                     <div class="flip-card visualizar-atleta" data-id="{{ $atleta->id }}"
-                        data-url="{{ route('atleta.visualizar', ['id' => $atleta->id]) }}">
+                        data-url="{{ url('/atleta/visualizar/' . $atleta->phpid) }}">
                         <div class="flip-card-inner">
                             <div class="flip-front">
                                 <div class="foto-front position-relative">
