@@ -172,75 +172,58 @@
             position: relative;
         }
 
-        @keyframes pulseOuro {
-
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-            }
-
-            50% {
-                transform: scale(1.15);
-                box-shadow: 0 0 12px rgb(255, 251, 0);
-                /* dourado */
-            }
-        }
-
-        @keyframes pulsePrata {
-
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-            }
-
-            50% {
-                transform: scale(1.15);
-                box-shadow: 0 0 12px rgba(236, 234, 234, 0.705);
-                /* prata */
-            }
-        }
-
-        @keyframes pulseBronze {
-
-            0%,
-            100% {
-                transform: scale(1);
-                box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-            }
-
-            50% {
-                transform: scale(1.15);
-                box-shadow: 0 0 12px rgba(205, 127, 50, 0.6);
-                /* bronze */
-            }
-        }
-
-        .medalha-badge-img {
+        /* Badge para Top10 visualizados (olho + texto) */
+        .card-top-badge.top10-visualizado {
             position: absolute;
-            top: 7px;
-            /* right: 6px; */
-            left: 8px;
-            font-size: 1.6rem;
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 50%;
-            padding: 2px 4px;
-            z-index: 5;
+            top: 8px;
+            right: 171px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.65);
+            color: #fff;
+            padding: 2px 2px;
+            border-radius: 18px;
+            font-size: 12px;
+            z-index: 30;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
-        .medalha-ouro {
-            animation: pulseOuro 1.8s infinite ease-in-out;
+        .card-top-badge .badge-icon svg {
+            width: 16px;
+            height: 16px;
+            color: #fff;
+            display: block;
         }
 
-        .medalha-prata {
-            animation: pulsePrata 1.8s infinite ease-in-out;
+        .card-top-badge .badge-text {
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            white-space: nowrap;
         }
 
-        .medalha-bronze {
-            animation: pulseBronze 1.8s infinite ease-in-out;
+        /* versão compacta do badge (quando espaço for reduzido) */
+        @media (max-width: 480px) {
+            .card-top-badge.top10-visualizado {
+                padding: 3px 6px;
+                gap: 4px;
+                font-size: 11px;
+            }
+
+            .card-top-badge .badge-text {
+                display: none;
+                /* mostra só o ícone em telas muito pequenas */
+            }
         }
 
+        /* garante que o container do card permita posicionamento absoluto do badge */
+        .flip-card.visualizar-atleta {
+            position: relative;
+            overflow: visible;
+        }
 
         @media (max-width: 768px) {
             .flip-card {
@@ -398,43 +381,44 @@
         <div class="row g-3" id="lista-atletas">
             @forelse($atletas as $atleta)
                 @php
-                    $medalha = null;
-                    $classeAnimacao = '';
-                    if ($atleta->visualizacoes >= 1000) {
-                        $medalha = ['emoji' => '🥇', 'title' => 'Medalha de Ouro'];
-                        $classeAnimacao = 'medalha-ouro';
-                    } elseif ($atleta->visualizacoes >= 500) {
-                        $medalha = ['emoji' => '🥈', 'title' => 'Medalha de Prata'];
-                        $classeAnimacao = 'medalha-prata';
-                    } elseif ($atleta->visualizacoes >= 100) {
-                        $medalha = ['emoji' => '🥉', 'title' => 'Medalha de Bronze'];
-                        $classeAnimacao = 'medalha-bronze';
-                    }
+                    // garante que $top10Visualizados exista e converte para inteiros
+                    $top10Ids = isset($top10Visualizados) ? array_map('intval', (array) $top10Visualizados) : [];
+                    // compara com id (use $atleta->id se no controller você pluckou 'id')
+                    $isTop10 = in_array((int) $atleta->id, $top10Ids, true);
                 @endphp
+
                 <div class="col-12 col-md-4 text-center atleta-card" data-idade="{{ $atleta->idade }}"
                     data-posicao="{{ strtolower($atleta->posicao_jogo) }}" data-cidade="{{ strtolower($atleta->cidade) }}"
                     data-entidade="{{ strtolower($atleta->entidade) }}">
                     <div class="flip-card visualizar-atleta" data-id="{{ $atleta->id }}"
-                        data-url="{{ url('/atleta/visualizar/' . $atleta->phpid) }}">
+                        data-url="{{ url('/atleta/visualizar/' . $atleta->id) }}">
                         <div class="flip-card-inner">
                             <div class="flip-front">
                                 <div class="foto-front position-relative">
-                                    {{-- Medalha sobre a imagem --}}
-                                    @if ($medalha)
-                                        <div class="medalha-badge-img {{ $classeAnimacao }}"
-                                            title="{{ $medalha['title'] }}">
-                                            {{ $medalha['emoji'] }}
+                                    @if ($isTop10)
+                                        <div class="card-top-badge top10-visualizado" title="Top 10 mais visualizados">
+                                            <span class="badge-icon" aria-hidden="true">
+                                                <!-- SVG olho -->
+                                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                    aria-hidden="true">
+                                                    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"
+                                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                    <circle cx="12" cy="12" r="3" fill="currentColor" />
+                                                </svg>
+                                            </span>
+                                            <span class="badge-text">Visualizado</span>
                                         </div>
                                     @endif
+
                                     <img src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
                                         alt="Foto de {{ $atleta->nome_completo }}">
                                 </div>
+
                                 <div class="info">
                                     <h3>{{ strtoupper($atleta->nome_completo) }}</h3>
                                     <div class="posicao">{{ $atleta->posicao_jogo }}</div>
-                                    <small class="toque-detalhes">
-                                        Toque para ver detalhes
-                                    </small>
+                                    <small class="toque-detalhes">Toque para ver detalhes</small>
                                     <div class="badge-pos viz-counter-wrapper" style="margin-top:6px;">
                                         👁️
                                         <span id="visualizacoes-{{ $atleta->id }}">
@@ -443,6 +427,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="flip-back">
                                 <div class="conteudo">
                                     <div class="foto-back">
@@ -465,14 +450,13 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             @empty
                 <div class="col-12">
-                    <div class="alert alert-secondary">
-                        Nenhum atleta encontrado.
-                    </div>
+                    <div class="alert alert-secondary">Nenhum atleta encontrado.</div>
                 </div>
             @endforelse
         </div>
@@ -515,7 +499,7 @@
                                 return;
                             }
                         } catch {
-                            // fallback: incrementa
+                            console.error('Erro ao registrar visualização.');
                         }
                         counter.textContent = +counter.textContent + 1;
                     });
