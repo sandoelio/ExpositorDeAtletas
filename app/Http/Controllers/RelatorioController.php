@@ -96,8 +96,8 @@ class RelatorioController extends Controller
             id,
             altura_raw,
             CASE
-              WHEN ABS(altura_raw) >= 10 THEN (altura_raw / 100.0) -- provavelmente cm
-              ELSE altura_raw                                   -- já em metros
+              WHEN ABS(altura_raw) >= 10 THEN (altura_raw / 100.0)
+              ELSE altura_raw
             END::NUMERIC(6,2) AS altura_m
           FROM cleaned
         )
@@ -115,7 +115,7 @@ class RelatorioController extends Controller
         ORDER BY faixa ASC
     ");
 
-            // Buscar apenas a maior altura normalizada (metres)
+            // Maior altura normalizada (metros)
             $alturaMaxRow = DB::selectOne("
         WITH cleaned AS (
           SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) AS altura_raw
@@ -136,29 +136,55 @@ class RelatorioController extends Controller
             $totalDaFaixaMaior = 0;
 
             if ($alturaMax !== null) {
-                // calcula bucket em centímetros e formata faixa em metros com vírgula (pt-BR)
                 $cm = (int) round($alturaMax * 100);
                 $bucketLowCm = floor($cm / 10) * 10;
                 $bucketHighCm = $bucketLowCm + 9;
                 $faixaDaMaior = number_format($bucketLowCm / 100, 2, ',', '') . ' - ' . number_format($bucketHighCm / 100, 2, ',', '');
 
-                // conta quantidade na faixa usando mesma normalização
                 $totalRow = DB::selectOne("
-            SELECT COUNT(*) AS total
-            FROM (
-              SELECT CASE WHEN ABS(CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC)) >= 10
-                   THEN (CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) / 100.0)
-                   ELSE CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC)
-              END::NUMERIC(6,2) AS altura_m
+            WITH cleaned AS (
+              SELECT CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) AS altura_raw
               FROM atletas
               WHERE altura IS NOT NULL
                 AND TRIM(altura::text) <> ''
-            ) AS sub
+            ),
+            normalized AS (
+              SELECT CASE WHEN ABS(altura_raw) >= 10 THEN (altura_raw / 100.0) ELSE altura_raw END::NUMERIC(6,2) AS altura_m
+              FROM cleaned
+            )
+            SELECT COUNT(*) AS total
+            FROM normalized
             WHERE altura_m BETWEEN ? AND ?
         ", [$bucketLowCm / 100, $bucketHighCm / 100]);
 
                 $totalDaFaixaMaior = $totalRow ? (int) $totalRow->total : 0;
             }
+
+            // Top 4 atletas mais altos (nome, cidade, idade, instituição), alturas normalizadas
+            $topAltos = collect(DB::select("
+        WITH cleaned AS (
+          SELECT
+            id,
+            nome_completo,
+            cidade,
+            entidade,
+            data_nascimento,
+            CAST(REPLACE(NULLIF(TRIM(altura::text), ''), ',', '.') AS NUMERIC) AS altura_raw
+          FROM atletas
+          WHERE altura IS NOT NULL
+            AND TRIM(altura::text) <> ''
+        ),
+        normalized AS (
+          SELECT
+            id, nome_completo, cidade, entidade, data_nascimento,
+            CASE WHEN ABS(altura_raw) >= 10 THEN (altura_raw / 100.0) ELSE altura_raw END::NUMERIC(6,2) AS altura_m
+          FROM cleaned
+        )
+        SELECT id, nome_completo, cidade, entidade, data_nascimento, altura_m
+        FROM normalized
+        ORDER BY altura_m DESC
+        LIMIT 4
+    "));
         } else {
             // MySQL: normaliza valores > 10 como cm -> /100 e agrupa por faixa (usa DECIMAL para segurança)
             $porAltura = DB::table('atletas')
@@ -224,12 +250,44 @@ class RelatorioController extends Controller
 
                 $totalDaFaixaMaior = $totalRow ? (int) $totalRow->total : 0;
             }
+
+            // Top 4 atletas mais altos (nome, cidade, idade, instituição), alturas normalizadas
+            $topAltos = DB::table('atletas')
+                ->select([
+                    'id',
+                    'nome_completo',
+                    'cidade',
+                    'entidade',
+                    'data_nascimento',
+                    DB::raw("
+                (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                    THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                    ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))
+                END) AS altura_m
+            "),
+                ])
+                ->whereNotNull('altura')
+                ->whereRaw("TRIM(altura) <> ''")
+                ->orderByDesc(DB::raw("
+            (CASE WHEN ABS(CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))) >= 10
+                THEN (CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2)) / 100)
+                ELSE CAST(REPLACE(altura, ',', '.') AS DECIMAL(10,2))
+            END)
+        "))
+                ->limit(4)
+                ->get();
         }
 
         // Se $porAltura foi obtido via DB::select (array of stdClass), converte para Collection
         if (is_array($porAltura)) {
             $porAltura = collect($porAltura);
         }
+
+        // calcular idade para os 4 mais altos
+        $topAltos = collect($topAltos ?? [])->map(function ($a) {
+            $a->idade = !empty($a->data_nascimento) ? \Carbon\Carbon::parse($a->data_nascimento)->age : null;
+            return $a;
+        });
 
         // envia para a view
         return view('relatorios.index', compact(
@@ -247,7 +305,8 @@ class RelatorioController extends Controller
             'porAltura',
             'alturaMax',
             'faixaDaMaior',
-            'totalDaFaixaMaior'
+            'totalDaFaixaMaior',
+            'topAltos'
         ));
     }
 }
