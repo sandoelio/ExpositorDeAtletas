@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Atleta;
 use Illuminate\Http\Request;
 use App\Services\AtletaService;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+
 use App\Exports\AtletasTemplateExport;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
-
-use function Laravel\Prompts\error;
 
 class AtletaController extends Controller
 {
@@ -61,9 +61,16 @@ class AtletaController extends Controller
             $cidades   = Atleta::select('cidade')->distinct()->get();
             $entidades = Atleta::select('entidade')->distinct()->get();
 
+            $top10Visualizados = DB::table('atletas')
+                ->whereNotNull('visualizacoes')
+                ->orderByDesc('visualizacoes')
+                ->limit(10)
+                ->pluck('id')
+                ->toArray();
+
             return view(
                 'atletas.index',
-                compact('atletas', 'posicoes', 'cidades', 'entidades'));
+                compact('atletas', 'posicoes', 'cidades', 'entidades', 'top10Visualizados'));
 
         } catch (\Exception $ex) {
             return response()->json(['erro' => 'Erro ao carregar a lista de atletas.', 'detalhes' => $ex->getMessage()], 500);
