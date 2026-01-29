@@ -45,9 +45,17 @@
                 ],
                 [
                     'key' => 'porAltura',
-                    'label' => 'Atletas por Altura',
+                    'label' => 'Faixa de Altura',
                     'icon' => '📏',
                     'data' => $porAltura ?? collect(),
+                ],
+
+                // ✅ Nova aba: Atletas altos
+                [
+                    'key' => 'atletasAltos',
+                    'label' => 'Atletas Altos',
+                    'icon' => '🏀',
+                    'data' => $altos190 ?? collect(),
                 ],
             ]);
         @endphp
@@ -122,6 +130,7 @@
                                         </div>
                                     </div>
 
+                                    {{-- ✅ Mantém badges apenas na aba porAltura --}}
                                     @if ($t['key'] === 'porAltura')
                                         <div class="px-3 pt-3">
                                             <div class="d-flex flex-wrap align-items-center gap-2">
@@ -142,95 +151,90 @@
                                         </div>
                                     @endif
 
-                                    <div class="table-responsive table-card-body p-3">
-                                        <table class="table table-sm mb-0 table-center">
-                                            <thead class="table-light small">
-                                                <tr>
-                                                    @if ($t['key'] === 'posicao')
-                                                        <th>Posição</th>
-                                                    @elseif($t['key'] === 'porCidade')
-                                                        <th>Cidade</th>
-                                                    @elseif($t['key'] === 'porInstituicao')
-                                                        <th>Instituição</th>
-                                                    @elseif($t['key'] === 'porAltura')
-                                                        <th>Faixa de Altura</th>
-                                                    @else
-                                                        <th>Chave</th>
-                                                    @endif
-                                                    <th class="text-center">Total</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse($t['data'] as $r)
-                                                    @php
-                                                        $isMaiorFaixa =
-                                                            $t['key'] === 'porAltura' &&
-                                                            isset($faixaDaMaior) &&
-                                                            isset($r->faixa) &&
-                                                            $r->faixa === $faixaDaMaior;
-                                                    @endphp
-                                                    <tr class="{{ $isMaiorFaixa ? 'row-maior-faixa' : '' }}">
-                                                        @if ($t['key'] === 'posicao')
-                                                            <td class="small">{{ $r->posicao_jogo }}</td>
-                                                        @elseif($t['key'] === 'porCidade')
-                                                            <td class="small">{{ $r->cidade }}</td>
-                                                        @elseif($t['key'] === 'porInstituicao')
-                                                            <td class="small">{{ $r->entidade }}</td>
-                                                        @elseif($t['key'] === 'porAltura')
-                                                            <td class="small">{{ $r->faixa }}</td>
-                                                        @else
-                                                            <td class="small">{{ $r->key ?? '' }}</td>
-                                                        @endif
-                                                        <td class="align-middle text-center">{{ $r->total }}</td>
-                                                    </tr>
-                                                @empty
+                                    {{-- ✅ Aba nova: atletasAltos tem tabela própria --}}
+                                    @if ($t['key'] === 'atletasAltos')
+                                        <div class="table-responsive table-card-body p-3 atletas-altos-scroll">
+                                            <table class="table table-sm mb-0 table-center">
+                                                <thead class="table-light small">
                                                     <tr>
-                                                        <td colspan="2" class="text-center small text-muted">Nenhum
-                                                            registro</td>
+                                                        <th>Nome</th>
+                                                        <th>Instituição</th>
+                                                        <th>Idade</th>
+                                                        <th>Altura</th>
                                                     </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-                                    </div>
-
-                                    {{-- Lista dos 4 atletas mais altos --}}
-                                    @if ($t['key'] === 'porAltura')
-                                        <div class="px-3 pb-3">
-                                            <h6 class="fw-bold mb-2">🏀 4 Atletas mais altos</h6>
-                                            <div class="table-responsive">
-                                                <table class="table table-sm mb-0">
-                                                    <thead class="table-light small">
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($t['data'] as $a)
                                                         <tr>
-                                                            <th>Nome</th>
-                                                            <th>Instituição</th>
-                                                            <th>Idade</th>
-                                                            <th>Cidade</th>
-                                                            <th>Altura</th>
+                                                            <td class="small">{{ $a->nome_completo }}</td>
+                                                            <td class="small">{{ $a->entidade }}</td>
+                                                            <td class="small">{{ $a->idade ?? '-' }}</td>
+                                                            <td class="small">
+                                                                {{ number_format((float) $a->altura_m, 2, ',', '') }}
+                                                            </td>
                                                         </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @forelse($topAltos as $a)
-                                                            <tr>
-                                                                <td class="small">{{ $a->nome_completo }}</td>
-                                                                <td class="small">{{ $a->entidade }}</td>
-                                                                <td class="small">{{ $a->idade ?? '-' }}</td>
-                                                                <td class="small">{{ $a->cidade }}</td>
-                                                                <td class="small">
-                                                                    {{ number_format((float) $a->altura_m, 2, ',', '') }}
-                                                                </td>
-                                                            </tr>
-                                                        @empty
-                                                            <tr>
-                                                                <td colspan="5" class="text-center small text-muted">
-                                                                    Nenhum atleta encontrado</td>
-                                                            </tr>
-                                                        @endforelse
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="5" class="text-center small text-muted">
+                                                                Nenhum atleta encontrado
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @else
+                                        <div class="table-responsive table-card-body p-3">
+                                            <table class="table table-sm mb-0 table-center">
+                                                <thead class="table-light small">
+                                                    <tr>
+                                                        @if ($t['key'] === 'posicao')
+                                                            <th>Posição</th>
+                                                        @elseif($t['key'] === 'porCidade')
+                                                            <th>Cidade</th>
+                                                        @elseif($t['key'] === 'porInstituicao')
+                                                            <th>Instituição</th>
+                                                        @elseif($t['key'] === 'porAltura')
+                                                            <th>Faixa de Altura</th>
+                                                        @else
+                                                            <th>Chave</th>
+                                                        @endif
+                                                        <th class="text-center">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($t['data'] as $r)
+                                                        @php
+                                                            $isMaiorFaixa =
+                                                                $t['key'] === 'porAltura' &&
+                                                                isset($faixaDaMaior) &&
+                                                                isset($r->faixa) &&
+                                                                $r->faixa === $faixaDaMaior;
+                                                        @endphp
+                                                        <tr class="{{ $isMaiorFaixa ? 'row-maior-faixa' : '' }}">
+                                                            @if ($t['key'] === 'posicao')
+                                                                <td class="small">{{ $r->posicao_jogo }}</td>
+                                                            @elseif($t['key'] === 'porCidade')
+                                                                <td class="small">{{ $r->cidade }}</td>
+                                                            @elseif($t['key'] === 'porInstituicao')
+                                                                <td class="small">{{ $r->entidade }}</td>
+                                                            @elseif($t['key'] === 'porAltura')
+                                                                <td class="small">{{ $r->faixa }}</td>
+                                                            @else
+                                                                <td class="small">{{ $r->key ?? '' }}</td>
+                                                            @endif
+                                                            <td class="align-middle text-center">{{ $r->total }}</td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="2" class="text-center small text-muted">Nenhum
+                                                                registro</td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
                                         </div>
                                     @endif
-
                                 </div>
                             </div>
                         </div>
@@ -311,11 +315,11 @@
 
         .table-card-body td,
         .table-card-body th {
-            white-space: nowrap;
+            /* white-space: nowrap; */
             overflow: hidden;
             text-overflow: ellipsis;
             vertical-align: middle;
-            padding: .5rem .75rem;
+            /* padding: .5rem .75rem; */
         }
 
         .table-light th {
@@ -372,6 +376,12 @@
             .row.g-3>[class*='col-'] {
                 flex-basis: 100% !important;
                 max-width: 100% !important;
+            }
+
+            .atletas-altos-scroll {
+                max-height: 260px;
+                /* mobile igual às outras abas */
+                -webkit-overflow-scrolling: touch;
             }
         }
 
@@ -528,6 +538,33 @@
 
         .text-secondary {
             color: #6c757d !important;
+        }
+        /* ===== Scroll REAL na aba "Atletas Altos" ===== */
+        .atletas-altos-scroll {
+            display: block !important;
+            /* mata o flex da .table-card-body */
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            max-height: 320px;
+            /* desktop (força aparecer com 10+ linhas) */
+            padding: 0.5rem 1rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* mantém o scroll “bonito” */
+        .atletas-altos-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .atletas-altos-scroll::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, .12);
+            border-radius: 6px;
+        }
+
+        @media (max-width: 767.98px) {
+            .atletas-altos-scroll {
+                max-height: 410px;
+            }
         }
     </style>
 @endpush
