@@ -56,6 +56,13 @@ class RelatorioController extends Controller
         // Visualizações: soma da coluna 'visualizacoes' na tabela 'atletas'
         $visualizacoesTotais = (int) DB::table('atletas')->sum('visualizacoes');
 
+        $top10Visualizados = DB::table('atletas')
+            ->select('id', 'nome_completo', 'entidade', 'cidade', 'visualizacoes')
+            ->orderByDesc('visualizacoes')
+            ->orderBy('nome_completo')
+            ->limit(10)
+            ->get();
+
         // Crescimento diário de cadastros: hoje vs ontem
         $novosHoje = DB::table('atletas')
             ->whereDate('created_at', $today)
@@ -311,7 +318,8 @@ class RelatorioController extends Controller
             'alturaMax',
             'faixaDaMaior',
             'totalDaFaixaMaior',
-            'altos190'
+            'altos190',
+            'top10Visualizados'
         ));
     }
 }
