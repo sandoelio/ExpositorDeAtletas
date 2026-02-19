@@ -57,6 +57,12 @@
                     'icon' => '🏀',
                     'data' => $altos190 ?? collect(),
                 ],
+                [
+                    'key' => 'visualizados',
+                    'label' => 'Visualizados',
+                    'icon' => 'TOP 10',
+                    'data' => $top10Visualizados ?? collect(),
+                ],
             ]);
         @endphp
 
@@ -171,6 +177,41 @@
                                                             <td class="small">{{ $a->idade ?? '-' }}</td>
                                                             <td class="small">
                                                                 {{ number_format((float) $a->altura_m, 2, ',', '') }}
+                                                            </td>
+                                                        </tr>
+                                                    @empty
+                                                        <tr>
+                                                            <td colspan="5" class="text-center small text-muted">
+                                                                Nenhum atleta encontrado
+                                                            </td>
+                                                        </tr>
+                                                    @endforelse
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    @elseif($t['key'] === 'visualizados')
+                                        <div class="table-responsive table-card-body p-3">
+                                            <table class="table table-sm mb-0 table-center">
+                                                <thead class="table-light small">
+                                                    <tr>
+                                                        <th class="text-center" style="width: 72px;">#</th>
+                                                        <th>Atleta</th>
+                                                        <th>Instituicao</th>
+                                                        <th>Cidade</th>
+                                                        <th class="text-center">Visualizacoes</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @forelse($t['data'] as $a)
+                                                        <tr>
+                                                            <td class="text-center small fw-semibold">
+                                                                {{ $loop->iteration }}
+                                                            </td>
+                                                            <td class="small">{{ $a->nome_completo }}</td>
+                                                            <td class="small">{{ $a->entidade ?? '-' }}</td>
+                                                            <td class="small">{{ $a->cidade ?? '-' }}</td>
+                                                            <td class="align-middle text-center fw-semibold">
+                                                                {{ number_format((int) ($a->visualizacoes ?? 0), 0, ',', '.') }}
                                                             </td>
                                                         </tr>
                                                     @empty
