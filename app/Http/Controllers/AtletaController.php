@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Atleta;
 use Illuminate\Http\Request;
 use App\Services\AtletaService;
+use App\Services\PerfilAtletaService;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -16,10 +17,12 @@ use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 class AtletaController extends Controller
 {
     protected $atletaService;
+    protected $perfilAtletaService;
 
-    public function __construct(AtletaService $atletaService)
+    public function __construct(AtletaService $atletaService, PerfilAtletaService $perfilAtletaService)
     {
         $this->atletaService = $atletaService;
+        $this->perfilAtletaService = $perfilAtletaService;
     }
 
     public function index(Request $request)
@@ -34,6 +37,9 @@ class AtletaController extends Controller
             }
             if ($request->filled('idade_max')) {
                 $query->where('idade', '<=', (int)$request->idade_max);
+            }
+            if ($request->filled('nome')) {
+                $query->where('nome_completo', 'like', '%' . $request->nome . '%');
             }
             if ($request->filled('posicao')) {
                 $query->where('posicao_jogo', $request->posicao);
@@ -53,8 +59,8 @@ class AtletaController extends Controller
             // paginar com appends para manter os filtros
             $atletas = $query
                 ->orderBy('nome_completo', 'asc')
-                ->paginate(6)                      // 6 items por página
-                ->appends($request->query());      // mantém ?idade_min=...&posicao=...
+                ->paginate(6)                      // fixo: 6 por pagina
+                ->appends($request->query());      // mantém filtros da URL
 
             // repovoa os selects
             $posicoes  = Atleta::select('posicao_jogo')->distinct()->get();
@@ -86,10 +92,56 @@ class AtletaController extends Controller
                 return redirect()->route('atletas.index')->with('error', 'Atleta não encontrado.');
             }
 
-            return view('atletas.show', compact('atleta')); // Retorna a view com detalhes
+            $dadosPerfil = $this->perfilAtletaService->montarDados($atleta);
+            return view('atletas.perfil', $dadosPerfil);
         } catch (\Exception $ex) {
-            return redirect()->back()->with('error', 'Erro ao carregar atleta: ' . $ex->getMessage());
+            return redirect()->route('atletas.index')->with('error', 'Erro ao carregar atleta: ' . $ex->getMessage());
         }
+    }
+
+    public function ogImage($id)
+    {
+        $atleta = Atleta::findOrFail($id);
+        $cacheControl = 'public, max-age=86400';
+
+        $raw = trim((string) ($atleta->imagem_base64 ?? ''));
+        if ($raw !== '') {
+            $mime = null;
+            $base64 = $raw;
+
+            if (preg_match('/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/', $raw, $matches)) {
+                $mime = strtolower(trim((string) ($matches[1] ?? '')));
+                $base64 = (string) ($matches[2] ?? '');
+            }
+
+            $base64 = preg_replace('/\s+/', '', $base64);
+            $binary = base64_decode($base64, true);
+
+            if ($binary !== false) {
+                if (!$mime) {
+                    $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                    $detected = (string) $finfo->buffer($binary);
+                    $mime = str_starts_with($detected, 'image/') ? $detected : 'image/png';
+                }
+
+                return response($binary, 200, [
+                    'Content-Type' => $mime,
+                    'Cache-Control' => $cacheControl,
+                ]);
+            }
+        }
+
+        $avatarPath = public_path('img/avatar.png');
+        $logoPath = public_path('img/LOGO1.png');
+        $fallbackPath = file_exists($avatarPath) ? $avatarPath : $logoPath;
+
+        if (file_exists($fallbackPath)) {
+            return response()->file($fallbackPath, [
+                'Cache-Control' => $cacheControl,
+            ]);
+        }
+
+        abort(404);
     }
 
     public function create()
@@ -217,13 +269,20 @@ class AtletaController extends Controller
         }   
     }
 
-    public function registrarVisualizacao($id)
+    public function registrarVisualizacao(Request $request, $id)
     {
         try {
-            $atleta = $this->atletaService->registrarVisualizacao($id);
+            $resultado = $this->atletaService->registrarVisualizacao(
+                $id,
+                (string) $request->session()->getId(),
+                (string) $request->ip()
+            );
+
+            $atleta = $resultado['atleta'];
             return response()->json([
                 'status' => 'ok',
-                'visualizacoes' => $atleta->visualizacoes
+                'visualizacoes' => $atleta->visualizacoes,
+                'counted' => (bool) ($resultado['counted'] ?? false),
             ]);
         } catch (\Exception $ex) {
             return response()->json([
@@ -360,5 +419,5 @@ class AtletaController extends Controller
 
         return response()->json($dados);
     }
-}
 
+}

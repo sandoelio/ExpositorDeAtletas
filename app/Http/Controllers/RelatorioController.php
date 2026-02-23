@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class RelatorioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Total de instituições inscritas
         $instituicoesCount = DB::table('atletas')
@@ -22,6 +23,9 @@ class RelatorioController extends Controller
         $cidadesCount = DB::table('atletas')
             ->select(DB::raw('COUNT(DISTINCT cidade) as total'))
             ->value('total');
+
+        // Total de tecnicos/olheiros cadastrados
+        $olheirosCount = DB::table('olheiros')->count();
 
         // Número de atletas por posição
         $porPosicao = DB::table('atletas')
@@ -62,6 +66,79 @@ class RelatorioController extends Controller
             ->orderBy('nome_completo')
             ->limit(10)
             ->get();
+
+        // Dados para aba "Olheiros"
+        $olheirosLista = DB::table('olheiros')
+            ->select('id', 'nome', 'entidade')
+            ->orderBy('nome')
+            ->get();
+
+        $olheiroSelecionadoId = (int) $request->query('olheiro_id', 0);
+        $olheiroExiste = $olheirosLista->firstWhere('id', $olheiroSelecionadoId);
+
+        if ($olheiroSelecionadoId <= 0 || !$olheiroExiste) {
+            $olheiroSelecionadoId = $olheirosLista->isNotEmpty() ? (int) $olheirosLista->first()->id : 0;
+        }
+
+        $olheiroSelecionado = null;
+        $olheiroFavoritos = collect();
+        $olheiroShortlists = collect();
+        $olheiroShortlistsCount = 0;
+        $olheiroAtletasEmShortlists = 0;
+
+        if ($olheiroSelecionadoId > 0) {
+            $olheiroSelecionado = DB::table('olheiros')
+                ->select('id', 'nome', 'entidade')
+                ->where('id', $olheiroSelecionadoId)
+                ->first();
+
+            $olheiroFavoritos = DB::table('olheiro_favoritos as f')
+                ->join('atletas as a', 'a.id', '=', 'f.atleta_id')
+                ->where('f.olheiro_id', $olheiroSelecionadoId)
+                ->select('a.nome_completo', 'a.entidade')
+                ->orderBy('a.nome_completo')
+                ->get();
+
+            $olheiroShortlists = DB::table('olheiro_shortlists as s')
+                ->leftJoin('olheiro_shortlist_itens as i', 'i.shortlist_id', '=', 's.id')
+                ->where('s.olheiro_id', $olheiroSelecionadoId)
+                ->groupBy('s.id', 's.nome')
+                ->select(
+                    's.id',
+                    's.nome',
+                    DB::raw('COUNT(DISTINCT i.atleta_id) as atletas_count')
+                )
+                ->orderBy('s.nome')
+                ->get();
+
+            $itensPorShortlist = DB::table('olheiro_shortlist_itens as i')
+                ->join('olheiro_shortlists as s', 's.id', '=', 'i.shortlist_id')
+                ->join('atletas as a', 'a.id', '=', 'i.atleta_id')
+                ->where('s.olheiro_id', $olheiroSelecionadoId)
+                ->select(
+                    'i.shortlist_id',
+                    'a.nome_completo',
+                    'a.entidade',
+                    'i.status'
+                )
+                ->orderBy('a.nome_completo')
+                ->get()
+                ->groupBy('shortlist_id');
+
+            $olheiroShortlists = $olheiroShortlists->map(function ($shortlist) use ($itensPorShortlist) {
+                $shortlist->itens = collect($itensPorShortlist->get($shortlist->id, []))
+                    ->map(function ($item) {
+                        $item->status = !empty($item->status) ? $item->status : 'Sem status';
+                        return $item;
+                    })
+                    ->values();
+
+                return $shortlist;
+            });
+
+            $olheiroShortlistsCount = $olheiroShortlists->count();
+            $olheiroAtletasEmShortlists = (int) $olheiroShortlists->sum('atletas_count');
+        }
 
         // Crescimento diário de cadastros: hoje vs ontem
         $novosHoje = DB::table('atletas')
@@ -306,6 +383,7 @@ class RelatorioController extends Controller
             'instituicoesCount',
             'atletasCount',
             'cidadesCount',
+            'olheirosCount',
             'porPosicao',
             'porCidade',
             'porInstituicao',
@@ -319,7 +397,14 @@ class RelatorioController extends Controller
             'faixaDaMaior',
             'totalDaFaixaMaior',
             'altos190',
-            'top10Visualizados'
+            'top10Visualizados',
+            'olheirosLista',
+            'olheiroSelecionadoId',
+            'olheiroSelecionado',
+            'olheiroFavoritos',
+            'olheiroShortlists',
+            'olheiroShortlistsCount',
+            'olheiroAtletasEmShortlists'
         ));
     }
 }
