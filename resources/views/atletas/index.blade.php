@@ -35,8 +35,9 @@
         .flip-front .foto-front img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             object-position: center;
+            background: #dfe3ea;
             display: block;
             border-radius: 12px 0 0 12px;
         }

@@ -200,7 +200,7 @@
         .demo-hero {
             display: grid;
             grid-template-columns: 1.5fr 1fr;
-            gap: 1rem;
+            gap: 0.8rem;
             align-items: stretch;
         }
 
@@ -334,14 +334,14 @@
         }
 
         .demo-hero-side {
-            padding: 0.8rem;
+            padding: 0.65rem;
         }
 
         .demo-photo-card {
             height: 100%;
             border-radius: 12px;
             background: linear-gradient(170deg, #102844 0%, #234969 70%, #1a3552 100%);
-            padding: 0.7rem;
+            padding: 0.55rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -360,15 +360,18 @@
         }
 
         .demo-photo-card img {
-            width: 100%;
-            max-height: 290px;
+            width: 38%;
+            max-height: 215px;
             object-fit: cover;
+            object-position: center top;
+            display: block;
+            margin: 0 auto;
             border-radius: 10px;
             background: #fff;
         }
 
         .demo-stats-grid {
-            margin-top: 0.9rem;
+            margin-top: 0.72rem;
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 0.5rem;
@@ -399,7 +402,7 @@
         }
 
         .demo-content-grid {
-            margin-top: 0.65rem;
+            margin-top: 0.5rem;
             display: grid;
             grid-template-columns: 1.45fr 1fr;
             gap: 0.65rem;
@@ -425,7 +428,7 @@
 
         .demo-video-placeholder {
             margin-top: 0.45rem;
-            min-height: 185px;
+            min-height: 160px;
             border-radius: 12px;
             border: 1px dashed rgba(255, 106, 19, 0.45);
             background: linear-gradient(140deg, #ffeddc 0%, #fff7ef 100%);
@@ -441,7 +444,7 @@
         .demo-video-placeholder video {
             width: 100%;
             max-width: 100%;
-            min-height: 210px;
+            min-height: 180px;
             border: 0;
             border-radius: 10px;
             background: #000;
@@ -512,7 +515,8 @@
             }
 
             .demo-photo-card img {
-                max-height: 340px;
+                width: 38%;
+                max-height: 215px;
             }
         }
 
@@ -536,6 +540,11 @@
 
             .btn-demo {
                 width: 100%;
+            }
+
+            .demo-photo-card img {
+                width: 38%;
+                max-height: 215px;
             }
         }
     </style>
