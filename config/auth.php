@@ -44,6 +44,10 @@ return [
             'driver'   => 'session',
             'provider' => 'admins',
         ],
+        'olheiro' => [
+            'driver' => 'session',
+            'provider' => 'olheiros',
+        ],
 
     ],
 
@@ -72,6 +76,10 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model'  => App\Models\Admin::class,
+        ],
+        'olheiros' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Olheiro::class,
         ],
     ],
 

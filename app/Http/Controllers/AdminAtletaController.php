@@ -10,28 +10,31 @@ class AdminAtletaController extends Controller
 {
     public function index(Request $request)
     {
-        // coleta todas as entidades únicas
+        $texto = trim((string) $request->query('texto', ''));
+        $entidade = trim((string) $request->query('entidade', ''));
+
         $entidades = Atleta::select('entidade')
             ->distinct()
             ->orderBy('entidade')
             ->pluck('entidade');
 
-        // inicia query
-        $query = Atleta::orderBy('nome_completo');
+        $query = Atleta::query()->orderBy('nome_completo');
 
-        // aplica filtro de entidade se informado
-        if ($request->filled('entidade')) {
-            $query->where('entidade', $request->entidade);
+        if ($entidade !== '') {
+            $query->where('entidade', $entidade);
         }
 
-        // você pode usar paginate() ou get()
-        $atletas = $query->paginate(10)
-            ->withQueryString();
+        if ($texto !== '') {
+            $query->where('nome_completo', 'like', '%' . $texto . '%');
+        }
+
+        $atletas = $query->paginate(5)->withQueryString();
 
         return view('admin.index', [
-            'entidades'      => $entidades,
-            'atletas'        => $atletas,
-            'filtroEntidade' => $request->entidade ?? ''
+            'entidades' => $entidades,
+            'atletas' => $atletas,
+            'filtroEntidade' => $entidade,
+            'filtroTexto' => $texto,
         ]);
     }
 }

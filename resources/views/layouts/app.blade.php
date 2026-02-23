@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vitrine de Atletas</title>
+    <title>@yield('title', 'Vitrine de Atletas')</title>
+    @stack('meta')
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     
     <!-- CSS do Bootstrap -->
@@ -30,12 +31,25 @@
 
 <body class="pagina-tema">
     <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
+        <div class="container d-flex justify-content-between align-items-center">
             <!-- Adicionando a logo -->
             <a class="navbar-brand" href="{{ url('/') }}">
-                <img src="{{ asset('img/LOGO1.png') }}" alt="Logo" class="logo-img">
-                <span class="spam-text"> Vitrine de Atletas</span><br>
+                <span class="spam-text">Vitrine de Atletas</span>
             </a>
+
+            @if (request()->routeIs('olheiro.*') && auth('olheiro')->check())
+                <div class="d-flex align-items-center gap-2 olheiro-topbar">
+                    <small class="olheiro-topbar-user">Bem-vindo, {{ auth('olheiro')->user()->nome }}.</small>
+                    <form method="POST" action="{{ route('olheiro.logout') }}" class="m-0">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Sair</button>
+                    </form>
+                </div>
+            @elseif (request()->routeIs('atletas.index'))
+                <a href="{{ route('home') }}" class="btn btn-outline-light btn-sm" title="Voltar para Home">
+                    <i class="fas fa-home"></i>
+                </a>
+            @endif
         </div>
     </nav>
 
@@ -60,4 +74,21 @@
             color: #28365F;
             font-weight: bold;
         }
+
+    .olheiro-topbar-user {
+        color: #fff;
+        font-size: 0.9rem;
+        line-height: 1;
+        margin: 0;
+    }
+
+    @media (max-width: 576px) {
+        .olheiro-topbar {
+            gap: 6px !important;
+        }
+
+        .olheiro-topbar-user {
+            font-size: 0.75rem;
+        }
+    }
 </style>

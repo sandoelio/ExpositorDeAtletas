@@ -1,233 +1,394 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-
-        {{-- Mensagens de sucesso / erro --}}
+    <div class="container atleta-form-wrap">
         @if (session('success'))
-            <div id="success-message" class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div id="error-message" class="alert alert-danger">
-                {{ session('error') }}
-            </div>
+            <div id="success-message" class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-        {{-- Formulário de edição --}}
-        <form id="formAtleta"
-              action="{{ route('atletas.update', $atleta->id) }}"
-              method="POST"
-              enctype="multipart/form-data">
+        @if (session('error'))
+            <div id="error-message" class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        @php
+            $posicoes = ['Ala', 'Armador', 'Pivo', 'Ala-Armador', 'Ala-Pivo'];
+            $posicaoAtual = old('posicao_jogo', $atleta->posicao_jogo);
+            if (!empty($posicaoAtual) && !in_array($posicaoAtual, $posicoes, true)) {
+                $posicoes[] = $posicaoAtual;
+            }
+            $sexoAtual = old('sexo', $atleta->sexo);
+        @endphp
+
+        <form id="formAtleta" action="{{ route('atletas.update', $atleta->id) }}" method="POST"
+            enctype="multipart/form-data" novalidate>
             @csrf
             @method('PUT')
-            <input type="hidden" name="id" id="atleta_id" value="{{ $atleta->id }}">
 
-            {{-- Preview da imagem atual --}}
-            <div id="imagem-container" class="text-center mb-3">
-                <label class="form-label d-block">Imagem Atual:</label>
-                <img id="imagem-preview"
-                     src="{{ $atleta->imagem_base64
-                             ? 'data:image/png;base64,' . $atleta->imagem_base64
-                             : asset('img/avatar.png') }}"
-                     alt="Imagem do Atleta"
-                     style="max-width:100px; border:1px solid #ccc; padding:4px; border-radius:8px;">
-            </div>
+            <section class="form-section mb-2">
+                <h5 class="form-section-title">Dados pessoais</h5>
+                <div class="row g-2 align-items-start">
+                    <div class="col-12 col-md-3">
+                        <label class="form-label d-block">Imagem atual</label>
+                        <div class="image-preview-wrap">
+                            <img id="imagem-preview"
+                                src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
+                                alt="Imagem do atleta" class="image-preview">
+                        </div>
+                        <label for="imagem" class="form-label mt-2">Nova imagem</label>
+                        <input type="file" class="form-control" name="imagem" id="imagem" accept="image/*">
+                    </div>
 
-            {{-- Trocar imagem --}}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="imagem" class="form-label">Nova Imagem</label>
-                    <input type="file"
-                           class="form-control"
-                           name="imagem"
-                           id="imagem"
-                           accept="image/*">
-                </div>
-                <div class="col-md-6">
-                    <label for="nome_completo" class="form-label">Nome Completo</label>
-                    <input type="text"
-                           class="form-control"
-                           name="nome_completo"
-                           id="nome_completo"
-                           placeholder="Ex: João da Silva"
-                           required
-                           value="{{ old('nome_completo', $atleta->nome_completo) }}">
-                </div>
-            </div>
+                    <div class="col-12 col-md-9">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-8">
+                                <label for="nome_completo" class="form-label">Nome e sobrenome</label>
+                                <input type="text" class="form-control" name="nome_completo" id="nome_completo"
+                                    placeholder="Ex: Joao Silva" required
+                                    value="{{ old('nome_completo', $atleta->nome_completo) }}">
+                            </div>
 
-            {{-- Peso e Data de Nascimento --}}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="peso" class="form-label">Peso (Kg)</label>
-                    <input type="number"
-                           class="form-control"
-                           name="peso"
-                           id="peso"
-                           placeholder="Ex: 75"
-                           required
-                           value="{{ old('peso', $atleta->peso) }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="data_nascimento" class="form-label">Data de Nascimento</label>
-                    <input type="date"
-                           class="form-control"
-                           name="data_nascimento"
-                           id="data_nascimento"
-                           required
-                           value="{{ old('data_nascimento', $atleta->data_nascimento) }}">
-                </div>
-            </div>
+                            <div class="col-12 col-md-4">
+                                <label for="data_nascimento" class="form-label">Data de nascimento</label>
+                                <input type="date" class="form-control" name="data_nascimento" id="data_nascimento"
+                                    required value="{{ old('data_nascimento', $atleta->data_nascimento) }}">
+                            </div>
 
-            {{-- Cidade e Posição de Jogo --}}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="cidade" class="form-label">Cidade</label>
-                    <input type="text"
-                           class="form-control"
-                           name="cidade"
-                           id="cidade"
-                           placeholder="Ex: São Paulo"
-                           required
-                           value="{{ old('cidade', $atleta->cidade) }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="posicao_jogo" class="form-label">Posição no Jogo</label>
-                    <input type="text"
-                           class="form-control"
-                           name="posicao_jogo"
-                           id="posicao_jogo"
-                           placeholder="Ex: Armador, Pivô..."
-                           required
-                           value="{{ old('posicao_jogo', $atleta->posicao_jogo) }}">
-                </div>
-            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="sexo" class="form-label">Sexo</label>
+                                <select name="sexo" id="sexo" class="form-select" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="Masculino" {{ $sexoAtual === 'Masculino' ? 'selected' : '' }}>Masculino</option>
+                                    <option value="Feminino" {{ $sexoAtual === 'Feminino' ? 'selected' : '' }}>Feminino</option>
+                                </select>
+                            </div>
 
-            {{-- Instituição e Contato --}}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="entidade" class="form-label">Instituição</label>
-                    <input type="text"
-                           class="form-control"
-                           name="entidade"
-                           id="entidade"
-                           placeholder="Nome da equipe ou instituição"
-                           required
-                           value="{{ old('entidade', $atleta->entidade) }}">
+                            <div class="col-12 col-md-6">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" name="cidade" id="cidade"
+                                    placeholder="Ex: Salvador" required value="{{ old('cidade', $atleta->cidade) }}">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="contato" class="form-label">Contato</label>
-                    <input type="text"
-                           class="form-control"
-                           name="contato"
-                           id="contato"
-                           placeholder="Ex: 71912345678"
-                           required
-                           value="{{ old('contato', $atleta->contato) }}">
-                </div>
-            </div>
+            </section>
 
-            {{-- Altura e Sexo --}}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="altura" class="form-label">Altura (m)</label>
-                    <input type="number"
-                           step="0.01"
-                           class="form-control"
-                           name="altura"
-                           id="altura"
-                           placeholder="Ex: 1.75"
-                           required
-                           value="{{ old('altura', $atleta->altura) }}">
-                </div>
-                <div class="col-md-6">
-                    <label for="sexo" class="form-label">Sexo</label>
-                    <select name="sexo"
-                            id="sexo"
-                            class="form-select"
-                            required>
-                        <option value="">Selecione...</option>
-                        <option value="Masculino"
-                          {{ old('sexo', $atleta->sexo) === 'masculino' ? 'selected' : '' }}>
-                          Masculino
-                        </option>
-                        <option value="Feminino"
-                          {{ old('sexo', $atleta->sexo) === 'feminino' ? 'selected' : '' }}>
-                          Feminino
-                        </option>
-                    </select>
-                </div>
-            </div>
+            <section class="form-section mb-2">
+                <h5 class="form-section-title">Esporte</h5>
+                <div class="row g-2">
+                    <div class="col-12 col-md-6">
+                        <label for="entidade" class="form-label">Instituicao</label>
+                        <input type="text" class="form-control" name="entidade" id="entidade"
+                            placeholder="Equipe ou instituicao" required value="{{ old('entidade', $atleta->entidade) }}">
+                    </div>
 
-            {{-- Vídeo --}}
-            <div class="mb-3">
-                <label for="resumo" class="form-label">Vídeo</label>
-                <input type="url"
-                       class="form-control"
-                       name="resumo"
-                       id="resumo"
-                       placeholder="https://exemplo.com/video"
-                       value="{{ old('resumo', $atleta->resumo) }}">
-            </div>
+                    <div class="col-12 col-md-6">
+                        <label for="posicao_jogo" class="form-label">Posicao no jogo</label>
+                        <select name="posicao_jogo" id="posicao_jogo" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            @foreach ($posicoes as $pos)
+                                <option value="{{ $pos }}" {{ $posicaoAtual === $pos ? 'selected' : '' }}>
+                                    {{ $pos }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-            {{-- Botões --}}
-            <div class="d-flex justify-content-center gap-3 flex-wrap btn-container">
-                <a href="{{ route('admin.index') }}"
-                   class="btn btn-custom">
-                    Voltar
-                </a>
-                <button type="submit"
-                        class="btn btn-custom"
-                        id="btnSalvar">
-                    Atualizar Atleta
-                </button>
+                    <div class="col-12 col-md-6">
+                        <label for="altura" class="form-label">Altura (m)</label>
+                        <input type="text" class="form-control" name="altura" id="altura" inputmode="decimal"
+                            placeholder="Ex: 1.75" required value="{{ old('altura', $atleta->altura) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="peso" class="form-label">Peso (kg)</label>
+                        <input type="text" class="form-control" name="peso" id="peso" inputmode="decimal"
+                            placeholder="Ex: 75" required value="{{ old('peso', $atleta->peso) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section mb-2">
+                <h5 class="form-section-title">Contato</h5>
+                <div class="row g-2">
+                    <div class="col-12 col-md-8">
+                        <label for="contato" class="form-label">Contato (telefone ou e-mail)</label>
+                        <input type="text" class="form-control" name="contato" id="contato"
+                            placeholder="Ex: (71) 91234-5678 ou email@dominio.com" required
+                            value="{{ old('contato', $atleta->contato) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-section mb-2">
+                <h5 class="form-section-title">Midia</h5>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <label for="resumo" class="form-label">Video (URL)</label>
+                        <input type="url" class="form-control" name="resumo" id="resumo"
+                            placeholder="https://exemplo.com/video" value="{{ old('resumo', $atleta->resumo) }}">
+                        <small class="text-muted">Informe o link de video com demonstracao do atleta.</small>
+                    </div>
+                </div>
+            </section>
+
+            <div class="form-actions-card">
+                <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary form-action-btn">Voltar</a>
+                <button type="button" class="btn btn-outline-danger form-action-btn" id="btnSairAdmin">Sair</button>
+                <button type="submit" class="btn btn-save form-action-btn" id="btnSalvar">Salvar</button>
             </div>
         </form>
+        <form id="logout-admin-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            @csrf
+        </form>
     </div>
-
-    {{-- Script para preview da imagem --}}
-    <script>
-        document.getElementById('imagem')
-            .addEventListener('change', function(event) {
-                const preview = document.getElementById('imagem-preview');
-                const file    = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = e => preview.src = e.target.result;
-                    reader.readAsDataURL(file);
-                }
-            });
-
-        // Oculta mensagens após 3s
-        document.addEventListener('DOMContentLoaded', function() {
-            const successMsg = document.getElementById('success-message');
-            const errorMsg   = document.getElementById('error-message');
-            [successMsg, errorMsg].forEach(el => {
-                if (el) setTimeout(() => el.style.display = 'none', 3000);
-            });
-        });
-    </script>
-
 @endsection
 
 @push('styles')
-<style>
-    /* Botões padronizados */
-    .btn-custom {
-        flex: 1 1 220px;
-        max-width: 220px;
-        background: #e66000;
-        color: #fff;
-        border: none;
-    }
-    .btn-custom:hover {
-        background: #cc5200;
-        color: #fff;
-    }
-    .btn-container {
-        margin-top: 20px;
-        margin-bottom: 20px
-    }
-</style>
+    <style>
+        .atleta-form-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            margin-bottom: 0.9rem;
+        }
+
+        .form-section {
+            border: 1px solid rgba(40, 54, 95, 0.14);
+            border-radius: 12px;
+            padding: 8px;
+            background: #fff;
+            box-shadow: 0 6px 16px rgba(17, 35, 70, 0.04);
+        }
+
+        .form-section-title {
+            margin: 0 0 6px;
+            color: #28365f;
+            font-size: 0.95rem;
+            font-weight: 800;
+        }
+
+        .atleta-form-wrap .form-label {
+            margin-bottom: 0.2rem;
+            font-size: 0.88rem;
+        }
+
+        .atleta-form-wrap .form-control,
+        .atleta-form-wrap .form-select {
+            min-height: 34px;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            font-size: 0.92rem;
+        }
+
+        .image-preview-wrap {
+            border: 1px dashed #cfd7e7;
+            border-radius: 10px;
+            padding: 8px;
+            background: #f9fbff;
+            text-align: center;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-width: 96px;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #d7deea;
+        }
+
+        .form-actions-card {
+            margin-top: 6px;
+            padding: 6px;
+            border: 1px solid rgba(40, 54, 95, 0.14);
+            border-radius: 12px;
+            background: #fff;
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .form-action-btn {
+            min-width: 102px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.35rem 0.55rem;
+        }
+
+        .btn-save {
+            background: #ff7209;
+            border: 1px solid #ff7209;
+            color: #fff;
+        }
+
+        .btn-save:hover {
+            background: #e66000;
+            border-color: #e66000;
+            color: #fff;
+        }
+
+        @media (max-width: 767.98px) {
+            .form-section {
+                padding: 7px;
+            }
+
+            .form-actions-card {
+                justify-content: stretch;
+            }
+
+            .form-action-btn {
+                flex: 1 1 calc(33.333% - 6px);
+                min-width: 86px;
+            }
+
+            .atleta-form-wrap {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formAtleta');
+            const altura = document.getElementById('altura');
+            const peso = document.getElementById('peso');
+            const contato = document.getElementById('contato');
+            const imagem = document.getElementById('imagem');
+            const preview = document.getElementById('imagem-preview');
+
+            if (!form || !altura || !peso || !contato) {
+                return;
+            }
+
+            const btnSairAdmin = document.getElementById('btnSairAdmin');
+            const logoutForm = document.getElementById('logout-admin-form');
+
+            function showFieldState(input, valid, message) {
+                const feedback = input.nextElementSibling && input.nextElementSibling.classList.contains('invalid-feedback')
+                    ? input.nextElementSibling
+                    : null;
+
+                if (valid) {
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    if (feedback) feedback.textContent = '';
+                } else {
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                    if (feedback) feedback.textContent = message || 'Valor invalido.';
+                }
+            }
+
+            function normalizeDecimal(value) {
+                return String(value || '').replace(',', '.').trim();
+            }
+
+            function validateAltura() {
+                const raw = normalizeDecimal(altura.value);
+                const n = Number(raw);
+                if (!raw) {
+                    altura.classList.remove('is-valid', 'is-invalid');
+                    return true;
+                }
+                const ok = !Number.isNaN(n) && n >= 0.5 && n <= 2.5;
+                showFieldState(altura, ok, 'Informe altura entre 0.50 e 2.50 m.');
+                return ok;
+            }
+
+            function validatePeso() {
+                const raw = normalizeDecimal(peso.value);
+                const n = Number(raw);
+                if (!raw) {
+                    peso.classList.remove('is-valid', 'is-invalid');
+                    return true;
+                }
+                const ok = !Number.isNaN(n) && n >= 30 && n <= 150;
+                showFieldState(peso, ok, 'Informe peso entre 30 e 150 kg.');
+                return ok;
+            }
+
+            function formatPhone(digits) {
+                const d = String(digits || '').slice(0, 13);
+                if (d.length <= 2) return d;
+                if (d.length <= 6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+                if (d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+                return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7,11)}`;
+            }
+
+            function validateContato() {
+                const value = (contato.value || '').trim();
+                if (!value) {
+                    contato.classList.remove('is-valid', 'is-invalid');
+                    return true;
+                }
+
+                if (value.includes('@')) {
+                    const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                    showFieldState(contato, okEmail, 'Informe um e-mail valido.');
+                    return okEmail;
+                }
+
+                const digits = value.replace(/\D/g, '');
+                contato.value = formatPhone(digits);
+                const okPhone = digits.length >= 10 && digits.length <= 13;
+                showFieldState(contato, okPhone, 'Telefone deve ter entre 10 e 13 digitos.');
+                return okPhone;
+            }
+
+            altura.addEventListener('input', validateAltura);
+            peso.addEventListener('input', validatePeso);
+            contato.addEventListener('input', validateContato);
+
+            [altura, peso].forEach(el => {
+                el.addEventListener('blur', function() {
+                    const normalized = normalizeDecimal(el.value);
+                    if (normalized) el.value = normalized;
+                });
+            });
+
+            if (imagem && preview) {
+                imagem.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            form.addEventListener('submit', function(event) {
+                const okAltura = validateAltura();
+                const okPeso = validatePeso();
+                const okContato = validateContato();
+
+                if (!form.checkValidity() || !okAltura || !okPeso || !okContato) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+
+            ['success-message', 'error-message'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    setTimeout(() => {
+                        el.style.display = 'none';
+                    }, 3000);
+                }
+            });
+
+            if (btnSairAdmin && logoutForm) {
+                btnSairAdmin.addEventListener('click', function() {
+                    logoutForm.submit();
+                });
+            }
+        });
+    </script>
 @endpush

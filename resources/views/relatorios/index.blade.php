@@ -2,9 +2,9 @@
 
 @section('content')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3 class="m-0">Relatórios</h3>
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary">Voltar</a>
+        <div class="d-flex justify-content-between align-items-center mb-3 report-page-header">
+            <h3 class="m-0 report-title">Relatórios</h3>
+            <a href="{{ route('admin.dashboard') }}" class="btn report-back-btn">Voltar</a>
         </div>
 
         @php
@@ -12,6 +12,7 @@
                 ['key' => 'instituicoes', 'label' => 'Instituições', 'value' => $instituicoesCount, 'icon' => '🏫'],
                 ['key' => 'atletas', 'label' => 'Atletas', 'value' => $atletasCount, 'icon' => '👥'],
                 ['key' => 'cidades', 'label' => 'Cidades', 'value' => $cidadesCount, 'icon' => '📍'],
+                ['key' => 'tecnicos', 'label' => 'Técnicos/Olheiros', 'value' => $olheirosCount ?? 0, 'icon' => '🧭'],
                 [
                     'key' => 'crescimento',
                     'label' => 'Diário de Cadastros',
@@ -49,8 +50,6 @@
                     'icon' => '📏',
                     'data' => $porAltura ?? collect(),
                 ],
-
-                // ✅ Nova aba: Atletas altos
                 [
                     'key' => 'atletasAltos',
                     'label' => 'Atletas Altos',
@@ -62,6 +61,12 @@
                     'label' => 'Visualizados',
                     'icon' => 'TOP 10',
                     'data' => $top10Visualizados ?? collect(),
+                ],
+                [
+                    'key' => 'olheirosAba',
+                    'label' => 'Olheiros',
+                    'icon' => '🧭',
+                    'data' => collect(),
                 ],
             ]);
         @endphp
@@ -127,9 +132,11 @@
                         <div class="col-12 d-flex">
                             <div class="card report-card w-100">
                                 <div class="card-body d-flex flex-column p-0">
-                                    <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+                                    <div
+                                        class="d-flex align-items-center justify-content-between p-3 border-bottom tab-panel-header {{ $t['key'] === 'olheirosAba' ? 'tab-header-compact' : '' }}">
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="icon fs-4">{{ $t['icon'] }}</div>
+                                            <div class="icon {{ $t['key'] === 'olheirosAba' ? 'fs-5' : 'fs-4' }}">
+                                                {{ $t['icon'] }}</div>
                                             <div>
                                                 <div class="label small text-muted mb-0">{{ $t['label'] }}</div>
                                             </div>
@@ -189,28 +196,197 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                    @elseif($t['key'] === 'olheirosAba')
+                                        <div class="p-3">
+                                            <form action="{{ route('relatorios.index') }}" method="GET" class="mb-3 olheiro-filter-bar">
+                                                <input type="hidden" name="aba" value="olheirosAba">
+                                                <div class="row g-2 align-items-end">
+                                                    <div class="col-12 col-md-9">
+                                                        <label for="olheiro_id" class="form-label small mb-1">
+                                                            Selecione o técnico/olheiro
+                                                        </label>
+                                                        <select name="olheiro_id" id="olheiro_id"
+                                                            class="form-select form-select-sm">
+                                                            @forelse($olheirosLista as $ol)
+                                                                <option value="{{ $ol->id }}"
+                                                                    {{ (int) $olheiroSelecionadoId === (int) $ol->id ? 'selected' : '' }}>
+                                                                    {{ $ol->nome }} - {{ $ol->entidade ?? '-' }}
+                                                                </option>
+                                                            @empty
+                                                                <option value="">Nenhum técnico/olheiro cadastrado
+                                                                </option>
+                                                            @endforelse
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-12 col-md-3">
+                                                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                            Carregar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+
+                                            @if ($olheiroSelecionado)
+                                                <div class="row g-3">
+                                                    <div class="col-12 col-lg-4">
+                                                        <div class="card h-100 border">
+                                                            <div class="card-body py-3">
+                                                                <div class="small"><strong>Nome:</strong>
+                                                                    {{ $olheiroSelecionado->nome }}</div>
+                                                                <div class="small"><strong>Instituição:</strong>
+                                                                    {{ $olheiroSelecionado->entidade ?? '-' }}</div>
+                                                                <hr class="my-2">
+                                                                <div class="small"><strong>Favoritos:</strong>
+                                                                    {{ $olheiroFavoritos->count() }}</div>
+                                                                <div class="small"><strong>Shortlists:</strong>
+                                                                    {{ $olheiroShortlistsCount }}</div>
+                                                                <div class="small"><strong>Atletas inseridos:</strong>
+                                                                    {{ $olheiroAtletasEmShortlists }}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12 col-lg-8">
+                                                        <div class="card h-100 border">
+                                                            <div class="card-body py-3">
+                                                                <h6 class="mb-2">Atletas favoritados</h6>
+                                                                <div
+                                                                    class="table-responsive olheiro-section-scroll olheiro-favoritos-scroll">
+                                                                    <table class="table table-sm mb-0">
+                                                                        <thead class="table-light small">
+                                                                            <tr>
+                                                                                <th>Atleta</th>
+                                                                                <th>Instituição</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @forelse($olheiroFavoritos as $fav)
+                                                                                <tr>
+                                                                                    <td class="small">
+                                                                                        {{ $fav->nome_completo }}</td>
+                                                                                    <td class="small">
+                                                                                        {{ $fav->entidade ?? '-' }}</td>
+                                                                                </tr>
+                                                                            @empty
+                                                                                <tr>
+                                                                                    <td colspan="2"
+                                                                                        class="text-center small text-muted">
+                                                                                        Nenhum favorito
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforelse
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-12">
+                                                        <div class="card border">
+                                                            <div class="card-body py-3">
+                                                                <h6 class="mb-2">Shortlists criadas</h6>
+                                                                <div
+                                                                    class="table-responsive olheiro-section-scroll olheiro-shortlists-scroll">
+                                                                    <table class="table table-sm mb-0">
+                                                                        <thead class="table-light small">
+                                                                            <tr>
+                                                                                <th>Shortlist</th>
+                                                                                <th>Atletas e status</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @forelse($olheiroShortlists as $sl)
+                                                                                <tr>
+                                                                                    <td class="small">{{ $sl->nome }}
+                                                                                    </td>
+                                                                                    <td class="small">
+                                                                                        <div class="shortlist-itens-scroll">
+                                                                                            @if (collect($sl->itens ?? [])->isNotEmpty())
+                                                                                                <div
+                                                                                                    class="d-flex flex-column gap-1">
+                                                                                                    @foreach ($sl->itens as $item)
+                                                                                                        @php
+                                                                                                            $statusTexto = trim((string) ($item->status ?? 'Sem status'));
+                                                                                                            $badgeClass = 'bg-secondary';
+                                                                                                            $itemStatusClass = 'semstatus';
+                                                                                                            if (stripos($statusTexto, 'reprov') !== false) {
+                                                                                                                $badgeClass = 'bg-danger';
+                                                                                                                $itemStatusClass = 'reprovado';
+                                                                                                            } elseif (stripos($statusTexto, 'aprov') !== false) {
+                                                                                                                $badgeClass = 'bg-success';
+                                                                                                                $itemStatusClass = 'aprovado';
+                                                                                                            } elseif (stripos($statusTexto, 'observ') !== false) {
+                                                                                                                $badgeClass = 'bg-warning text-dark';
+                                                                                                                $itemStatusClass = 'observacao';
+                                                                                                            }
+                                                                                                        @endphp
+                                                                                                        <div
+                                                                                                            class="d-flex justify-content-between align-items-center gap-2 shortlist-item-status {{ $itemStatusClass }}">
+                                                                                                            <span class="text-truncate"
+                                                                                                                title="{{ $item->nome_completo }} ({{ $item->entidade ?? '-' }})">
+                                                                                                                <span class="atleta-nome">{{ $item->nome_completo }}</span>
+                                                                                                                <span class="atleta-entidade">({{ $item->entidade ?? '-' }})</span>
+                                                                                                            </span>
+                                                                                                            <span
+                                                                                                                class="badge {{ $badgeClass }} flex-shrink-0">{{ $statusTexto }}</span>
+                                                                                                        </div>
+                                                                                                    @endforeach
+                                                                                                </div>
+                                                                                            @else
+                                                                                                <span
+                                                                                                    class="text-muted">Sem atletas inseridos</span>
+                                                                                            @endif
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @empty
+                                                                                <tr>
+                                                                                    <td colspan="2"
+                                                                                        class="text-center small text-muted">
+                                                                                        Nenhuma shortlist criada
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforelse
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                <div class="alert alert-info mb-0">Nenhum técnico/olheiro selecionado.
+                                                </div>
+                                            @endif
+                                        </div>
                                     @elseif($t['key'] === 'visualizados')
                                         <div class="table-responsive table-card-body p-3">
-                                            <table class="table table-sm mb-0 table-center">
+                                            <table class="table table-sm mb-0 table-center visualizados-table">
                                                 <thead class="table-light small">
                                                     <tr>
-                                                        <th class="text-center" style="width: 72px;">#</th>
-                                                        <th>Atleta</th>
-                                                        <th>Instituicao</th>
-                                                        <th>Cidade</th>
-                                                        <th class="text-center">Visualizacoes</th>
+                                                        <th class="text-center viz-col-rank" style="width: 72px;">#</th>
+                                                        <th class="viz-col-atleta">Atleta</th>
+                                                        <th class="viz-col-inst">Instituicao</th>
+                                                        <th class="viz-col-city">Cidade</th>
+                                                        <th class="text-center viz-col-views">Visualizações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @forelse($t['data'] as $a)
                                                         <tr>
-                                                            <td class="text-center small fw-semibold">
+                                                            <td class="text-center small fw-semibold viz-col-rank">
                                                                 {{ $loop->iteration }}
                                                             </td>
-                                                            <td class="small">{{ $a->nome_completo }}</td>
-                                                            <td class="small">{{ $a->entidade ?? '-' }}</td>
-                                                            <td class="small">{{ $a->cidade ?? '-' }}</td>
-                                                            <td class="align-middle text-center fw-semibold">
+                                                            <td class="small viz-col-atleta">
+                                                                <div class="viz-atleta-nome">{{ $a->nome_completo }}</div>
+                                                                <div class="viz-mobile-meta">
+                                                                    {{ $a->entidade ?? '-' }} | {{ $a->cidade ?? '-' }}
+                                                                </div>
+                                                            </td>
+                                                            <td class="small viz-col-inst">{{ $a->entidade ?? '-' }}</td>
+                                                            <td class="small viz-col-city">{{ $a->cidade ?? '-' }}</td>
+                                                            <td class="align-middle text-center fw-semibold viz-col-views">
                                                                 {{ number_format((int) ($a->visualizacoes ?? 0), 0, ',', '.') }}
                                                             </td>
                                                         </tr>
@@ -289,6 +465,33 @@
 
 @push('styles')
     <style>
+        .report-page-header {
+            background: linear-gradient(135deg, #fff6ee 0%, #ffe8d7 100%);
+            border: 1px solid rgba(40, 54, 95, 0.1);
+            border-radius: 12px;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .report-title {
+            color: #28365f;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .report-back-btn {
+            background: #ff7209;
+            border: 1px solid #ff7209;
+            color: #fff;
+            font-weight: 700;
+            min-width: 92px;
+        }
+
+        .report-back-btn:hover {
+            background: #e66000;
+            border-color: #e66000;
+            color: #fff;
+        }
+
         /* Grid e cards */
         .report-grid {
             align-items: stretch;
@@ -315,6 +518,10 @@
             flex-direction: column;
             height: 100%;
             width: 100%;
+            border: 1px solid rgba(40, 54, 95, 0.12);
+            border-radius: 12px;
+            box-shadow: 0 6px 16px rgba(17, 35, 70, 0.05);
+            overflow: hidden;
         }
 
         .report-card .card-body {
@@ -360,11 +567,50 @@
             overflow: hidden;
             text-overflow: ellipsis;
             vertical-align: middle;
-            /* padding: .5rem .75rem; */
+            padding: 0.55rem 0.65rem;
         }
 
         .table-light th {
             white-space: nowrap;
+            font-weight: 700;
+            color: #334666;
+        }
+
+        .visualizados-table {
+            table-layout: auto !important;
+        }
+
+        .visualizados-table th,
+        .visualizados-table td {
+            overflow: visible;
+            text-overflow: initial;
+        }
+
+        .visualizados-table .viz-atleta-nome {
+            font-weight: 600;
+            white-space: normal;
+            line-height: 1.25;
+        }
+
+        .visualizados-table .viz-mobile-meta {
+            display: none;
+            margin-top: 2px;
+            font-size: 0.72rem;
+            color: #60708e;
+            font-weight: 600;
+            white-space: normal;
+            line-height: 1.15;
+        }
+
+        .tab-panel-header {
+            background: #f8fbff;
+        }
+
+        .olheiro-filter-bar {
+            background: #f8fbff;
+            border: 1px solid rgba(40, 54, 95, 0.1);
+            border-radius: 10px;
+            padding: 0.6rem;
         }
 
         /* Centralização visual das tabelas no desktop */
@@ -394,24 +640,81 @@
         /* Alturas máximas */
         @media (min-width: 768px) {
             .table-card-body {
-                max-height: 520px;
+                max-height: 460px;
             }
         }
 
         @media (max-width: 767.98px) {
+            .tabs-wrapper {
+                margin-bottom: 0.5rem !important;
+            }
+
+            .tabs-wrapper .nav-tabs {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+                white-space: normal;
+                overflow-x: visible;
+                padding: 0.35rem;
+            }
+
+            .tabs-wrapper .nav-tabs .nav-item {
+                margin: 0;
+            }
+
+            .tabs-wrapper .nav-tabs .nav-link {
+                width: 100%;
+                margin: 0;
+                padding: 0.4rem 0.45rem;
+                min-height: 38px;
+                font-size: 0.78rem;
+                line-height: 1.15;
+                text-align: center;
+            }
+
+            .tab-content>.tab-pane>.row.g-3 {
+                --bs-gutter-x: 0.5rem;
+                --bs-gutter-y: 0.5rem;
+            }
+
+            .visualizados-table .viz-col-inst,
+            .visualizados-table .viz-col-city {
+                display: none;
+            }
+
+            .visualizados-table .viz-col-rank {
+                width: 46px !important;
+                text-align: center;
+            }
+
+            .visualizados-table .viz-col-views {
+                width: 84px;
+                white-space: nowrap;
+                text-align: center;
+            }
+
+            .visualizados-table .viz-col-atleta {
+                min-width: 160px;
+            }
+
+            .visualizados-table .viz-mobile-meta {
+                display: block;
+            }
+
             .report-card .card-body {
-                padding: 0.9rem;
+                padding: 0.75rem;
             }
 
             .table-card-body {
-                max-height: 260px;
+                max-height: 280px;
+                padding: 0.4rem 0.55rem;
                 -webkit-overflow-scrolling: touch;
             }
 
             .container,
             .report-grid {
-                padding-left: .75rem;
-                padding-right: .75rem;
+                padding-left: 0.55rem;
+                padding-right: 0.55rem;
             }
 
             .row.g-3>[class*='col-'] {
@@ -468,6 +771,8 @@
             padding: .45rem .9rem;
             margin: 0 .125rem;
             border-radius: .5rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
             transition: background .12s ease, color .12s ease, box-shadow .12s ease;
             position: relative;
             z-index: 1;
@@ -607,5 +912,176 @@
                 max-height: 410px;
             }
         }
+
+        .olheiro-section-scroll {
+            max-height: 240px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .olheiro-favoritos-scroll {
+            overflow: hidden !important;
+        }
+
+        .olheiro-favoritos-scroll table {
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 0;
+        }
+
+        .olheiro-favoritos-scroll thead,
+        .olheiro-favoritos-scroll tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .olheiro-favoritos-scroll tbody {
+            display: block;
+            max-height: 108px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .olheiro-favoritos-scroll tbody td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-header-compact {
+            padding: 0.45rem 0.75rem !important;
+        }
+
+        .tab-header-compact .label {
+            font-size: 0.78rem !important;
+            line-height: 1.1;
+        }
+
+        .olheiro-shortlists-scroll {
+            overflow: hidden !important;
+        }
+
+        .olheiro-shortlists-scroll table {
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 0;
+        }
+
+        .olheiro-shortlists-scroll thead,
+        .olheiro-shortlists-scroll tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .olheiro-shortlists-scroll thead th:nth-child(1),
+        .olheiro-shortlists-scroll tbody td:nth-child(1) {
+            width: 26%;
+        }
+
+        .olheiro-shortlists-scroll thead th:nth-child(2),
+        .olheiro-shortlists-scroll tbody td:nth-child(2) {
+            width: 74%;
+        }
+
+        .olheiro-shortlists-scroll tbody {
+            display: block;
+            max-height: 204px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .olheiro-shortlists-scroll tbody td {
+            vertical-align: middle;
+        }
+
+        .olheiro-shortlists-scroll tbody td:nth-child(1) {
+            text-align: center;
+        }
+
+        .shortlist-itens-scroll {
+            max-height: 68px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .shortlist-item-status {
+            padding: 0.2rem 0.35rem;
+            border-left: 4px solid #6c757d;
+            border-radius: 6px;
+            background: rgba(108, 117, 125, 0.12);
+        }
+
+        .shortlist-item-status.aprovado {
+            border-left-color: #198754;
+            background: rgba(25, 135, 84, 0.14);
+        }
+
+        .shortlist-item-status.reprovado {
+            border-left-color: #dc3545;
+            background: rgba(220, 53, 69, 0.14);
+        }
+
+        .shortlist-item-status.observacao {
+            border-left-color: #ffc107;
+            background: rgba(255, 193, 7, 0.18);
+        }
+
+        @media (max-width: 767.98px) {
+            .tab-header-compact {
+                padding: 0.4rem 0.6rem !important;
+            }
+
+            .tab-header-compact .label {
+                font-size: 0.74rem !important;
+            }
+
+            .olheiro-shortlists-scroll thead th,
+            .olheiro-shortlists-scroll tbody td {
+                padding: 0.45rem 0.35rem;
+                font-size: 0.8rem;
+            }
+
+            .olheiro-shortlists-scroll thead th {
+                white-space: normal;
+                line-height: 1.15;
+                text-align: center;
+            }
+
+            .olheiro-shortlists-scroll thead th:nth-child(1),
+            .olheiro-shortlists-scroll tbody td:nth-child(1) {
+                width: 34%;
+            }
+
+            .olheiro-shortlists-scroll thead th:nth-child(2),
+            .olheiro-shortlists-scroll tbody td:nth-child(2) {
+                width: 66%;
+                white-space: nowrap;
+            }
+
+            .olheiro-shortlists-scroll .atleta-entidade {
+                display: none;
+            }
+        }
     </style>
 @endpush
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const aba = new URLSearchParams(window.location.search).get('aba');
+            if (!aba || aba === 'visao') return;
+
+            const tabButton = document.getElementById('tab-' + aba);
+            if (tabButton && window.bootstrap && bootstrap.Tab) {
+                bootstrap.Tab.getOrCreateInstance(tabButton).show();
+            }
+        });
+    </script>
+@endpush
+
+
+
+
+

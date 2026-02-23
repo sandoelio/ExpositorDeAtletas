@@ -2,7 +2,6 @@
 
 @section('content')
     <style>
-        /* Logo responsiva fluida */
         .basquete-img {
             width: 50%;
             max-width: 400px;
@@ -11,22 +10,68 @@
             margin: 5px auto;
         }
 
-        /* Botões estilizados */
         .btn-custom {
             display: inline-block;
             background: #FF7209;
-            color: white;
+            color: #fff;
             font-size: 1.1rem;
             font-weight: 500;
             padding: 6px 7px;
             border-radius: 8px;
             text-decoration: none;
             transition: 0.3s;
+            border: 0;
         }
 
         .btn-custom:hover {
             background: #e66000;
+            color: #fff;
             transform: scale(1.05);
+        }
+
+        .btn-olheiro {
+            display: inline-block;
+            background: linear-gradient(90deg, #0d6efd, #0a58ca);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 0;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.25);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .btn-olheiro:hover {
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(13, 110, 253, 0.35);
+        }
+
+        .home-title {
+            color: #fff;
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin: 4px 0 10px;
+        }
+
+        .home-actions {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .stats-toggle {
+            border-color: rgba(255, 255, 255, 0.35);
+            color: #fff;
+        }
+
+        .stats-toggle:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .grafico-ranking-wrapper {
@@ -45,33 +90,35 @@
 
         .badge-destaque {
             background-color: #FF7209;
-            color: white;
-            padding: 2px 2px;
+            color: #fff;
+            padding: 2px 4px;
             border-radius: 4px;
             font-weight: bold;
         }
 
-        /* Responsividade */
         @media (max-width: 768px) {
             .basquete-img {
                 width: 50%;
-                /* ocupa quase toda a tela */
                 max-width: 500px;
-                /* pode crescer mais no mobile */
             }
 
-            .btn-custom {
-                width: 40%;
-                /* ocupa largura total */
-                padding: 6px;
-                /* aumenta área de clique */
-                font-size: 1.2rem;
-                /* texto maior */
+            .btn-custom,
+            .btn-olheiro {
+                width: 100%;
+                max-width: 320px;
+                padding: 8px 10px;
+                font-size: 1rem;
             }
 
-            .gap-3 {
-                gap: 15px !important;
-                /* mais espaço entre botões */
+            .home-title {
+                font-size: 1.55rem;
+                margin-bottom: 12px;
+            }
+
+            .home-actions {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
             }
 
             .grafico-ranking-wrapper {
@@ -86,38 +133,49 @@
             .relatorio-estatistico .row {
                 flex-direction: column;
                 align-items: center;
-                /* centraliza os cards */
                 gap: 10px;
             }
 
             .relatorio-estatistico .col-12 {
                 width: 100%;
                 max-width: 360px;
-                /* opcional: limita largura dos cards */
+            }
+
+            #stats-content {
+                display: none;
+            }
+
+            #stats-content.is-open {
+                display: block;
             }
         }
     </style>
 
     <div class="d-flex justify-content-center align-items-center min-vh-90 text-center">
         <div>
-            <h6 class="mt-1">Descubra talentos, inspire-se e conecte-se com o futuro do esporte!</h6>
-            <!-- Logo responsiva -->
             <img src="{{ asset('img/LOGO1.png') }}" alt="Logo" class="basquete-img">
+            <h2 class="home-title">Vitrine de Atletas</h2>
 
-            <div class="mt-1 d-flex justify-content-center gap-3 flex-wrap">
-                <a href="{{ route('atletas.index') }}" class="btn-custom">Listar Atletas</a>
+            <div class="mt-1 home-actions">
+                <a href="{{ route('atletas.index') }}" class="btn-custom">Atletas</a>
                 <a href="{{ route('admin.login') }}" class="btn-custom">Administração</a>
+
+                @if (Auth::guard('olheiro')->check())
+                    <a href="{{ route('olheiro.atletas.index') }}" class="btn-olheiro">Técnico / Olheiro</a>
+                @else
+                    <a href="{{ route('olheiro.login.form') }}" class="btn-olheiro">Técnico / Olheiro</a>
+                @endif
             </div>
-            {{-- gráfico de ranking --}}
+
             <div class="mt-3">
-                <h5 class="text-center mb-1">🏆 Ranking dos Mais Visualizados</h5>
+                <h5 class="text-center mb-1">Ranking dos mais visualizados</h5>
                 <div class="mt-2 d-flex justify-content-center">
                     <div class="grafico-ranking-wrapper">
                         <canvas id="rankingChart"></canvas>
                     </div>
                 </div>
             </div>
-            {{-- estatístico dos cadastrados --}}
+
             @php
                 $valores = collect([
                     $estatisticas['categoria12'],
@@ -132,38 +190,42 @@
                 $maior = $valores->max();
                 $sexoMaior = max($estatisticas['masculino'], $estatisticas['feminino']);
             @endphp
+
             <div class="mt-2">
-                <h5 class="text-center mb-2">📊 Relatório estatístico dos cadastrados</h5>
-                <div class="relatorio-estatistico mx-auto" style="max-width: 600px;">
+                <h5 class="text-center mb-2">Relatório estatístico dos cadastrados</h5>
+                <button type="button" id="toggle-stats" class="btn btn-sm stats-toggle d-md-none mb-2">
+                    Mostrar estatísticas
+                </button>
+                <div id="stats-content" class="relatorio-estatistico mx-auto" style="max-width: 600px;">
                     <div class="mb-3 row justify-content-center">
                         <div class="col-12 col-md-6 text-center text-md-start">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>👨 Masculino</span>
+                                    <span>Masculino</span>
                                     <strong class="{{ $estatisticas['masculino'] == $sexoMaior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['masculino'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>👩 Feminino</span>
+                                    <span>Feminino</span>
                                     <strong class="{{ $estatisticas['feminino'] == $sexoMaior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['feminino'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (≤ 12)</span>
+                                    <span>Categoria (<= 12)</span>
                                     <strong class="{{ $estatisticas['categoria12'] == $maior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['categoria12'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (13–14)</span>
+                                    <span>Categoria (13-14)</span>
                                     <strong class="{{ $estatisticas['categoria14'] == $maior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['categoria14'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (15–16)</span>
+                                    <span>Categoria (15-16)</span>
                                     <strong class="{{ $estatisticas['categoria16'] == $maior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['categoria16'] }}
                                     </strong>
@@ -173,33 +235,33 @@
                         <div class="col-12 col-md-6 text-center text-md-start">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (17–18)</span>
+                                    <span>Categoria (17-18)</span>
                                     <strong class="{{ $estatisticas['categoria18'] == $maior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['categoria18'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (19–21)</span>
+                                    <span>Categoria (19-21)</span>
                                     <strong class="{{ $estatisticas['categoria21'] == $maior ? 'badge-destaque' : '' }}">
                                         {{ $estatisticas['categoria21'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (22–29)</span>
-                                    <strong
-                                        class="{{ $estatisticas['categoria22_29'] == $maior ? 'badge-destaque' : '' }}">{{ $estatisticas['categoria22_29'] }}
+                                    <span>Categoria (22-29)</span>
+                                    <strong class="{{ $estatisticas['categoria22_29'] == $maior ? 'badge-destaque' : '' }}">
+                                        {{ $estatisticas['categoria22_29'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (30–39)</span>
-                                    <strong
-                                        class="{{ $estatisticas['categoria30_39'] == $maior ? 'badge-destaque' : '' }}">{{ $estatisticas['categoria30_39'] }}
+                                    <span>Categoria (30-39)</span>
+                                    <strong class="{{ $estatisticas['categoria30_39'] == $maior ? 'badge-destaque' : '' }}">
+                                        {{ $estatisticas['categoria30_39'] }}
                                     </strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
-                                    <span>🏀 Categoria (≥ 40)</span>
-                                    <strong
-                                        class="{{ $estatisticas['categoria'] == $maior ? 'badge-destaque' : '' }}">{{ $estatisticas['categoria'] }}
+                                    <span>Categoria (>= 40)</span>
+                                    <strong class="{{ $estatisticas['categoria'] == $maior ? 'badge-destaque' : '' }}">
+                                        {{ $estatisticas['categoria'] }}
                                     </strong>
                                 </li>
                             </ul>
@@ -209,96 +271,109 @@
             </div>
         </div>
     </div>
+
     @php
-        $nomes = $topAtletas->map(function ($a) {
+        $topAtletasHome = $topAtletas->take(5);
+        $nomes = $topAtletasHome->map(function ($a) {
             return explode(' ', trim($a->nome_completo))[0];
         });
-        $visualizacoes = $topAtletas->pluck('visualizacoes');
+        $visualizacoes = $topAtletasHome->pluck('visualizacoes');
     @endphp
-@endsection
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels" defer></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const ctx = document.getElementById('rankingChart').getContext('2d');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnToggleStats = document.getElementById('toggle-stats');
+            const statsContent = document.getElementById('stats-content');
+            if (btnToggleStats && statsContent) {
+                btnToggleStats.addEventListener('click', () => {
+                    const opened = statsContent.classList.toggle('is-open');
+                    btnToggleStats.textContent = opened ? 'Ocultar estatísticas' : 'Mostrar estatísticas';
+                });
+            }
 
-        const nomes = @json($nomes); // primeiros nomes
-        const visualizacoes = @json($visualizacoes);
+            const chartEl = document.getElementById('rankingChart');
+            if (!chartEl || typeof Chart === 'undefined' || typeof ChartDataLabels === 'undefined') {
+                return;
+            }
 
-        const medalhaCores = visualizacoes.map((_, i) => {
-            if (i === 0) return '#FFD700'; // ouro
-            if (i === 1) return '#C0C0C0'; // prata
-            if (i === 2) return '#CD7F32'; // bronze
-            return '#FF7209'; // padrão
-        });
+            const ctx = chartEl.getContext('2d');
+            const nomes = @json($nomes);
+            const visualizacoes = @json($visualizacoes);
 
-        // Registra o plugin
-        Chart.register(ChartDataLabels);
+            const medalhaCores = visualizacoes.map((_, i) => {
+                if (i === 0) return '#FFD700';
+                if (i === 1) return '#C0C0C0';
+                if (i === 2) return '#CD7F32';
+                return '#FF7209';
+            });
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: nomes,
-                datasets: [{
-                    label: 'Visualizações',
-                    data: visualizacoes,
-                    backgroundColor: medalhaCores,
-                    borderRadius: 6,
-                    barThickness: 20
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    datalabels: {
-                        anchor: 'end',
-                        align: 'right',
-                        color: '#fff',
-                        font: {
-                            weight: 'bold',
-                            size: 12
-                        },
-                        formatter: value => `👁️ ${value}`
-                    },
-                    tooltip: {
-                        enabled: false
-                    }
+            Chart.register(ChartDataLabels);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: nomes,
+                    datasets: [{
+                        label: 'Visualizacoes',
+                        data: visualizacoes,
+                        backgroundColor: medalhaCores,
+                        borderRadius: 6,
+                        barThickness: 20,
+                    }],
                 },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: '#fff',
-                            precision: 0
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
                         },
-                        grid: {
-                            color: 'rgba(255,255,255,0.1)'
-                        },
-                        // margem automática para não cortar o valor
-                        afterDataLimits(scale) {
-                            scale.max += scale.max * 0.15; // adiciona 15% de espaço para o número
-                        }
-                    },
-                    y: {
-                        ticks: {
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'right',
                             color: '#fff',
                             font: {
-                                size: 12
-                            }
+                                weight: 'bold',
+                                size: 12,
+                            },
+                            formatter: value => `${value}`,
                         },
-                        grid: {
-                            display: false
-                        }
-                    }
-                }
-            }
+                        tooltip: {
+                            enabled: false,
+                        },
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#fff',
+                                precision: 0,
+                            },
+                            grid: {
+                                color: 'rgba(255,255,255,0.1)',
+                            },
+                            afterDataLimits(scale) {
+                                scale.max += scale.max * 0.15;
+                            },
+                        },
+                        y: {
+                            ticks: {
+                                color: '#fff',
+                                font: {
+                                    size: 12,
+                                },
+                            },
+                            grid: {
+                                display: false,
+                            },
+                        },
+                    },
+                },
+            });
         });
-    });
-</script>
+    </script>
+@endsection

@@ -2,40 +2,24 @@
 
 @section('content')
     <style>
-        /* ===== Flip Card ===== */
+        /* ===== Card Atleta ===== */
         .flip-card {
-            perspective: 1000px;
-            height: 240px;
-            cursor: pointer;
+            height: 220px;
             position: relative;
-        }
-
-        .flip-card-inner {
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            position: relative;
-            border-radius: 12px;
-        }
-
-        .flip-card.is-flipped .flip-card-inner {
-            transform: rotateY(180deg);
-        }
-
-        .flip-front,
-        .flip-back {
-            position: absolute;
-            inset: 0;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
         }
 
+        .flip-card-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+
         .flip-front {
             display: flex;
+            width: 100%;
             height: 100%;
             position: relative;
             justify-content: center;
@@ -49,9 +33,10 @@
         }
 
         .flip-front .foto-front img {
-            width: 104%;
-            height: 106%;
-            object-fit: inherit;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
             display: block;
             border-radius: 12px 0 0 12px;
         }
@@ -62,7 +47,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            padding: 16px;
+            padding: 12px;
             position: relative;
             z-index: 2;
             color: #fff;
@@ -78,71 +63,23 @@
         }
 
         .flip-front .info h3 {
-            font-size: 15px;
-            font-weight: 500;
-            margin: 0 0 4px 0;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            line-height: 1.2;
             text-transform: uppercase;
             white-space: normal;
             text-overflow: ellipsis;
         }
 
         .flip-front .posicao {
-            font-size: 25px;
+            font-size: 27px;
             font-weight: 900;
             color: #e66000;
-            margin: 14px 0 6px 0;
+            margin: 8px 0 6px 0;
         }
 
-        .flip-front .toque-detalhes {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-top: auto;
-        }
-
-        .flip-back {
-            background: linear-gradient(135deg, #FF7F50, #FF7F50 40%, #FF4500);
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            color: #fff;
-            transform: rotateY(180deg);
-            display: flex;
-            flex-direction: column;
-            padding: 5px;
-        }
-
-        .flip-back .conteudo {
-            display: flex;
-            /* gap: 12px; */
-            flex: 1;
-            align-items: start;
-        }
-
-        .flip-back .foto-back {
-            flex: 0 0 100px;
-        }
-
-        .flip-back .foto-back img {
-            width: 95px;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .flip-back .dados {
-            flex: 1;
-            font-size: 15px;
-            line-height: 1.25;
-            align-items: flex-end;
-            text-align: left;
-        }
-
-        .flip-back .dados p {
-            margin: 2px 0;
-        }
-
-        .badge-pos,
-        .badge-back {
+        .badge-pos {
             background: #e66000;
             color: #fff;
             padding: 4px 8px;
@@ -150,18 +87,29 @@
             font-weight: 700;
         }
 
-        .badge-back {
-            padding: 1px 1px;
+        .perfil-action-btn {
+            width: 100%;
+            max-width: 118px;
+            min-width: 0;
+            white-space: nowrap;
+            display: inline-block;
+            font-size: 0.82rem;
+            padding: 0.3rem 0.5rem;
+            line-height: 1.1;
         }
 
-        .video-link {
-            color: #fff;
-            text-decoration: underline;
+        .perfil-open-wrap {
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
         }
 
-        .video-link:hover {
-            text-decoration: none;
-            color: #000;
+        @media (max-width: 576px) {
+            .perfil-action-btn {
+                max-width: 106px;
+                font-size: 0.78rem;
+                padding: 0.26rem 0.4rem;
+            }
         }
 
         strong {
@@ -266,7 +214,7 @@
 
         @media (max-width: 768px) {
             .flip-card {
-                height: 240px;
+                height: 214px;
             }
 
             .flip-front {
@@ -291,26 +239,13 @@
                 font-size: 25px;
             }
 
-            .flip-back .foto-back {
-                flex: 0 0 80px;
-            }
-
-            .flip-back .foto-back img {
-                width: 100px;
-                height: 150px;
-            }
-
-            .flip-back .dados {
-                font-size: 15px;
-            }
-
             .atleta-card {
                 flex: 0 0 100%;
                 max-width: 100%;
             }
 
             #lista-atletas .atleta-card:last-child {
-                margin-bottom: 4rem;
+                margin-bottom: 0.7rem;
             }
 
             #form-filtros .col-12.d-flex.gap-2 button {
@@ -335,30 +270,132 @@
         }
 
         .filtros-row {
-            margin-bottom: 18px;
+            margin-bottom: 4px;
+        }
+
+        .filtros-card {
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 12px;
+            background: rgba(18, 36, 74, 0.35);
+            padding: 0.5rem;
+        }
+
+        .btn-ordenar-vis {
+            min-height: 34px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .filtro-btn {
+            min-height: 34px;
+            padding: 0.26rem 0.68rem;
+            font-size: 0.88rem;
+            line-height: 1.1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filtro-actions {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            justify-content: flex-end;
+            margin-top: 2px;
+        }
+
+        .filtro-actions .filtro-btn {
+            flex: 1 1 0;
+            min-width: 104px;
+        }
+
+        #form-filtros .mt-2 {
+            margin-top: 2.0rem !important;
+        }
+
+        #form-filtros .filtro-ativo {
+            border-color: #ff7209 !important;
+            box-shadow: 0 0 0 0.16rem rgba(255, 114, 9, 0.28);
+            background: #fffaf6;
+        }
+
+        .filtro-resultados-meta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.25rem 0.52rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(255, 114, 9, 0.95);
+        }
+
+        .paginacao-box {
+            margin-top: 0.45rem;
+            margin-bottom: 0.65rem;
+            text-align: center;
+        }
+
+        .paginacao-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #fff;
+            border-radius: 999px;
+            padding: 0.22rem 0.64rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .paginacao-box .pagination {
+            margin-bottom: 0;
+        }
+
+        .paginacao-box .page-link {
+            min-width: 84px;
+            text-align: center;
+            font-weight: 700;
+            padding-top: 0.28rem;
+            padding-bottom: 0.28rem;
+        }
+
+        @media (max-width: 767.98px) {
+            .filtro-actions {
+                justify-content: stretch;
+            }
+
+            .filtro-actions .filtro-btn {
+                min-width: 0;
+            }
+
+            .paginacao-box .page-link {
+                min-width: 84px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 
     <div class="container">
-        <div class="mb-3">
-            <div class="mb-3">
-                <a href="{{ route('home') }}" class="btn btn-outline-secondary"
-                    style="background:#e66000; color:white; font-size: 1.4rem;" title="Voltar para a Home">
-                    <i class="fas fa-home"></i>
-                </a>
-            </div>
-        </div>
-
         @php $ordenandoPorVisualizacoes = request('ordenar') === 'visualizacoes'; @endphp
+        <div class="filtros-card mb-3">
 
         <a href="{{ route('atletas.index', array_merge(request()->query(), ['ordenar' => 'visualizacoes'])) }}"
-            class="btn w-100 {{ $ordenandoPorVisualizacoes ? 'btn-dark' : 'btn-outline-secondary' }}"
+            class="btn w-100 btn-ordenar-vis {{ $ordenandoPorVisualizacoes ? 'btn-dark' : 'btn-outline-secondary' }}"
             style="background:{{ $ordenandoPorVisualizacoes ? '#333' : '#e66000' }}; color:white">
             Ordenar por Visualizações 👁️
         </a>
 
         {{-- FORMULÁRIO DE FILTROS --}}
-        <form method="GET" action="{{ route('atletas.index') }}" id="form-filtros" class="row filtros-row g-2 mb-4">
+        <form method="GET" action="{{ route('atletas.index') }}" id="form-filtros" class="row filtros-row g-2 mb-1">
+            <div class="col-12 col-md-4">
+                <label for="nome">Nome</label>
+                <input type="text" name="nome" id="nome" class="form-control"
+                    value="{{ request('nome') }}" placeholder="Digite o nome do atleta..."
+                    autocomplete="off" {{ request('nome') ? 'autofocus' : '' }}>
+            </div>
             <div class="col-6 col-md-2">
                 <label for="idade_min">Idade Mín</label>
                 <input type="number" name="idade_min" id="idade_min" class="form-control" min="0"
@@ -369,7 +406,7 @@
                 <input type="number" name="idade_max" id="idade_max" class="form-control" min="0"
                     value="{{ request('idade_max') }}">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label for="posicao">Posição</label>
                 <select name="posicao" id="posicao" class="form-control">
                     <option value="">Todas</option>
@@ -381,7 +418,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <label for="cidade">Cidade</label>
                 <select name="cidade" id="cidade" class="form-control">
                     <option value="">Todas</option>
@@ -393,7 +430,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
                 <label for="entidade">Entidade</label>
                 <select name="entidade" id="entidade" class="form-control">
                     <option value="">Todas</option>
@@ -406,15 +443,21 @@
                 </select>
             </div>
 
-            <div class="col-12 col-md-6 mt-2 d-flex gap-2">
-                <button type="submit" class="btn flex-fill" style="background:#e66000; color:#fff">
-                    Filtrar
-                </button>
-                <a href="{{ route('atletas.index') }}" class="btn btn-outline-secondary flex-fill">
-                    Limpar
-                </a>
+            <div class="col-12 col-md-4 mt-2">
+                <div class="filtro-actions">
+                    <button type="submit" class="btn filtro-btn" style="background:#e66000; color:#fff">
+                        Filtrar
+                    </button>
+                    <a href="{{ route('atletas.index') }}" class="btn btn-outline-secondary filtro-btn">
+                        Limpar
+                    </a>
+                </div>
             </div>
         </form>
+        <div class="d-flex justify-content-start mb-1">
+            <span class="filtro-resultados-meta">{{ $atletas->total() }} atleta(s) encontrado(s)</span>
+        </div>
+        </div>
 
         {{-- LISTA DE CARDS --}}
         <div class="row g-3" id="lista-atletas">
@@ -435,8 +478,7 @@
                 <div class="col-12 col-md-4 text-center atleta-card" data-idade="{{ $atleta->idade }}"
                     data-posicao="{{ strtolower($atleta->posicao_jogo) }}" data-cidade="{{ strtolower($atleta->cidade) }}"
                     data-entidade="{{ strtolower($atleta->entidade) }}">
-                    <div class="flip-card visualizar-atleta" data-id="{{ $atleta->id }}"
-                        data-url="{{ url('/atleta/visualizar/' . $atleta->id) }}">
+                    <div class="flip-card visualizar-atleta">
                         <div class="flip-card-inner">
                             <div class="flip-front">
                                 <div class="foto-front position-relative">
@@ -491,39 +533,21 @@
                                 <div class="info">
                                     <h3>{{ strtoupper($atleta->nome_completo) }}</h3>
                                     <div class="posicao">{{ $atleta->posicao_jogo }}</div>
-                                    <small class="toque-detalhes">Toque para ver detalhes</small>
                                     <div class="badge-pos viz-counter-wrapper" style="margin-top:6px;">
                                         👁️
                                         <span id="visualizacoes-{{ $atleta->id }}">
                                             {{ (int) $atleta->visualizacoes }}
                                         </span>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="flip-back">
-                                <div class="conteudo">
-                                    <div class="foto-back">
-                                        <img src="{{ asset('img/basket-silhouette.png') }}"
-                                            alt="Foto de {{ $atleta->nome_completo }}">
-                                    </div>
-                                    <div class="dados">
-                                        <p><strong>Idade:</strong> {{ $atleta->idade }}</p>
-                                        <p><strong>Altura (cm):</strong> {{ $atleta->altura }}</p>
-                                        <p><strong>Peso (kg):</strong> {{ $atleta->peso }}</p>
-                                        <p><strong>Cidade:</strong> {{ $atleta->cidade }}</p>
-                                        <p><strong>Treina:</strong> {{ $atleta->entidade }}</p>
-                                        <p><strong>Contato:</strong> {{ $atleta->contato }}</p>
-                                        <p><strong>Link:</strong>
-                                            <a href="{{ $atleta->resumo }}" target="_blank" rel="noopener noreferrer"
-                                                class="video-link">
-                                                {{ $atleta->resumo }}
-                                            </a>
-                                        </p>
+                                    <div class="perfil-open-wrap">
+                                        <a href="{{ route('atletas.show', $atleta->id) }}"
+                                            class="btn btn-sm btn-light perfil-action-btn perfil-open-link"
+                                            data-track-url="{{ url('/atleta/visualizar/' . $atleta->id) }}">
+                                            Ver perfil completo
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -535,8 +559,11 @@
         </div>
 
         {{-- PAGINAÇÃO --}}
-        <div class="d-flex justify-content-center mt-4 mb-5">
-            {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
+        <div class="paginacao-box">
+            <div class="paginacao-status">Página {{ $atletas->currentPage() }} de {{ $atletas->lastPage() }}</div>
+            <div class="d-flex justify-content-center mt-2">
+                {{ $atletas->onEachSide(1)->links('pagination::simple-bootstrap-5') }}
+            </div>
         </div>
     </div>
 
@@ -548,37 +575,28 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.flip-card.visualizar-atleta')
-                .forEach(card => {
-                    card.addEventListener('click', async () => {
-                        card.classList.toggle('is-flipped');
-                        if (!card.classList.contains('is-flipped')) return;
+            const formFiltros = document.getElementById('form-filtros');
+            document.querySelectorAll('.perfil-open-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    const trackUrl = link.dataset.trackUrl;
+                    if (!trackUrl) {
+                        return;
+                    }
 
-                        const id = card.dataset.id;
-                        const counter = document.getElementById('visualizacoes-' + id);
-                        const baseUrl = card.dataset.url;
-
-                        try {
-                            const resp = await fetch(baseUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': getCsrf(),
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-                            const data = await resp.json();
-                            if (data.visualizacoes !== undefined) {
-                                counter.textContent = data.visualizacoes;
-                                return;
-                            }
-                        } catch {
-                            console.error('Erro ao registrar visualização.');
-                        }
-                        counter.textContent = +counter.textContent + 1;
-                    });
+                    fetch(trackUrl, {
+                        method: 'POST',
+                        keepalive: true,
+                        headers: {
+                            'X-CSRF-TOKEN': getCsrf(),
+                            'Content-Type': 'application/json'
+                        },
+                        body: '{}'
+                    }).catch(() => {});
                 });
+            });
 
             // Controle de desativação de filtros
+            const nomeEl = document.getElementById('nome');
             const idadeMin = document.getElementById('idade_min');
             const idadeMax = document.getElementById('idade_max');
             const posicaoEl = document.getElementById('posicao');
@@ -603,14 +621,72 @@
                 }
             }
 
+            function atualizarFiltrosAtivos() {
+                [nomeEl, idadeMin, idadeMax, posicaoEl, cidadeEl, entidadeEl].forEach(el => {
+                    if (!el) {
+                        return;
+                    }
+                    const valor = String(el.value || '').trim();
+                    el.classList.toggle('filtro-ativo', valor !== '');
+                });
+            }
+
             [idadeMin, idadeMax, posicaoEl, cidadeEl, entidadeEl].forEach(el => {
                 if (el) {
-                    el.addEventListener('input', toggleFiltros);
-                    el.addEventListener('change', toggleFiltros);
+                    el.addEventListener('input', function() {
+                        toggleFiltros();
+                        atualizarFiltrosAtivos();
+                    });
+                    el.addEventListener('change', function() {
+                        toggleFiltros();
+                        atualizarFiltrosAtivos();
+                    });
                 }
             });
 
+            let nomeDebounce = null;
+            let ultimoNomeSubmetido = (nomeEl ? (nomeEl.value || '').trim() : '');
+            if (nomeEl && formFiltros) {
+                const restoreCursor = function() {
+                    const fim = nomeEl.value.length;
+                    nomeEl.focus();
+                    if (nomeEl.setSelectionRange) {
+                        nomeEl.setSelectionRange(fim, fim);
+                    }
+                };
+
+                if (nomeEl.value.trim() !== '') {
+                    restoreCursor();
+                }
+
+                nomeEl.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        ultimoNomeSubmetido = nomeEl.value.trim();
+                        formFiltros.submit();
+                    }
+                });
+
+                nomeEl.addEventListener('input', function() {
+                    atualizarFiltrosAtivos();
+                    clearTimeout(nomeDebounce);
+                    nomeDebounce = setTimeout(function() {
+                        const nomeAtual = nomeEl.value.trim();
+                        if (nomeAtual !== '' && nomeAtual.length < 3) {
+                            return;
+                        }
+                        if (nomeAtual === ultimoNomeSubmetido) {
+                            return;
+                        }
+                        ultimoNomeSubmetido = nomeAtual;
+                        formFiltros.submit();
+                    }, 900);
+                });
+            }
+
             toggleFiltros();
+            atualizarFiltrosAtivos();
         });
     </script>
 @endsection
+

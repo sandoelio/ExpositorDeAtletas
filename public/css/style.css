@@ -1,4 +1,4 @@
-/* Fundo geral da página */
+﻿/* Fundo geral da pÃ¡gina */
 .pagina-tema {
     background-color: #28365F; 
     color: #FFFFFF; 
@@ -6,7 +6,7 @@
 }
 
 
-/* Estilização dos Cards */
+/* EstilizaÃ§Ã£o dos Cards */
 .card {
     background-color: #704708; 
     border-radius: 10px;
@@ -17,7 +17,7 @@
     text-align: center;
 }
 
-/* Estilização do Avatar */
+/* EstilizaÃ§Ã£o do Avatar */
 .avatar-img {
     width: 150px;
     height: 150px;
@@ -28,7 +28,7 @@
     padding: 5px;
 }
 
-/* Botões */
+/* BotÃµes */
 .btn-primary {
     background-color: #28365F; 
     border: none;
@@ -50,18 +50,25 @@
     width: 100%; /* Define uma largura menor */
     height: auto; /* Define uma altura fixa */
     margin: 0 auto; /* Centraliza na tela */
-    background-color: #FF7209; 
-
+    background-color: #FF7209;
+    padding: 4px 0;
 }
-/* Estilização do texto de spam */
+
+.navbar-brand {
+    margin-bottom: 0;
+    padding: 2px 0;
+}
+/* EstilizaÃ§Ã£o do texto de spam */
 .spam-text {
     background-color: #FF7209;
-    color: #020202; 
-    padding: 10px;
+    color: #020202;
+    padding: 6px 8px;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    font-weight: 600;
 }
-
 /* Ajuste do tamanho da logo */
 .logo-img {
     width: 90px; /* Reduzindo para melhor encaixe */
@@ -74,15 +81,14 @@
 .footer {
     background-color: #FF7209;
     color: #141313;
-    padding: 10px 0;
+    padding: 6px 0;
     width: 100%;
-    height: 60px;
-    font-size: 20px;
+    min-height: 44px;
+    font-size: 16px;
+    line-height: 1.2;
     text-align: center;
 }
-
-
-/*botoes paginação*/
+/*botoes paginaÃ§Ã£o*/
 .pagination .page-item .page-link {
     color: #070707; 
     background-color: #FFA500; 
@@ -97,7 +103,7 @@
     color: #ffffff; /* Texto branco */
     text-align: center; /* Centralizado */
     font-size: 14px; /* Tamanho adequado */
-    margin-top: 0px; /* Espaço entre paginação e texto */  
+    margin-top: 0px; /* EspaÃ§o entre paginaÃ§Ã£o e texto */  
 }
 
 .container {
@@ -121,7 +127,7 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1px; /* Espaçamento entre os cards */
+    gap: 1px; /* EspaÃ§amento entre os cards */
 }
 
 /*imagem da home*/
@@ -131,11 +137,11 @@ h1 {
     margin-right: 10px;
 }
 
-/* Estilização do card flip */
+/* EstilizaÃ§Ã£o do card flip */
 
 .card p {
     word-break: break-word; /* quebra palavras longas */
-    white-space: pre-wrap;  /* respeita quebras de linha e espaços */
+    white-space: pre-wrap;  /* respeita quebras de linha e espaÃ§os */
     overflow-wrap: break-word;
     margin-bottom: 2px; 
 }
@@ -148,7 +154,7 @@ h1 {
 
 .card.front,
 .card.back {
-    min-height: 320px; /* ajuste conforme necessário */
+    min-height: 320px; /* ajuste conforme necessÃ¡rio */
     display: flex;
     flex-direction: column;
 
@@ -201,7 +207,7 @@ h1 {
     max-height: 300px;
     padding-right: 10px;
     text-align: left;
-    gap: 4px; /* Espaço compacto entre os <p> */
+    gap: 4px; /* EspaÃ§o compacto entre os <p> */
     display: flex;
     flex-direction: column;
     
@@ -244,7 +250,7 @@ select.disabled, input.disabled {
       color: #0056b3;
   }
   
-  /* Ajustes para as instruções de vídeo */
+  /* Ajustes para as instruÃ§Ãµes de vÃ­deo */
   p.video-instructions {
       margin-bottom: 0.5rem;
       font-size: 1rem;
@@ -263,6 +269,20 @@ select.disabled, input.disabled {
   }
 
 @media (max-width: 576px) {
+    .navbar {
+        padding: 2px 0;
+    }
+
+    .spam-text {
+        font-size: 1.25rem;
+        padding: 4px 6px;
+    }
+
+    .footer {
+        min-height: 40px;
+        font-size: 14px;
+        padding: 5px 0;
+    }
     .centralizar {
         text-align: center;
         margin-top: 50%;
