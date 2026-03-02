@@ -31,6 +31,7 @@ class AtletasTemplateExport implements FromArray, WithHeadings
             'entidade',
             'posicao_jogo',
             'contato',
+            'email',
             'resumo'
         ];
     }

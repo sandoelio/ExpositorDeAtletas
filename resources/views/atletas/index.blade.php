@@ -544,7 +544,7 @@
                                         <a href="{{ route('atletas.show', $atleta->id) }}"
                                             class="btn btn-sm btn-light perfil-action-btn perfil-open-link"
                                             data-track-url="{{ url('/atleta/visualizar/' . $atleta->id) }}">
-                                            Ver perfil completo
+                                            Ver perfil
                                         </a>
                                     </div>
                                 </div>

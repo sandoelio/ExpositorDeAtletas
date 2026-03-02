@@ -47,11 +47,13 @@ class OlheiroAuthController extends Controller
             'cidade' => trim($data['cidade']),
             'login' => trim($data['login']),
             'password' => Hash::make($data['password']),
+            'aprovado' => false,
+            'aprovado_em' => null,
         ]);
 
         return redirect()
             ->route('olheiro.login.form')
-            ->with('olheiro_success', 'Cadastro concluido com sucesso. Agora faca login.');
+            ->with('olheiro_success', 'Cadastro enviado com sucesso. Aguarde a validacao do administrador para fazer login.');
     }
 
     public function login(Request $request)
@@ -61,9 +63,19 @@ class OlheiroAuthController extends Controller
             'password' => 'required|string|max:255',
         ]);
 
+        $login = trim($credentials['login']);
+        $olheiro = Olheiro::where('login', $login)->first();
+
+        if ($olheiro && Hash::check($credentials['password'], $olheiro->password) && !$olheiro->aprovado) {
+            return back()
+                ->withErrors(['login' => 'Cadastro pendente de validacao do administrador.'])
+                ->withInput($request->only('login'));
+        }
+
         if (Auth::guard('olheiro')->attempt([
-            'login' => trim($credentials['login']),
+            'login' => $login,
             'password' => $credentials['password'],
+            'aprovado' => true,
         ])) {
             $request->session()->regenerate();
             return redirect()->route('olheiro.atletas.index');

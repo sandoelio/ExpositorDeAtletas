@@ -154,7 +154,6 @@
     <div class="d-flex justify-content-center align-items-center min-vh-90 text-center">
         <div>
             <img src="{{ asset('img/LOGO1.png') }}" alt="Logo" class="basquete-img">
-            <h2 class="home-title">Vitrine de Atletas</h2>
 
             <div class="mt-1 home-actions">
                 <a href="{{ route('atletas.index') }}" class="btn-custom">Atletas</a>

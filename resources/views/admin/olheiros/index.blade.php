@@ -10,7 +10,7 @@
         @endif
 
         <div class="admin-olh-head mb-3">
-            <h4 class="m-0">Gestão de Técnicos/Olheiros</h4>
+            <h4 class="m-0">Gestao de Tecnicos/Olheiros</h4>
             <a href="{{ route('admin.dashboard') }}" class="btn btn-back">Voltar</a>
         </div>
 
@@ -18,7 +18,7 @@
             <div class="card-body">
                 <form action="{{ route('admin.olheiros.index') }}" method="GET" class="row g-2 align-items-end">
                     <div class="col-12 col-md-7">
-                        <label for="nome" class="form-label mb-1">Nome do técnico/olheiro</label>
+                        <label for="nome" class="form-label mb-1">Nome do tecnico/olheiro</label>
                         <input id="nome" type="text" name="nome" class="form-control"
                             placeholder="Digite o nome..." value="{{ $filtroNome }}">
                     </div>
@@ -40,22 +40,38 @@
                             <th>Nome</th>
                             <th>Entidade</th>
                             <th>Cidade</th>
-                            <th class="text-center acoes-col">Ações</th>
+                            <th class="text-center acoes-col">Acoes</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($olheiros as $o)
                             <tr>
-                                <td class="fw-semibold" data-label="Nome">{{ $o->nome }}</td>
+                                <td class="fw-semibold" data-label="Nome">
+                                    <div>{{ $o->nome }}</div>
+                                    <span class="olh-status-badge {{ $o->aprovado ? 'is-approved' : 'is-pending' }}">
+                                        {{ $o->aprovado ? 'Validado' : 'Pendente' }}
+                                    </span>
+                                </td>
                                 <td data-label="Entidade">{{ $o->entidade }}</td>
                                 <td data-label="Cidade">{{ $o->cidade }}</td>
-                                <td class="text-center acoes-col" data-label="Ações">
+                                <td class="text-center acoes-col" data-label="Acoes">
                                     <div class="acoes-wrap">
+                                        @if (!$o->aprovado)
+                                            <form action="{{ route('admin.olheiros.approve', $o->id) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button class="btn btn-sm btn-approve">Validar</button>
+                                            </form>
+                                        @else
+                                            <button class="btn btn-sm btn-approved" type="button" disabled>Validado</button>
+                                        @endif
+
                                         <a href="{{ route('admin.olheiros.edit', $o->id) }}" class="btn btn-sm btn-edit">
                                             Editar
                                         </a>
+
                                         <form action="{{ route('admin.olheiros.destroy', $o->id) }}" method="POST"
-                                            onsubmit="return confirm('Excluir este técnico/olheiro?');">
+                                            onsubmit="return confirm('Excluir este tecnico/olheiro?');">
                                             @csrf
                                             @method('DELETE')
                                             <button class="btn btn-sm btn-danger">Excluir</button>
@@ -65,7 +81,7 @@
                             </tr>
                         @empty
                             <tr class="empty-row">
-                                <td colspan="4" class="text-center py-3">Nenhum técnico/olheiro encontrado.</td>
+                                <td colspan="4" class="text-center py-3">Nenhum tecnico/olheiro encontrado.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -161,14 +177,56 @@
             padding: 0.7rem 0.65rem;
         }
 
+        .olh-status-badge {
+            display: inline-flex;
+            margin-top: 0.24rem;
+            padding: 0.12rem 0.42rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+        }
+
+        .olh-status-badge.is-pending {
+            background: #fff3cd;
+            color: #7a4b00;
+            border: 1px solid #ffe08a;
+        }
+
+        .olh-status-badge.is-approved {
+            background: #e6f7ea;
+            color: #0f5132;
+            border: 1px solid #9fd9b0;
+        }
+
         .acoes-col {
-            width: 210px;
+            width: 250px;
         }
 
         .acoes-wrap {
             display: inline-flex;
             gap: 8px;
             align-items: center;
+        }
+
+        .btn-approve {
+            background: #198754;
+            border: 1px solid #198754;
+            color: #fff;
+        }
+
+        .btn-approve:hover {
+            background: #157347;
+            border-color: #157347;
+            color: #fff;
+        }
+
+        .btn-approved {
+            background: #6c757d;
+            border: 1px solid #6c757d;
+            color: #fff;
+            opacity: 1;
+            cursor: default;
         }
 
         .btn-edit {
@@ -279,3 +337,4 @@
         });
     </script>
 @endpush
+

@@ -28,7 +28,7 @@
                     <div class="import-step">
                         <span class="step-badge">2</span>
                         <strong>Preencha os dados</strong>
-                        <small>Mantenha os nomes de colunas do template.</small>
+                        <small>Mantenha os nomes de colunas do template. O campo email e opcional.</small>
                     </div>
                     <div class="import-step">
                         <span class="step-badge">3</span>

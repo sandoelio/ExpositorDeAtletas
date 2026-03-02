@@ -10,7 +10,9 @@ class AdminOlheiroController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Olheiro::query()->orderBy('nome');
+        $query = Olheiro::query()
+            ->orderBy('aprovado')
+            ->orderBy('nome');
 
         if ($request->filled('nome')) {
             $nome = trim((string) $request->nome);
@@ -23,6 +25,20 @@ class AdminOlheiroController extends Controller
             'olheiros' => $olheiros,
             'filtroNome' => (string) ($request->nome ?? ''),
         ]);
+    }
+
+    public function approve($id)
+    {
+        $olheiro = Olheiro::findOrFail($id);
+
+        $olheiro->update([
+            'aprovado' => true,
+            'aprovado_em' => now(),
+        ]);
+
+        return redirect()
+            ->route('admin.olheiros.index')
+            ->with('success', 'Tecnico/olheiro validado com sucesso.');
     }
 
     public function edit($id)
