@@ -112,12 +112,17 @@
             <section class="form-section mb-2">
                 <h5 class="form-section-title">Contato</h5>
                 <div class="row g-2">
-                    <div class="col-12 col-md-8">
-                        <label for="contato" class="form-label">Contato (telefone ou e-mail)</label>
+                    <div class="col-12 col-md-6">
+                        <label for="contato" class="form-label">Contato (telefone)</label>
                         <input type="text" class="form-control" name="contato" id="contato"
-                            placeholder="Ex: (71) 91234-5678 ou email@dominio.com" required
+                            placeholder="Ex: (71) 91234-5678" required
                             value="{{ old('contato', $atleta->contato) }}">
                         <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="email" class="form-label">E-mail</label>
+                        <input type="email" class="form-control" name="email" id="email"
+                            placeholder="Ex: atleta@email.com" value="{{ old('email', $atleta->email) }}">
                     </div>
                 </div>
             </section>

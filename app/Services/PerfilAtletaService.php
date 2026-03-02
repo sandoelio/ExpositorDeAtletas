@@ -18,6 +18,7 @@ class PerfilAtletaService
         }
 
         $contatoRaw = trim((string) ($atleta->contato ?? ''));
+        $emailRaw = strtolower(trim((string) ($atleta->email ?? '')));
         $contatoDigitos = preg_replace('/\D+/', '', $contatoRaw);
         $whatsappUrl = null;
         if (strlen($contatoDigitos) >= 10) {
@@ -25,7 +26,10 @@ class PerfilAtletaService
             $whatsNumero = str_starts_with($whatsNumero, '55') ? $whatsNumero : '55' . $whatsNumero;
             $whatsappUrl = 'https://wa.me/' . $whatsNumero;
         }
-        $emailUrl = filter_var($contatoRaw, FILTER_VALIDATE_EMAIL) ? 'mailto:' . $contatoRaw : null;
+        $emailValido = filter_var($emailRaw, FILTER_VALIDATE_EMAIL)
+            ? $emailRaw
+            : (filter_var($contatoRaw, FILTER_VALIDATE_EMAIL) ? strtolower($contatoRaw) : null);
+        $emailUrl = $emailValido ? 'mailto:' . $emailValido : null;
 
         $video = $this->parseVideoLink((string) ($atleta->resumo ?? ''));
 
@@ -42,6 +46,7 @@ class PerfilAtletaService
             'peso' => $pesoFmt,
             'cidade' => $atleta->cidade ?: 'Cidade nao informada',
             'entidade' => $atleta->entidade ?: 'Entidade nao informada',
+            'email' => $emailValido,
             'foto_url' => !empty($atleta->imagem_base64)
                 ? 'data:image/png;base64,' . $atleta->imagem_base64
                 : asset('img/avatar.png'),
@@ -66,6 +71,7 @@ class PerfilAtletaService
             'Perfil visualizado: ' . number_format((int) $perfil['visualizacoes'], 0, ',', '.') . ' vezes',
             'Rank atual: #' . $perfil['rank'],
             'Treina na instituicao: ' . ($perfil['entidade'] ?: '-'),
+            'E-mail: ' . ($perfil['email'] ?: 'nao informado'),
         ];
 
         return [
@@ -122,6 +128,16 @@ class PerfilAtletaService
                 if (preg_match('#/(\d+)#', $path, $matches)) {
                     $videoEmbedUrl = 'https://player.vimeo.com/video/' . $matches[1];
                     $videoTipo = 'iframe';
+                }
+            } elseif (str_contains($host, 'instagram.com')) {
+                if (preg_match('#/(reel|p|tv)/([^/?]+)#', $path, $matches)) {
+                    $tipo = $matches[1] ?? null;
+                    $codigo = $matches[2] ?? null;
+
+                    if (!empty($tipo) && !empty($codigo)) {
+                        $videoEmbedUrl = 'https://www.instagram.com/' . $tipo . '/' . rawurlencode($codigo) . '/embed';
+                        $videoTipo = 'iframe';
+                    }
                 }
             }
 

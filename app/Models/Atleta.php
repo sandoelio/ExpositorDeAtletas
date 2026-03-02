@@ -21,6 +21,7 @@ class Atleta extends Model
         'entidade',
         'posicao_jogo',
         'contato',
+        'email',
         'resumo',
     ];
 

@@ -19,11 +19,18 @@ class Olheiro extends Authenticatable
         'cidade',
         'login',
         'password',
+        'aprovado',
+        'aprovado_em',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'aprovado' => 'boolean',
+        'aprovado_em' => 'datetime',
     ];
 
     public function favoritos()
@@ -36,4 +43,3 @@ class Olheiro extends Authenticatable
         return $this->hasMany(OlheiroShortlist::class);
     }
 }
-

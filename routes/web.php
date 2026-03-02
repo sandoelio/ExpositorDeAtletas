@@ -40,6 +40,7 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
     Route::get('/dashboard', function () { return view('admin.dashboard'); })->name('admin.dashboard');
     Route::get('/atletas', [AdminAtletaController::class, 'index'])->name('admin.index');
     Route::get('/olheiros', [AdminOlheiroController::class, 'index'])->name('admin.olheiros.index');
+    Route::patch('/olheiros/{id}/aprovar', [AdminOlheiroController::class, 'approve'])->name('admin.olheiros.approve');
     Route::get('/olheiros/{id}/edit', [AdminOlheiroController::class, 'edit'])->name('admin.olheiros.edit');
     Route::put('/olheiros/{id}', [AdminOlheiroController::class, 'update'])->name('admin.olheiros.update');
     Route::delete('/olheiros/{id}', [AdminOlheiroController::class, 'destroy'])->name('admin.olheiros.destroy');

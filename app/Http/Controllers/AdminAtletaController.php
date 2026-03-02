@@ -25,7 +25,8 @@ class AdminAtletaController extends Controller
         }
 
         if ($texto !== '') {
-            $query->where('nome_completo', 'like', '%' . $texto . '%');
+            $textoBusca = mb_strtolower($texto, 'UTF-8');
+            $query->whereRaw('LOWER(nome_completo) LIKE ?', ['%' . $textoBusca . '%']);
         }
 
         $atletas = $query->paginate(5)->withQueryString();

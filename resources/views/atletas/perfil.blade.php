@@ -59,6 +59,9 @@
                     <span>{{ $atleta['altura'] }}</span>
                     <span>{{ $atleta['peso'] }}</span>
                     <span>{{ $atleta['cidade'] }}</span>
+                    @if (!empty($atleta['email']))
+                        <span>{{ $atleta['email'] }}</span>
+                    @endif
                 </div>
 
                 <p class="demo-summary">{{ $atleta['bio'] }}</p>
@@ -126,6 +129,7 @@
                 <div class="demo-contact-box">
                     <h3>Contato rapido</h3>
                     <p>Acoes com base no contato cadastrado do atleta.</p>
+                    <p><strong>E-mail:</strong> {{ !empty($atleta['email']) ? $atleta['email'] : 'Nao informado' }}</p>
                     <div class="demo-contact-actions">
                         @if (!empty($atleta['whatsapp_url']))
                             <a href="{{ $atleta['whatsapp_url'] }}" target="_blank" rel="noopener noreferrer"

@@ -39,7 +39,8 @@ class AtletaController extends Controller
                 $query->where('idade', '<=', (int)$request->idade_max);
             }
             if ($request->filled('nome')) {
-                $query->where('nome_completo', 'like', '%' . $request->nome . '%');
+                $nomeBusca = mb_strtolower(trim((string) $request->nome), 'UTF-8');
+                $query->whereRaw('LOWER(nome_completo) LIKE ?', ['%' . $nomeBusca . '%']);
             }
             if ($request->filled('posicao')) {
                 $query->where('posicao_jogo', $request->posicao);
@@ -160,6 +161,7 @@ class AtletaController extends Controller
                 'peso' => 'required|numeric|min:30|max:150',
                 'sexo' => 'required|string|in:Masculino,Feminino',
                 'contato' => 'required|string|max:20',
+                'email' => 'nullable|email|max:255',
                 'posicao_jogo' => 'required|string|max:50',
                 'cidade' => 'required|string|max:255',
                 'entidade' => 'required|string|max:255',
@@ -178,6 +180,7 @@ class AtletaController extends Controller
                 'sexo.required' => 'O campo "Sexo" é obrigatório.',
                 'sexo.string' => 'O campo "Sexo" deve ser uma string.',
                 'contato.required' => 'O campo "Contato" é obrigatório.',
+                'email.email' => 'O campo "Email" deve ser um e-mail valido.',
                 'posicao_jogo.required' => 'O campo "Posição no Jogo" é obrigatório.',
                 'cidade.required' => 'O campo "Cidade" é obrigatório.',
                 'cidade.string' => 'O campo "Cidade" deve ser uma string.',
@@ -191,6 +194,9 @@ class AtletaController extends Controller
 
             // Aplicando a validação
             $validatedData = $request->validate($rules, $messages);
+            $validatedData['email'] = !empty($validatedData['email'])
+                ? strtolower(trim((string) $validatedData['email']))
+                : null;
 
             // Convertendo imagem para Base64 se houver uma imagem
             $imagemBase64 = null;
@@ -225,8 +231,14 @@ class AtletaController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            $request->validate([
+                'email' => 'nullable|email|max:255',
+            ]);
 
             $data = $request->all();
+            $data['email'] = $request->filled('email')
+                ? strtolower(trim((string) $request->input('email')))
+                : null;
 
             // Atualizando o atleta
             $this->atletaService->atualizarAtleta($id, $data);
@@ -342,6 +354,11 @@ class AtletaController extends Controller
             }
 
             // 3) Prepara atributos e cria
+            $emailImport = !empty($data['email']) ? strtolower(trim((string) $data['email'])) : null;
+            if (!empty($emailImport) && !filter_var($emailImport, FILTER_VALIDATE_EMAIL)) {
+                $emailImport = null;
+            }
+
             $attrs = [
                 'nome_completo'   => $nome,
                 'entidade'        => $entidade,
@@ -352,6 +369,7 @@ class AtletaController extends Controller
                 'cidade'          => $data['cidade']       ?? 'Indefinido',
                 'posicao_jogo'    => $data['posicao_jogo'] ?? null,
                 'contato'         => $data['contato']      ?? null,
+                'email'           => $emailImport,
                 'resumo'          => $data['resumo']       ?? null,
                 'imagem_base64'   => $data['imagem_base64'] ?? null,
             ];
@@ -398,7 +416,8 @@ class AtletaController extends Controller
         $query = Atleta::query();
 
         if ($texto) {
-            $query->where('nome_completo', 'LIKE', "%{$texto}%");
+            $textoBusca = mb_strtolower(trim((string) $texto), 'UTF-8');
+            $query->whereRaw('LOWER(nome_completo) LIKE ?', ["%{$textoBusca}%"]);
         }
 
         if ($entidade) {
@@ -421,3 +440,5 @@ class AtletaController extends Controller
     }
 
 }
+
+

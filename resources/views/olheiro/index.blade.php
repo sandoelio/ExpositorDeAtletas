@@ -99,33 +99,20 @@
                             @if ($shortlistSelecionada)
                                 <input type="hidden" name="shortlist_id" value="{{ $shortlistSelecionada->id }}">
                             @endif
-                            <div class="col-12 col-md-6">
-                                <input type="text" name="nome" value="{{ request('nome') }}"
-                                    placeholder="Nome do atleta" class="form-control form-control-sm">
-                            </div>
-                            <div class="col-6 col-md-3">
-                                <select name="cidade" class="form-select form-select-sm">
-                                    <option value="">Cidade</option>
-                                    @foreach ($cidades as $cidade)
-                                        <option value="{{ $cidade }}" {{ request('cidade') === $cidade ? 'selected' : '' }}>
-                                            {{ $cidade }}
+                            <div class="col-12 col-md-4">
+                                <select name="altura_faixa" class="form-select form-select-sm">
+                                    <option value="">Altura (todas)</option>
+                                    @foreach ($faixasAltura as $faixaKey => $faixa)
+                                        <option value="{{ $faixaKey }}"
+                                            {{ request('altura_faixa') === $faixaKey ? 'selected' : '' }}>
+                                            {{ $faixa['label'] }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 col-md-3">
-                                <select name="entidade" class="form-select form-select-sm">
-                                    <option value="">Entidade</option>
-                                    @foreach ($entidades as $entidade)
-                                        <option value="{{ $entidade }}" {{ request('entidade') === $entidade ? 'selected' : '' }}>
-                                            {{ $entidade }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-6 col-md-3">
+                            <div class="col-12 col-md-4">
                                 <select name="posicao" class="form-select form-select-sm">
-                                    <option value="">Posicao</option>
+                                    <option value="">Posicao (todas)</option>
                                     @foreach ($posicoes as $posicao)
                                         <option value="{{ $posicao }}" {{ request('posicao') === $posicao ? 'selected' : '' }}>
                                             {{ $posicao }}
@@ -133,10 +120,18 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-6 col-md-3">
-                                <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
+                            <div class="col-6 col-md-2">
+                                <input type="number" min="0" name="idade_min" value="{{ request('idade_min') }}"
+                                    placeholder="Idade min" class="form-control form-control-sm">
                             </div>
-                            <div class="col-12 col-md-3">
+                            <div class="col-6 col-md-2">
+                                <input type="number" min="0" name="idade_max" value="{{ request('idade_max') }}"
+                                    placeholder="Idade max" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-6 col-md-2 ms-md-auto">
+                                <button type="submit" class="btn btn-sm btn-primary w-100 filtro-submit-btn">Filtrar</button>
+                            </div>
+                            <div class="col-6 col-md-2">
                                 <a href="{{ route('olheiro.atletas.index', $shortlistSelecionada ? ['shortlist_id' => $shortlistSelecionada->id] : []) }}"
                                     class="btn btn-sm btn-outline-secondary w-100">
                                     Limpar
@@ -423,6 +418,10 @@
         .accordion-button:not(.collapsed) {
             background-color: #eef3ff;
             color: #1f2430;
+        }
+
+        .filtro-submit-btn {
+            white-space: nowrap;
         }
 
         @media (max-width: 991.98px) {

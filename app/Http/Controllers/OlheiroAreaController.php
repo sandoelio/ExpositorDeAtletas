@@ -16,39 +16,52 @@ class OlheiroAreaController extends Controller
         $olheiro = Auth::guard('olheiro')->user();
 
         $query = Atleta::query();
+        $faixasAltura = [
+            '1.60-1.70' => ['label' => '1,60 a 1,70', 'min' => 1.60, 'max' => 1.70],
+            '1.71-1.80' => ['label' => '1,71 a 1,80', 'min' => 1.71, 'max' => 1.80],
+            '1.81-1.90' => ['label' => '1,81 a 1,90', 'min' => 1.81, 'max' => 1.90],
+            '1.91-2.40' => ['label' => '1,91 a 2,40', 'min' => 1.91, 'max' => 2.40],
+        ];
 
-        if ($request->filled('nome')) {
-            $query->where('nome_completo', 'like', '%' . trim((string) $request->nome) . '%');
+        $alturaFaixa = trim((string) $request->query('altura_faixa', ''));
+        if ($alturaFaixa !== '' && isset($faixasAltura[$alturaFaixa])) {
+            $query->whereBetween('altura', [
+                $faixasAltura[$alturaFaixa]['min'],
+                $faixasAltura[$alturaFaixa]['max'],
+            ]);
         }
-        if ($request->filled('cidade')) {
-            $query->where('cidade', trim((string) $request->cidade));
-        }
-        if ($request->filled('entidade')) {
-            $query->where('entidade', trim((string) $request->entidade));
-        }
+
         if ($request->filled('posicao')) {
-            $query->where('posicao_jogo', trim((string) $request->posicao));
+            $query->where('posicao_jogo', trim((string) $request->query('posicao')));
         }
 
-        $atletas = $query
-            ->orderByDesc('visualizacoes')
-            ->orderBy('nome_completo')
-            ->paginate(4)
-            ->withQueryString();
+        $idadeMin = $request->filled('idade_min') ? (int) $request->query('idade_min') : null;
+        $idadeMax = $request->filled('idade_max') ? (int) $request->query('idade_max') : null;
 
-        $cidades = Atleta::query()
-            ->whereNotNull('cidade')
-            ->where('cidade', '<>', '')
-            ->distinct()
-            ->orderBy('cidade')
-            ->pluck('cidade');
+        if ($idadeMin !== null && $idadeMax !== null && $idadeMin > $idadeMax) {
+            [$idadeMin, $idadeMax] = [$idadeMax, $idadeMin];
+        }
 
-        $entidades = Atleta::query()
-            ->whereNotNull('entidade')
-            ->where('entidade', '<>', '')
-            ->distinct()
-            ->orderBy('entidade')
-            ->pluck('entidade');
+        if ($idadeMin !== null) {
+            $query->where('idade', '>=', $idadeMin);
+        }
+
+        if ($idadeMax !== null) {
+            $query->where('idade', '<=', $idadeMax);
+        }
+
+        $temFiltros = $alturaFaixa !== ''
+            || $request->filled('posicao')
+            || $idadeMin !== null
+            || $idadeMax !== null;
+
+        if ($temFiltros) {
+            $query->orderBy('nome_completo');
+        } else {
+            $query->orderByDesc('visualizacoes')->orderBy('nome_completo');
+        }
+
+        $atletas = $query->paginate(4)->withQueryString();
 
         $posicoes = Atleta::query()
             ->whereNotNull('posicao_jogo')
@@ -102,10 +115,9 @@ class OlheiroAreaController extends Controller
             'shortlists' => $shortlists,
             'shortlistSelecionada' => $shortlistSelecionada,
             'statusOptions' => $statusOptions,
-            'cidades' => $cidades,
-            'entidades' => $entidades,
-            'posicoes' => $posicoes,
             'shortlistAtletaIds' => $shortlistAtletaIds,
+            'faixasAltura' => $faixasAltura,
+            'posicoes' => $posicoes,
         ]);
     }
 
