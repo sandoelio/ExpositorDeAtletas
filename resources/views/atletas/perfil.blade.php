@@ -101,16 +101,22 @@
                     @if (($atleta['video_tipo'] ?? null) === 'iframe' && !empty($atleta['video_embed_url']))
                         <iframe src="{{ $atleta['video_embed_url'] }}" title="Video destaque de {{ $atleta['nome'] }}"
                             loading="lazy" allowfullscreen></iframe>
+                        @if (!empty($atleta['video_original_url']))
+                            <a href="{{ $atleta['video_original_url'] }}" target="_blank" rel="noopener noreferrer"
+                                class="btn-demo btn-demo-light mt-2">Abrir em nova aba</a>
+                        @endif
                     @elseif(($atleta['video_tipo'] ?? null) === 'file' && !empty($atleta['video_original_url']))
                         <video controls preload="metadata">
                             <source src="{{ $atleta['video_original_url'] }}">
                             Seu navegador nao suporta video HTML5.
                         </video>
+                        <a href="{{ $atleta['video_original_url'] }}" target="_blank" rel="noopener noreferrer"
+                            class="btn-demo btn-demo-light mt-2">Abrir em nova aba</a>
                     @elseif(!empty($atleta['video_original_url']))
                         <i class="bi bi-link-45deg"></i>
                         <p>Link de video disponivel</p>
                         <a href="{{ $atleta['video_original_url'] }}" target="_blank" rel="noopener noreferrer"
-                            class="btn-demo btn-demo-light">Abrir video</a>
+                            class="btn-demo btn-demo-light">Abrir em nova aba</a>
                     @else
                         <i class="bi bi-play-circle-fill"></i>
                         <p>Nenhum video cadastrado no campo resumo</p>

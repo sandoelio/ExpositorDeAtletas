@@ -99,7 +99,17 @@ class PerfilAtletaService
 
     private function parseVideoLink(string $resumo): array
     {
-        $videoRaw = trim($resumo);
+        $videoRaw = trim(html_entity_decode($resumo, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+        // Permite texto com URL dentro do campo resumo.
+        if (!filter_var($videoRaw, FILTER_VALIDATE_URL) && preg_match('~https?://[^\s]+~i', $videoRaw, $matches)) {
+            $videoRaw = trim($matches[0]);
+        }
+
+        if (!filter_var($videoRaw, FILTER_VALIDATE_URL) && str_starts_with(strtolower($videoRaw), 'www.')) {
+            $videoRaw = 'https://' . $videoRaw;
+        }
+
         $videoOriginalUrl = filter_var($videoRaw, FILTER_VALIDATE_URL) ? $videoRaw : null;
         $videoEmbedUrl = null;
         $videoTipo = null;
@@ -109,14 +119,17 @@ class PerfilAtletaService
             $host = strtolower((string) ($parsed['host'] ?? ''));
             $path = (string) ($parsed['path'] ?? '');
             parse_str((string) ($parsed['query'] ?? ''), $queryParams);
+            $hostSemPrefixo = preg_replace('/^(www\.|m\.)/i', '', $host);
 
-            if (str_contains($host, 'youtube.com') || str_contains($host, 'youtu.be')) {
+            if (str_contains($hostSemPrefixo, 'youtube.com')
+                || str_contains($hostSemPrefixo, 'youtu.be')
+                || str_contains($hostSemPrefixo, 'youtube-nocookie.com')) {
                 $videoId = null;
-                if (str_contains($host, 'youtu.be')) {
+                if (str_contains($hostSemPrefixo, 'youtu.be')) {
                     $videoId = trim($path, '/');
                 } elseif (!empty($queryParams['v'])) {
                     $videoId = $queryParams['v'];
-                } elseif (preg_match('#/(shorts|embed)/([^/?]+)#', $path, $matches)) {
+                } elseif (preg_match('#/(shorts|embed|live)/([^/?]+)#', $path, $matches)) {
                     $videoId = $matches[2] ?? null;
                 }
 
@@ -124,12 +137,12 @@ class PerfilAtletaService
                     $videoEmbedUrl = 'https://www.youtube.com/embed/' . rawurlencode($videoId);
                     $videoTipo = 'iframe';
                 }
-            } elseif (str_contains($host, 'vimeo.com')) {
+            } elseif (str_contains($hostSemPrefixo, 'vimeo.com')) {
                 if (preg_match('#/(\d+)#', $path, $matches)) {
                     $videoEmbedUrl = 'https://player.vimeo.com/video/' . $matches[1];
                     $videoTipo = 'iframe';
                 }
-            } elseif (str_contains($host, 'instagram.com')) {
+            } elseif (str_contains($hostSemPrefixo, 'instagram.com')) {
                 if (preg_match('#/(reel|p|tv)/([^/?]+)#', $path, $matches)) {
                     $tipo = $matches[1] ?? null;
                     $codigo = $matches[2] ?? null;
@@ -138,6 +151,28 @@ class PerfilAtletaService
                         $videoEmbedUrl = 'https://www.instagram.com/' . $tipo . '/' . rawurlencode($codigo) . '/embed';
                         $videoTipo = 'iframe';
                     }
+                }
+            } elseif (str_contains($hostSemPrefixo, 'drive.google.com')) {
+                $fileId = null;
+                if (preg_match('#/file/d/([^/]+)#', $path, $matches)) {
+                    $fileId = $matches[1] ?? null;
+                } elseif (!empty($queryParams['id'])) {
+                    $fileId = $queryParams['id'];
+                }
+
+                if (!empty($fileId)) {
+                    $videoEmbedUrl = 'https://drive.google.com/file/d/' . rawurlencode($fileId) . '/preview';
+                    $videoTipo = 'iframe';
+                }
+            } elseif (str_contains($hostSemPrefixo, 'tiktok.com')) {
+                $videoId = null;
+                if (preg_match('#/video/(\d+)#', $path, $matches)) {
+                    $videoId = $matches[1] ?? null;
+                }
+
+                if (!empty($videoId)) {
+                    $videoEmbedUrl = 'https://www.tiktok.com/embed/v2/' . rawurlencode($videoId);
+                    $videoTipo = 'iframe';
                 }
             }
 
