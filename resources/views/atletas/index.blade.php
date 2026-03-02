@@ -74,7 +74,7 @@
         }
 
         .flip-front .posicao {
-            font-size: 27px;
+            font-size: 20px;
             font-weight: 900;
             color: #e66000;
             margin: 8px 0 6px 0;
