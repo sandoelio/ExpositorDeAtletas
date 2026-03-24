@@ -39,8 +39,7 @@ class AtletaController extends Controller
                 $query->where('idade', '<=', (int)$request->idade_max);
             }
             if ($request->filled('nome')) {
-                $nomeBusca = mb_strtolower(trim((string) $request->nome), 'UTF-8');
-                $query->whereRaw('LOWER(nome_completo) LIKE ?', ['%' . $nomeBusca . '%']);
+                $query->buscarPorNomeFlexivel($request->nome);
             }
             if ($request->filled('posicao')) {
                 $query->where('posicao_jogo', $request->posicao);
@@ -416,8 +415,7 @@ class AtletaController extends Controller
         $query = Atleta::query();
 
         if ($texto) {
-            $textoBusca = mb_strtolower(trim((string) $texto), 'UTF-8');
-            $query->whereRaw('LOWER(nome_completo) LIKE ?', ["%{$textoBusca}%"]);
+            $query->buscarPorNomeFlexivel($texto);
         }
 
         if ($entidade) {
@@ -440,5 +438,4 @@ class AtletaController extends Controller
     }
 
 }
-
 

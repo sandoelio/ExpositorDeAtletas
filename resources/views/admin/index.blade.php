@@ -389,7 +389,7 @@
                 const texto = (inputNome.value || '').trim();
                 const entidade = selectEntidade ? (selectEntidade.value || '') : '';
 
-                if (texto === '') {
+                if (texto === '' && entidade === '') {
                     restoreInitialTable();
                     return;
                 }
@@ -424,10 +424,6 @@
 
             if (selectEntidade) {
                 selectEntidade.addEventListener('change', function() {
-                    const texto = (inputNome.value || '').trim();
-                    if (texto === '') {
-                        return;
-                    }
                     runLiveSearch();
                 });
             }
