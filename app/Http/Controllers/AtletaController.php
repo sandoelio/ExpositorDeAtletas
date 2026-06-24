@@ -487,16 +487,91 @@ class AtletaController extends Controller
 
     private function normalizarDadosPortfolio(array $data, Request $request): array
     {
-        $data['principais_qualidades'] = $this->linhasParaArray($request->input('principais_qualidades_texto'));
-        $data['portfolio_temporadas'] = $this->linhasTemporadasParaArray($request->input('portfolio_temporadas_texto'));
-        $data['portfolio_conquistas'] = $this->linhasConquistasParaArray($request->input('portfolio_conquistas_texto'));
-        $data['portfolio_historico_clubes'] = $this->linhasHistoricoParaArray($request->input('portfolio_historico_clubes_texto'));
+        // Processar qualidades (array dinâmico ou textarea legado)
+        $qualidades = $request->input('qualidades');
+        if ($qualidades && is_array($qualidades)) {
+            $data['principais_qualidades'] = collect($qualidades)
+                ->map(fn($q) => trim($q))
+                ->filter()
+                ->values()
+                ->all() ?: null;
+        } else {
+            $data['principais_qualidades'] = $this->linhasParaArray($request->input('principais_qualidades_texto'));
+        }
 
+        // Processar temporadas (array dinâmico ou textarea legado)
+        $temporadasEquipes = $request->input('temporadas.equipe');
+        if ($temporadasEquipes && is_array($temporadasEquipes)) {
+            $temporadas = [];
+            foreach ($temporadasEquipes as $idx => $equipe) {
+                if (trim($equipe)) {
+                    $temporadas[] = [
+                        'equipe' => trim($equipe),
+                        'temporada' => trim($request->input("temporadas.temporada.$idx") ?? ''),
+                        'ppg' => trim($request->input("temporadas.ppg.$idx") ?? '--'),
+                        'rpg' => trim($request->input("temporadas.rpg.$idx") ?? '--'),
+                        'apg' => trim($request->input("temporadas.apg.$idx") ?? '--'),
+                        'eff' => trim($request->input("temporadas.eff.$idx") ?? '--'),
+                    ];
+                }
+            }
+            $data['portfolio_temporadas'] = !empty($temporadas) ? $temporadas : null;
+        } else {
+            $data['portfolio_temporadas'] = $this->linhasTemporadasParaArray($request->input('portfolio_temporadas_texto'));
+        }
+
+        // Processar conquistas (array dinâmico ou textarea legado)
+        $conquistasEquipes = $request->input('conquistas.equipe');
+        if ($conquistasEquipes && is_array($conquistasEquipes)) {
+            $conquistas = [];
+            foreach ($conquistasEquipes as $idx => $equipe) {
+                if (trim($equipe)) {
+                    $itensTexto = trim($request->input("conquistas.itens.$idx") ?? '');
+                    $itens = collect(explode(';', $itensTexto))
+                        ->map(fn($item) => trim($item))
+                        ->filter()
+                        ->values()
+                        ->all();
+                    
+                    $conquistas[] = [
+                        'equipe' => trim($equipe),
+                        'periodo' => trim($request->input("conquistas.periodo.$idx") ?? ''),
+                        'itens' => $itens,
+                    ];
+                }
+            }
+            $data['portfolio_conquistas'] = !empty($conquistas) ? $conquistas : null;
+        } else {
+            $data['portfolio_conquistas'] = $this->linhasConquistasParaArray($request->input('portfolio_conquistas_texto'));
+        }
+
+        // Processar histórico (array dinâmico ou textarea legado)
+        $historicoAnos = $request->input('historico.ano');
+        if ($historicoAnos && is_array($historicoAnos)) {
+            $historico = [];
+            foreach ($historicoAnos as $idx => $ano) {
+                if (trim($ano)) {
+                    $historico[] = [
+                        'ano' => trim($ano),
+                        'equipe' => trim($request->input("historico.equipe.$idx") ?? ''),
+                    ];
+                }
+            }
+            $data['portfolio_historico_clubes'] = !empty($historico) ? $historico : null;
+        } else {
+            $data['portfolio_historico_clubes'] = $this->linhasHistoricoParaArray($request->input('portfolio_historico_clubes_texto'));
+        }
+
+        // Remover campos de textarea legado
         unset(
             $data['principais_qualidades_texto'],
             $data['portfolio_temporadas_texto'],
             $data['portfolio_conquistas_texto'],
-            $data['portfolio_historico_clubes_texto']
+            $data['portfolio_historico_clubes_texto'],
+            $data['qualidades'],
+            $data['temporadas'],
+            $data['conquistas'],
+            $data['historico']
         );
 
         return $data;

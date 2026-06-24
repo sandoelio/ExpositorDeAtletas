@@ -150,6 +150,7 @@
                 </ul>
 
                 <div class="tab-content portfolio-tab-content">
+                    <!-- ABA RESUMO -->
                     <div class="tab-pane fade show active" id="portfolio-resumo-create">
                         <div class="row g-2">
                             <div class="col-12 col-md-6">
@@ -184,31 +185,106 @@
                         </div>
                     </div>
 
+                    <!-- ABA QUALIDADES -->
                     <div class="tab-pane fade" id="portfolio-qualidades-create">
-                        <label for="principais_qualidades_texto" class="form-label">Uma qualidade por linha</label>
-                        <textarea class="form-control" name="principais_qualidades_texto" id="principais_qualidades_texto" rows="8"
-                            placeholder="Defensor de elite&#10;Arremesso de 3 pontos&#10;Rebote ofensivo&#10;Movimentacao sem a bola">{{ old('principais_qualidades_texto') }}</textarea>
+                        <div class="dynamic-form-group">
+                            <div id="qualidades-container" class="dynamic-items-list">
+                                <div class="dynamic-item">
+                                    <input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite">
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-item" style="display: none;"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-qualidade-btn">
+                                <i class="bi bi-plus-circle"></i> Adicionar qualidade
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- ABA TEMPORADAS -->
                     <div class="tab-pane fade" id="portfolio-temporadas-create">
-                        <label for="portfolio_temporadas_texto" class="form-label">Equipe | Temporada | PPG | RPG | APG | EFF</label>
-                        <textarea class="form-control code-textarea" name="portfolio_temporadas_texto" id="portfolio_temporadas_texto"
-                            rows="8" placeholder="EC Bahia | Supercopa 2025 | 21.5 | 12.0 | 3.4 | 19.5&#10;Brasilia Basquete | LDB 2024 | 10.0 | 6.2 | 0.6 | 10.1">{{ old('portfolio_temporadas_texto') }}</textarea>
-                        <small class="text-muted">Use uma linha por equipe/temporada. Separe as colunas com o caractere |.</small>
+                        <div class="dynamic-form-group">
+                            <div id="temporadas-container" class="dynamic-items-list">
+                                <div class="dynamic-item temporada-item">
+                                    <div class="row g-2">
+                                        <div class="col-12 col-md-3">
+                                            <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe">
+                                        </div>
+                                        <div class="col-12 col-md-2">
+                                            <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada">
+                                        </div>
+                                        <div class="col-12 col-md-1">
+                                            <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG">
+                                        </div>
+                                        <div class="col-12 col-md-1">
+                                            <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG">
+                                        </div>
+                                        <div class="col-12 col-md-1">
+                                            <input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG">
+                                        </div>
+                                        <div class="col-12 col-md-1">
+                                            <input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF">
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-temporada-btn">
+                                <i class="bi bi-plus-circle"></i> Adicionar temporada
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- ABA CONQUISTAS -->
                     <div class="tab-pane fade" id="portfolio-conquistas-create">
-                        <label for="portfolio_conquistas_texto" class="form-label">Equipe | Periodo | Conquistas</label>
-                        <textarea class="form-control code-textarea" name="portfolio_conquistas_texto" id="portfolio_conquistas_texto"
-                            rows="8" placeholder="EC Bahia | 2025 | Campeao da Supercopa; MVP das finais; Melhor ala da liga&#10;Botafogo | 2019 | Maior pontuador; Melhor ala do campeonato">{{ old('portfolio_conquistas_texto') }}</textarea>
-                        <small class="text-muted">Em conquistas, separe varios itens com ponto e virgula.</small>
+                        <div class="dynamic-form-group">
+                            <div id="conquistas-container" class="dynamic-items-list">
+                                <div class="dynamic-item conquista-item">
+                                    <div class="row g-2">
+                                        <div class="col-12 col-md-4">
+                                            <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe">
+                                        </div>
+                                        <div class="col-12 col-md-2">
+                                            <input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período">
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)">
+                                        </div>
+                                        <div class="col-12 col-md-2">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-conquista-btn">
+                                <i class="bi bi-plus-circle"></i> Adicionar conquista
+                            </button>
+                        </div>
                     </div>
 
+                    <!-- ABA HISTÓRICO -->
                     <div class="tab-pane fade" id="portfolio-historico-create">
-                        <label for="portfolio_historico_clubes_texto" class="form-label">Ano | Equipe</label>
-                        <textarea class="form-control code-textarea" name="portfolio_historico_clubes_texto"
-                            id="portfolio_historico_clubes_texto" rows="8" placeholder="2025 | EC Bahia&#10;2024 | Brasilia Basquete&#10;2023 | Vitoria">{{ old('portfolio_historico_clubes_texto') }}</textarea>
-                        <small class="text-muted">O nome da equipe sera usado como tooltip no escudo do portfolio.</small>
+                        <div class="dynamic-form-group">
+                            <div id="historico-container" class="dynamic-items-list">
+                                <div class="dynamic-item historico-item">
+                                    <div class="row g-2">
+                                        <div class="col-12 col-md-3">
+                                            <input type="text" class="form-control" name="historico[ano][]" placeholder="Ano">
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe">
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-historico-btn">
+                                <i class="bi bi-plus-circle"></i> Adicionar clube
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -301,6 +377,49 @@
         .code-textarea {
             font-family: Consolas, monospace;
             font-size: 0.78rem !important;
+        }
+
+        .dynamic-form-group {
+            margin-top: 0.5rem;
+        }
+
+        .dynamic-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .dynamic-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+        }
+
+        .dynamic-item input {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dynamic-item .remove-item {
+            flex-shrink: 0;
+        }
+
+        .dynamic-item .remove-item:not([style*="display: none"]) {
+            display: inline-flex !important;
+        }
+
+        .dynamic-item.temporada-item,
+        .dynamic-item.conquista-item,
+        .dynamic-item.historico-item {
+            display: block;
+        }
+
+        .dynamic-item.temporada-item .row,
+        .dynamic-item.conquista-item .row,
+        .dynamic-item.historico-item .row {
+            align-items: flex-end;
         }
 
         .image-preview-wrap {
@@ -510,6 +629,82 @@
                     logoutForm.submit();
                 });
             }
+
+            // ===== GERENCIAMENTO DE CAMPOS DINÂMICOS =====
+            function setupDynamicFields(containerId, addButtonId, itemTemplate) {
+                const container = document.getElementById(containerId);
+                const addBtn = document.getElementById(addButtonId);
+
+                if (!container || !addBtn) return;
+
+                function updateRemoveButtons() {
+                    const items = container.querySelectorAll('.dynamic-item');
+                    items.forEach(item => {
+                        const removeBtn = item.querySelector('.remove-item');
+                        if (removeBtn) {
+                            if (items.length > 1) {
+                                removeBtn.style.display = 'inline-flex';
+                                removeBtn.addEventListener('click', function(e) {
+                                    e.preventDefault();
+                                    item.remove();
+                                    updateRemoveButtons();
+                                });
+                            } else {
+                                removeBtn.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+
+                addBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const newItem = document.createElement('div');
+                    newItem.innerHTML = itemTemplate;
+                    newItem.className = 'dynamic-item ' + container.querySelector('.dynamic-item').className.split(' ').slice(2).join(' ');
+                    container.appendChild(newItem);
+                    updateRemoveButtons();
+                });
+
+                updateRemoveButtons();
+            }
+
+            // Qualidades
+            setupDynamicFields('qualidades-container', 'add-qualidade-btn', 
+                '<input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite">' +
+                '<button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="bi bi-trash"></i></button>'
+            );
+
+            // Temporadas
+            setupDynamicFields('temporadas-container', 'add-temporada-btn',
+                '<div class="row g-2">' +
+                '<div class="col-12 col-md-3"><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe"></div>' +
+                '<div class="col-12 col-md-2"><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada"></div>' +
+                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
+                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
+                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
+                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF"></div>' +
+                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '</div>'
+            );
+
+            // Conquistas
+            setupDynamicFields('conquistas-container', 'add-conquista-btn',
+                '<div class="row g-2">' +
+                '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe"></div>' +
+                '<div class="col-12 col-md-2"><input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período"></div>' +
+                '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)"></div>' +
+                '<div class="col-12 col-md-2"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '</div>'
+            );
+
+            // Histórico
+            setupDynamicFields('historico-container', 'add-historico-btn',
+                '<div class="row g-2">' +
+                '<div class="col-12 col-md-3"><input type="text" class="form-control" name="historico[ano][]" placeholder="Ano"></div>' +
+                '<div class="col-12 col-md-6"><input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe"></div>' +
+                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '</div>'
+            );
         });
     </script>
 @endpush
