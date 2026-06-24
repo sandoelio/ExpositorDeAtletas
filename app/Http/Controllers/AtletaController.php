@@ -99,6 +99,34 @@ class AtletaController extends Controller
         }
     }
 
+    public function portfolio($id)
+    {
+        try {
+            $atleta = $this->atletaService->buscarPorId($id);
+
+            if (!$atleta) {
+                return redirect()->route('atletas.index')->with('error', 'Atleta nao encontrado.');
+            }
+
+            $dadosPerfil = $this->perfilAtletaService->montarDados($atleta);
+            $perfil = $dadosPerfil['atleta'];
+
+            return view('atletas.portfolio', [
+                'atletaModel' => $atleta,
+                'atleta' => $perfil,
+                'temporadas' => $this->obterTemporadasPortfolio($atleta),
+                'qualidades' => $this->obterQualidadesPortfolio($atleta),
+                'conquistas' => $this->obterConquistasPortfolio($atleta),
+                'historicoClubes' => $this->obterHistoricoClubesPortfolio($atleta),
+                'perfilProfissional' => $atleta->perfil_profissional ?: $perfil['bio'],
+                'highlightsTexto' => $atleta->highlights_texto ?: 'Highlights disponiveis sob demanda',
+                'instagram' => $atleta->instagram ?: null,
+            ]);
+        } catch (\Exception $ex) {
+            return redirect()->route('atletas.index')->with('error', 'Erro ao carregar portfolio: ' . $ex->getMessage());
+        }
+    }
+
     public function ogImage($id)
     {
         $atleta = Atleta::findOrFail($id);
@@ -166,6 +194,15 @@ class AtletaController extends Controller
                 'entidade' => 'required|string|max:255',
                 'imagem_base64' => 'nullable|image|max:2048',
                 'resumo' => 'nullable|string|max:1000',
+                'nacionalidade' => 'nullable|string|max:80',
+                'estilo_jogo' => 'nullable|string|max:120',
+                'perfil_profissional' => 'nullable|string|max:2000',
+                'principais_qualidades_texto' => 'nullable|string|max:2000',
+                'portfolio_temporadas_texto' => 'nullable|string|max:5000',
+                'portfolio_conquistas_texto' => 'nullable|string|max:7000',
+                'portfolio_historico_clubes_texto' => 'nullable|string|max:5000',
+                'instagram' => 'nullable|string|max:120',
+                'highlights_texto' => 'nullable|string|max:160',
             ];
 
             // Definição das mensagens de erro personalizadas
@@ -196,6 +233,7 @@ class AtletaController extends Controller
             $validatedData['email'] = !empty($validatedData['email'])
                 ? strtolower(trim((string) $validatedData['email']))
                 : null;
+            $validatedData = $this->normalizarDadosPortfolio($validatedData, $request);
 
             // Convertendo imagem para Base64 se houver uma imagem
             $imagemBase64 = null;
@@ -232,12 +270,22 @@ class AtletaController extends Controller
         try {
             $request->validate([
                 'email' => 'nullable|email|max:255',
+                'nacionalidade' => 'nullable|string|max:80',
+                'estilo_jogo' => 'nullable|string|max:120',
+                'perfil_profissional' => 'nullable|string|max:2000',
+                'principais_qualidades_texto' => 'nullable|string|max:2000',
+                'portfolio_temporadas_texto' => 'nullable|string|max:5000',
+                'portfolio_conquistas_texto' => 'nullable|string|max:7000',
+                'portfolio_historico_clubes_texto' => 'nullable|string|max:5000',
+                'instagram' => 'nullable|string|max:120',
+                'highlights_texto' => 'nullable|string|max:160',
             ]);
 
             $data = $request->all();
             $data['email'] = $request->filled('email')
                 ? strtolower(trim((string) $request->input('email')))
                 : null;
+            $data = $this->normalizarDadosPortfolio($data, $request);
 
             // Atualizando o atleta
             $this->atletaService->atualizarAtleta($id, $data);
@@ -437,5 +485,148 @@ class AtletaController extends Controller
         return response()->json($dados);
     }
 
-}
+    private function normalizarDadosPortfolio(array $data, Request $request): array
+    {
+        $data['principais_qualidades'] = $this->linhasParaArray($request->input('principais_qualidades_texto'));
+        $data['portfolio_temporadas'] = $this->linhasTemporadasParaArray($request->input('portfolio_temporadas_texto'));
+        $data['portfolio_conquistas'] = $this->linhasConquistasParaArray($request->input('portfolio_conquistas_texto'));
+        $data['portfolio_historico_clubes'] = $this->linhasHistoricoParaArray($request->input('portfolio_historico_clubes_texto'));
 
+        unset(
+            $data['principais_qualidades_texto'],
+            $data['portfolio_temporadas_texto'],
+            $data['portfolio_conquistas_texto'],
+            $data['portfolio_historico_clubes_texto']
+        );
+
+        return $data;
+    }
+
+    private function linhasParaArray(?string $texto): ?array
+    {
+        $linhas = collect(preg_split('/\r\n|\r|\n/', (string) $texto))
+            ->map(fn($linha) => trim($linha))
+            ->filter()
+            ->values();
+
+        return $linhas->isEmpty() ? null : $linhas->all();
+    }
+
+    private function linhasTemporadasParaArray(?string $texto): ?array
+    {
+        $linhas = $this->linhasComColunas($texto);
+
+        $dados = $linhas->map(function (array $colunas) {
+            return [
+                'equipe' => $colunas[0] ?? null,
+                'temporada' => $colunas[1] ?? null,
+                'ppg' => $colunas[2] ?? '--',
+                'rpg' => $colunas[3] ?? '--',
+                'apg' => $colunas[4] ?? '--',
+                'eff' => $colunas[5] ?? '--',
+            ];
+        })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['temporada']))->values();
+
+        return $dados->isEmpty() ? null : $dados->all();
+    }
+
+    private function linhasConquistasParaArray(?string $texto): ?array
+    {
+        $linhas = $this->linhasComColunas($texto);
+
+        $dados = $linhas->map(function (array $colunas) {
+            $itens = collect(explode(';', (string) ($colunas[2] ?? '')))
+                ->map(fn($item) => trim($item))
+                ->filter()
+                ->values()
+                ->all();
+
+            return [
+                'equipe' => $colunas[0] ?? null,
+                'periodo' => $colunas[1] ?? null,
+                'itens' => $itens,
+            ];
+        })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['periodo']) || !empty($linha['itens']))->values();
+
+        return $dados->isEmpty() ? null : $dados->all();
+    }
+
+    private function linhasHistoricoParaArray(?string $texto): ?array
+    {
+        $linhas = $this->linhasComColunas($texto);
+
+        $dados = $linhas->map(function (array $colunas) {
+            return [
+                'ano' => $colunas[0] ?? null,
+                'equipe' => $colunas[1] ?? null,
+            ];
+        })->filter(fn(array $linha) => !empty($linha['ano']) || !empty($linha['equipe']))->values();
+
+        return $dados->isEmpty() ? null : $dados->all();
+    }
+
+    private function linhasComColunas(?string $texto): \Illuminate\Support\Collection
+    {
+        return collect(preg_split('/\r\n|\r|\n/', (string) $texto))
+            ->map(fn($linha) => trim($linha))
+            ->filter()
+            ->map(fn($linha) => collect(explode('|', $linha))->map(fn($coluna) => trim($coluna))->all())
+            ->values();
+    }
+
+    private function obterTemporadasPortfolio(Atleta $atleta): array
+    {
+        if (!empty($atleta->portfolio_temporadas)) {
+            return $atleta->portfolio_temporadas;
+        }
+
+        return [[
+            'equipe' => $atleta->entidade ?: 'Equipe atual',
+            'temporada' => now()->year,
+            'ppg' => '--',
+            'rpg' => '--',
+            'apg' => '--',
+            'eff' => number_format((int) ($atleta->visualizacoes ?? 0), 0, ',', '.'),
+        ]];
+    }
+
+    private function obterQualidadesPortfolio(Atleta $atleta): array
+    {
+        if (!empty($atleta->principais_qualidades)) {
+            return $atleta->principais_qualidades;
+        }
+
+        return array_values(array_filter([
+            $atleta->posicao_jogo ? 'Atua como ' . $atleta->posicao_jogo : null,
+            $atleta->altura ? 'Altura competitiva para a posicao' : null,
+            $atleta->entidade ? 'Atleta vinculado a ' . $atleta->entidade : null,
+            'Perfil disponivel para avaliacao',
+        ]));
+    }
+
+    private function obterConquistasPortfolio(Atleta $atleta): array
+    {
+        if (!empty($atleta->portfolio_conquistas)) {
+            return $atleta->portfolio_conquistas;
+        }
+
+        return [[
+            'equipe' => $atleta->entidade ?: 'Equipe atual',
+            'periodo' => now()->year,
+            'itens' => ['Atleta cadastrado na vitrine', 'Perfil disponivel para avaliacao'],
+        ]];
+    }
+
+    private function obterHistoricoClubesPortfolio(Atleta $atleta): array
+    {
+        if (!empty($atleta->portfolio_historico_clubes)) {
+            return $atleta->portfolio_historico_clubes;
+        }
+
+        return [[
+            'ano' => now()->year,
+            'equipe' => $atleta->entidade ?: 'Equipe atual',
+        ]];
+    }
+
+}

@@ -102,7 +102,22 @@
         .perfil-open-wrap {
             margin-top: auto;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            gap: 0.35rem;
+        }
+
+        .portfolio-action-btn {
+            background: #e66000;
+            border-color: #e66000;
+            color: #fff;
+        }
+
+        .portfolio-action-btn:hover {
+            background: #c95000;
+            border-color: #c95000;
+            color: #fff;
         }
 
         @media (max-width: 576px) {
@@ -541,6 +556,10 @@
                                         </span>
                                     </div>
                                     <div class="perfil-open-wrap">
+                                        <a href="{{ route('atletas.portfolio', $atleta->id) }}"
+                                            class="btn btn-sm perfil-action-btn portfolio-action-btn">
+                                            Ver portfolio
+                                        </a>
                                         <a href="{{ route('atletas.show', $atleta->id) }}"
                                             class="btn btn-sm btn-light perfil-action-btn perfil-open-link"
                                             data-track-url="{{ url('/atleta/visualizar/' . $atleta->id) }}">
@@ -690,4 +709,3 @@
         });
     </script>
 @endsection
-

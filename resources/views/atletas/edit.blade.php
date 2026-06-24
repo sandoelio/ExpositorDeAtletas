@@ -17,6 +17,33 @@
                 $posicoes[] = $posicaoAtual;
             }
             $sexoAtual = old('sexo', $atleta->sexo);
+            $qualidadesTexto = old('principais_qualidades_texto', implode("\n", $atleta->principais_qualidades ?? []));
+            $temporadasTextoPadrao = collect($atleta->portfolio_temporadas ?? [])->map(function ($item) {
+                return implode(' | ', [
+                    $item['equipe'] ?? '',
+                    $item['temporada'] ?? '',
+                    $item['ppg'] ?? '',
+                    $item['rpg'] ?? '',
+                    $item['apg'] ?? '',
+                    $item['eff'] ?? '',
+                ]);
+            })->implode("\n");
+            $conquistasTextoPadrao = collect($atleta->portfolio_conquistas ?? [])->map(function ($item) {
+                return implode(' | ', [
+                    $item['equipe'] ?? '',
+                    $item['periodo'] ?? '',
+                    implode('; ', $item['itens'] ?? []),
+                ]);
+            })->implode("\n");
+            $historicoTextoPadrao = collect($atleta->portfolio_historico_clubes ?? [])->map(function ($item) {
+                return implode(' | ', [
+                    $item['ano'] ?? '',
+                    $item['equipe'] ?? '',
+                ]);
+            })->implode("\n");
+            $temporadasTexto = old('portfolio_temporadas_texto', $temporadasTextoPadrao);
+            $conquistasTexto = old('portfolio_conquistas_texto', $conquistasTextoPadrao);
+            $historicoClubesTexto = old('portfolio_historico_clubes_texto', $historicoTextoPadrao);
         @endphp
 
         <form id="formAtleta" action="{{ route('atletas.update', $atleta->id) }}" method="POST"
@@ -139,6 +166,94 @@
                 </div>
             </section>
 
+            <section class="form-section mb-2">
+                <h5 class="form-section-title">Portfolio esportivo</h5>
+                <p class="portfolio-help">Preencha apenas informacoes que nao existem nos dados principais do atleta.</p>
+
+                <ul class="nav nav-pills portfolio-tabs" id="portfolioTabsEdit" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" type="button" data-bs-toggle="pill" data-bs-target="#portfolio-resumo-edit">Resumo</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#portfolio-qualidades-edit">Qualidades</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#portfolio-temporadas-edit">Temporadas</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#portfolio-conquistas-edit">Conquistas</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" data-bs-toggle="pill" data-bs-target="#portfolio-historico-edit">Historico</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content portfolio-tab-content">
+                    <div class="tab-pane fade show active" id="portfolio-resumo-edit">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <label for="nacionalidade" class="form-label">Nacionalidade</label>
+                                <input type="text" class="form-control" name="nacionalidade" id="nacionalidade"
+                                    placeholder="Ex: Brasileiro" value="{{ old('nacionalidade', $atleta->nacionalidade) }}">
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="estilo_jogo" class="form-label">Estilo de jogo</label>
+                                <input type="text" class="form-control" name="estilo_jogo" id="estilo_jogo"
+                                    placeholder="Ex: Ala 3&D, armador criador, pivo reboteiro"
+                                    value="{{ old('estilo_jogo', $atleta->estilo_jogo) }}">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="perfil_profissional" class="form-label">Resumo profissional</label>
+                                <textarea class="form-control" name="perfil_profissional" id="perfil_profissional" rows="5"
+                                    placeholder="Responda em texto curto: Como o atleta joga? Quais pontos fortes aparecem em quadra? O que ele entrega no ataque e na defesa? O que diferencia esse atleta?">{{ old('perfil_profissional', $atleta->perfil_profissional) }}</textarea>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="instagram" class="form-label">Instagram</label>
+                                <input type="text" class="form-control" name="instagram" id="instagram"
+                                    placeholder="Ex: @atleta" value="{{ old('instagram', $atleta->instagram) }}">
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="highlights_texto" class="form-label">Chamada dos highlights</label>
+                                <input type="text" class="form-control" name="highlights_texto" id="highlights_texto"
+                                    placeholder="Ex: Highlights disponiveis sob demanda"
+                                    value="{{ old('highlights_texto', $atleta->highlights_texto) }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="portfolio-qualidades-edit">
+                        <label for="principais_qualidades_texto" class="form-label">Uma qualidade por linha</label>
+                        <textarea class="form-control" name="principais_qualidades_texto" id="principais_qualidades_texto" rows="8"
+                            placeholder="Defensor de elite&#10;Arremesso de 3 pontos&#10;Rebote ofensivo&#10;Movimentacao sem a bola">{{ $qualidadesTexto }}</textarea>
+                    </div>
+
+                    <div class="tab-pane fade" id="portfolio-temporadas-edit">
+                        <label for="portfolio_temporadas_texto" class="form-label">Equipe | Temporada | PPG | RPG | APG | EFF</label>
+                        <textarea class="form-control code-textarea" name="portfolio_temporadas_texto" id="portfolio_temporadas_texto"
+                            rows="8">{{ $temporadasTexto }}</textarea>
+                        <small class="text-muted">Use uma linha por equipe/temporada. Separe as colunas com o caractere |.</small>
+                    </div>
+
+                    <div class="tab-pane fade" id="portfolio-conquistas-edit">
+                        <label for="portfolio_conquistas_texto" class="form-label">Equipe | Periodo | Conquistas</label>
+                        <textarea class="form-control code-textarea" name="portfolio_conquistas_texto" id="portfolio_conquistas_texto"
+                            rows="8">{{ $conquistasTexto }}</textarea>
+                        <small class="text-muted">Em conquistas, separe varios itens com ponto e virgula.</small>
+                    </div>
+
+                    <div class="tab-pane fade" id="portfolio-historico-edit">
+                        <label for="portfolio_historico_clubes_texto" class="form-label">Ano | Equipe</label>
+                        <textarea class="form-control code-textarea" name="portfolio_historico_clubes_texto"
+                            id="portfolio_historico_clubes_texto" rows="8">{{ $historicoClubesTexto }}</textarea>
+                        <small class="text-muted">O nome da equipe sera usado como tooltip no escudo do portfolio.</small>
+                    </div>
+                </div>
+            </section>
+
             <div class="form-actions-card">
                 <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary form-action-btn">Voltar</a>
                 <button type="button" class="btn btn-outline-danger form-action-btn" id="btnSairAdmin">Sair</button>
@@ -185,6 +300,48 @@
             padding-top: 0.25rem;
             padding-bottom: 0.25rem;
             font-size: 0.92rem;
+        }
+
+        .portfolio-help {
+            margin: -2px 0 8px;
+            color: #5d6b84;
+            font-size: 0.84rem;
+        }
+
+        .portfolio-tabs {
+            gap: 5px;
+            margin-bottom: 8px;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            padding-bottom: 2px;
+        }
+
+        .portfolio-tabs .nav-link {
+            white-space: nowrap;
+            color: #28365f;
+            background: #eef3fb;
+            border: 1px solid #d7deea;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 0.35rem 0.6rem;
+        }
+
+        .portfolio-tabs .nav-link.active {
+            background: #28365f;
+            border-color: #28365f;
+            color: #fff;
+        }
+
+        .portfolio-tab-content {
+            border: 1px solid #d7deea;
+            border-radius: 10px;
+            padding: 8px;
+            background: #f9fbff;
+        }
+
+        .code-textarea {
+            font-family: Consolas, monospace;
+            font-size: 0.78rem !important;
         }
 
         .image-preview-wrap {

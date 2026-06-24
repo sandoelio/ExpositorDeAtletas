@@ -50,6 +50,7 @@ Route::middleware('auth:admin')->prefix('admin')->group(function () {
 
 Route::get('/atletas/buscar', [AtletaController::class, 'buscar'])->name('atletas.buscar');
 Route::get('/atletas/{id}/og-image', [AtletaController::class, 'ogImage'])->name('atletas.og-image');
+Route::get('/atletas/{id}/portfolio', [AtletaController::class, 'portfolio'])->name('atletas.portfolio');
 Route::get('/atletas/{id}', [AtletaController::class, 'show'])->name('atletas.show');
 Route::get('/perfil-atleta/{id}', [AtletaController::class, 'show'])->name('atletas.perfil');
 Route::get('/atletas', [AtletaController::class, 'index'])->name('atletas.index');

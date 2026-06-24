@@ -24,7 +24,23 @@ class Atleta extends Model
         'posicao_jogo',
         'contato',
         'email',
+        'nacionalidade',
+        'estilo_jogo',
+        'perfil_profissional',
+        'principais_qualidades',
+        'portfolio_temporadas',
+        'portfolio_conquistas',
+        'portfolio_historico_clubes',
+        'instagram',
+        'highlights_texto',
         'resumo',
+    ];
+
+    protected $casts = [
+        'principais_qualidades' => 'array',
+        'portfolio_temporadas' => 'array',
+        'portfolio_conquistas' => 'array',
+        'portfolio_historico_clubes' => 'array',
     ];
 
     /**
