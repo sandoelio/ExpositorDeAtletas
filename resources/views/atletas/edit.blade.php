@@ -255,25 +255,31 @@
                                     <div class="dynamic-item temporada-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-3">
-                                                <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe" value="{{ $temporada['equipe'] ?? '' }}">
+                                                <label class="form-label small">Equipe</label>
+                                                <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia" value="{{ $temporada['equipe'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada" value="{{ $temporada['temporada'] ?? '' }}">
+                                                <label class="form-label small">Ano</label>
+                                                <input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025" value="{{ $temporada['ano'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG" value="{{ $temporada['ppg'] ?? '' }}">
+                                                <label class="form-label small" title="Pontos Por Jogo">PPG</label>
+                                                <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5" value="{{ $temporada['ppg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG" value="{{ $temporada['rpg'] ?? '' }}">
+                                                <label class="form-label small" title="Rebotes Por Jogo">RPG</label>
+                                                <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0" value="{{ $temporada['rpg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG" value="{{ $temporada['apg'] ?? '' }}">
+                                                <label class="form-label small" title="Assistências Por Jogo">APG</label>
+                                                <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4" value="{{ $temporada['apg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF" value="{{ $temporada['eff'] ?? '' }}">
+                                                <label class="form-label small" title="Eficiência">EFF</label>
+                                                <input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5" value="{{ $temporada['eff'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-3">
-                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                             </div>
                                         </div>
                                     </div>
@@ -281,25 +287,31 @@
                                     <div class="dynamic-item temporada-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-3">
-                                                <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe">
+                                                <label class="form-label small">Equipe</label>
+                                                <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada">
+                                                <label class="form-label small">Ano</label>
+                                                <input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG">
+                                                <label class="form-label small" title="Pontos Por Jogo">PPG</label>
+                                                <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG">
+                                                <label class="form-label small" title="Rebotes Por Jogo">RPG</label>
+                                                <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG">
+                                                <label class="form-label small" title="Assistências Por Jogo">APG</label>
+                                                <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF">
+                                                <label class="form-label small" title="Eficiência">EFF</label>
+                                                <input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5">
                                             </div>
                                             <div class="col-12 col-md-3">
-                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                             </div>
                                         </div>
                                     </div>
@@ -319,16 +331,19 @@
                                     <div class="dynamic-item conquista-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-4">
-                                                <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe" value="{{ $conquista['equipe'] ?? '' }}">
+                                                <label class="form-label small">Equipe</label>
+                                                <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia" value="{{ $conquista['equipe'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período" value="{{ $conquista['periodo'] ?? '' }}">
+                                                <label class="form-label small">Ano</label>
+                                                <input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025" value="{{ $conquista['ano'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-4">
+                                                <label class="form-label small">Conquistas</label>
                                                 <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)" value="{{ implode('; ', $conquista['itens'] ?? []) }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                             </div>
                                         </div>
                                     </div>
@@ -336,16 +351,19 @@
                                     <div class="dynamic-item conquista-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-4">
-                                                <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe">
+                                                <label class="form-label small">Equipe</label>
+                                                <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período">
+                                                <label class="form-label small">Ano</label>
+                                                <input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025">
                                             </div>
                                             <div class="col-12 col-md-4">
+                                                <label class="form-label small">Conquistas</label>
                                                 <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                             </div>
                                         </div>
                                     </div>

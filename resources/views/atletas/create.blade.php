@@ -207,25 +207,31 @@
                                 <div class="dynamic-item temporada-item">
                                     <div class="row g-2">
                                         <div class="col-12 col-md-3">
-                                            <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe">
+                                            <label class="form-label small">Equipe</label>
+                                            <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia">
                                         </div>
                                         <div class="col-12 col-md-2">
-                                            <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada">
+                                            <label class="form-label small">Ano</label>
+                                            <input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025">
                                         </div>
                                         <div class="col-12 col-md-1">
-                                            <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG">
+                                            <label class="form-label small" title="Pontos Por Jogo">PPG</label>
+                                            <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5">
                                         </div>
                                         <div class="col-12 col-md-1">
-                                            <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG">
+                                            <label class="form-label small" title="Rebotes Por Jogo">RPG</label>
+                                            <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0">
                                         </div>
                                         <div class="col-12 col-md-1">
-                                            <input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG">
+                                            <label class="form-label small" title="Assistências Por Jogo">APG</label>
+                                            <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4">
                                         </div>
                                         <div class="col-12 col-md-1">
-                                            <input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF">
+                                            <label class="form-label small" title="Eficiência">EFF</label>
+                                            <input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5">
                                         </div>
                                         <div class="col-12 col-md-3">
-                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                         </div>
                                     </div>
                                 </div>
@@ -243,16 +249,19 @@
                                 <div class="dynamic-item conquista-item">
                                     <div class="row g-2">
                                         <div class="col-12 col-md-4">
-                                            <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe">
+                                            <label class="form-label small">Equipe</label>
+                                            <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia">
                                         </div>
                                         <div class="col-12 col-md-2">
-                                            <input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período">
+                                            <label class="form-label small">Ano</label>
+                                            <input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025">
                                         </div>
                                         <div class="col-12 col-md-4">
+                                            <label class="form-label small">Conquistas</label>
                                             <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)">
                                         </div>
                                         <div class="col-12 col-md-2">
-                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                         </div>
                                     </div>
                                 </div>
@@ -290,7 +299,7 @@
             </section>
 
             <div class="form-actions-card">
-                <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary form-action-btn">Voltar</a>
+                <a href="{{ route('admin.index') }}" class="btn btn-outline-secondary form-action-btn">Voltar</a>
                 <button type="button" class="btn btn-outline-danger form-action-btn" id="btnSairAdmin">Sair</button>
                 <button type="submit" class="btn btn-save form-action-btn" id="btnSalvar">Salvar</button>
             </div>
@@ -452,40 +461,47 @@
         }
 
         .form-action-btn {
-            min-width: 102px;
-            font-weight: 700;
+            padding: 0.4rem 0.8rem;
             font-size: 0.9rem;
-            padding: 0.35rem 0.55rem;
+            font-weight: 600;
         }
 
         .btn-save {
-            background: #ff7209;
-            border: 1px solid #ff7209;
+            background: #28365f;
+            border-color: #28365f;
             color: #fff;
         }
 
         .btn-save:hover {
-            background: #e66000;
-            border-color: #e66000;
+            background: #1f2847;
+            border-color: #1f2847;
             color: #fff;
         }
 
-        @media (max-width: 767.98px) {
+        @media (max-width: 991.98px) {
+            .atleta-form-wrap {
+                margin-bottom: 0.5rem;
+            }
+
             .form-section {
-                padding: 7px;
+                padding: 6px;
+            }
+
+            .portfolio-tabs {
+                gap: 3px;
+            }
+
+            .portfolio-tabs .nav-link {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.4rem;
             }
 
             .form-actions-card {
-                justify-content: stretch;
+                flex-direction: column;
             }
 
             .form-action-btn {
-                flex: 1 1 calc(33.333% - 6px);
-                min-width: 86px;
-            }
-
-            .atleta-form-wrap {
-                margin-bottom: 1.5rem;
+                width: 100%;
             }
         }
     </style>
@@ -677,23 +693,23 @@
             // Temporadas
             setupDynamicFields('temporadas-container', 'add-temporada-btn',
                 '<div class="row g-2">' +
-                '<div class="col-12 col-md-3"><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe"></div>' +
-                '<div class="col-12 col-md-2"><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF"></div>' +
-                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '<div class="col-12 col-md-3"><label class="form-label small">Equipe</label><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small">Ano</label><input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025"></div>' +
+                '<div class="col-12 col-md-1"><label class="form-label small" title="Pontos Por Jogo">PPG</label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5"></div>' +
+                '<div class="col-12 col-md-1"><label class="form-label small" title="Rebotes Por Jogo">RPG</label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0"></div>' +
+                '<div class="col-12 col-md-1"><label class="form-label small" title="Assistencias Por Jogo">APG</label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4"></div>' +
+                '<div class="col-12 col-md-1"><label class="form-label small" title="Eficiencia">EFF</label><input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5"></div>' +
+                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
 
             // Conquistas
             setupDynamicFields('conquistas-container', 'add-conquista-btn',
                 '<div class="row g-2">' +
-                '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe"></div>' +
-                '<div class="col-12 col-md-2"><input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período"></div>' +
-                '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)"></div>' +
-                '<div class="col-12 col-md-2"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '<div class="col-12 col-md-4"><label class="form-label small">Equipe</label><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small">Ano</label><input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025"></div>' +
+                '<div class="col-12 col-md-4"><label class="form-label small">Conquistas</label><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
+                '<div class="col-12 col-md-2"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
 
