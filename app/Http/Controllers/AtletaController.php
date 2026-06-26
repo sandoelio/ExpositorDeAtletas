@@ -616,8 +616,7 @@ class AtletaController extends Controller
     {
         $arquivo = $request->file("$grupo.icone.$idx");
         if ($arquivo && $arquivo->isValid()) {
-            $mime = $arquivo->getMimeType() ?: 'image/png';
-            return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($arquivo->getPathname()));
+            return $arquivo->store('portfolio/team-icons', 'public');
         }
 
         $atual = trim((string) $request->input("$grupo.icone_atual.$idx", ''));

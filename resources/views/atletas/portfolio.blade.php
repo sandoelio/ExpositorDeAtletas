@@ -38,6 +38,18 @@
 
         return 'portfolio-trophy-default';
     };
+    $iconeEquipeUrl = function ($icone) {
+        $icone = trim((string) $icone);
+        if ($icone === '') {
+            return null;
+        }
+
+        if (str_starts_with($icone, 'data:image/') || str_starts_with($icone, 'http://') || str_starts_with($icone, 'https://')) {
+            return $icone;
+        }
+
+        return asset('storage/' . ltrim($icone, '/'));
+    };
 @endphp
 
 @section('content')
@@ -97,8 +109,8 @@
                             <header>
                                 <span class="portfolio-shield" title="{{ $temporada['equipe'] ?? 'Equipe' }}"
                                     data-bs-toggle="tooltip">
-                                    @if (!empty($temporada['icone']))
-                                        <img src="{{ $temporada['icone'] }}" alt="Icone de {{ $temporada['equipe'] ?? 'Equipe' }}">
+                                    @if ($iconeUrl = $iconeEquipeUrl($temporada['icone'] ?? null))
+                                        <img src="{{ $iconeUrl }}" alt="Icone de {{ $temporada['equipe'] ?? 'Equipe' }}">
                                     @else
                                         <i class="bi bi-shield-fill-check"></i>
                                     @endif
@@ -146,8 +158,8 @@
                             <div class="portfolio-club-head">
                                 <span class="portfolio-shield" title="{{ $conquista['equipe'] ?? 'Equipe' }}"
                                     data-bs-toggle="tooltip">
-                                    @if (!empty($conquista['icone']))
-                                        <img src="{{ $conquista['icone'] }}" alt="Icone de {{ $conquista['equipe'] ?? 'Equipe' }}">
+                                    @if ($iconeUrl = $iconeEquipeUrl($conquista['icone'] ?? null))
+                                        <img src="{{ $iconeUrl }}" alt="Icone de {{ $conquista['equipe'] ?? 'Equipe' }}">
                                     @else
                                         <i class="bi bi-shield-fill-check"></i>
                                     @endif
@@ -183,8 +195,8 @@
                             <strong>{{ $clube['ano'] ?? '-' }}</strong>
                             <span class="portfolio-shield" title="{{ $clube['equipe'] ?? 'Equipe' }}"
                                 data-bs-toggle="tooltip">
-                                @if (!empty($clube['icone']))
-                                    <img src="{{ $clube['icone'] }}" alt="Icone de {{ $clube['equipe'] ?? 'Equipe' }}">
+                                @if ($iconeUrl = $iconeEquipeUrl($clube['icone'] ?? null))
+                                    <img src="{{ $iconeUrl }}" alt="Icone de {{ $clube['equipe'] ?? 'Equipe' }}">
                                 @else
                                     <i class="bi bi-shield-fill-check"></i>
                                 @endif

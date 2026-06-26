@@ -44,6 +44,18 @@
             $conquistasTexto = old('portfolio_conquistas_texto', $conquistasTextoPadrao);
             $historicoClubesTexto = old('portfolio_historico_clubes_texto', $historicoTextoPadrao);
             $imagemPreviewUrl = route('atletas.og-image', $atleta->id) . '?v=' . optional($atleta->updated_at)->timestamp;
+            $iconePortfolioUrl = function ($icone) {
+                $icone = trim((string) $icone);
+                if ($icone === '') {
+                    return null;
+                }
+
+                if (str_starts_with($icone, 'data:image/') || str_starts_with($icone, 'http://') || str_starts_with($icone, 'https://')) {
+                    return $icone;
+                }
+
+                return asset('storage/' . ltrim($icone, '/'));
+            };
         @endphp
 
         <form id="formAtleta" action="{{ route('atletas.update', $atleta->id) }}" method="POST"
@@ -262,7 +274,7 @@
                                                 <label class="form-label small">Icone</label>
                                                 <input type="hidden" name="temporadas[icone_atual][]" value="{{ $temporada['icone'] ?? '' }}">
                                                 @if (!empty($temporada['icone']))
-                                                    <img class="team-icon-preview" src="{{ $temporada['icone'] }}" alt="Icone atual de {{ $temporada['equipe'] ?? 'Equipe' }}">
+                                                    <img class="team-icon-preview" src="{{ $iconePortfolioUrl($temporada['icone']) }}" alt="Icone atual de {{ $temporada['equipe'] ?? 'Equipe' }}">
                                                 @endif
                                                 <input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*">
                                             </div>
@@ -344,7 +356,7 @@
                                                 <input type="hidden" name="conquistas[icone_atual][]" value="{{ $conquista['icone'] ?? '' }}">
                                                 <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
                                                 @if (!empty($conquista['icone']))
-                                                    <img class="team-icon-preview" src="{{ $conquista['icone'] }}" alt="Icone atual de {{ $conquista['equipe'] ?? 'Equipe' }}">
+                                                    <img class="team-icon-preview" src="{{ $iconePortfolioUrl($conquista['icone']) }}" alt="Icone atual de {{ $conquista['equipe'] ?? 'Equipe' }}">
                                                 @endif
                                             </div>
                                             <div class="col-6 col-md-1">
@@ -410,7 +422,7 @@
                                                 <input type="hidden" name="historico[icone_atual][]" value="{{ $clube['icone'] ?? '' }}">
                                                 <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
                                                 @if (!empty($clube['icone']))
-                                                    <small class="text-muted">Icone atual salvo</small>
+                                                    <img class="team-icon-preview" src="{{ $iconePortfolioUrl($clube['icone']) }}" alt="Icone atual de {{ $clube['equipe'] ?? 'Equipe' }}">
                                                 @endif
                                             </div>
                                             <div class="col-12 col-md-3">
