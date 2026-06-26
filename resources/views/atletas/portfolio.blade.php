@@ -13,6 +13,7 @@
     $estiloJogo = $atletaModel->estilo_jogo ?: $posicao;
     $dataNascimento = $atletaModel->data_nascimento ? \Carbon\Carbon::parse($atletaModel->data_nascimento)->format('d/m/Y') : '-';
     $fotoPortfolio = route('atletas.og-image', $atletaModel->id) . '?v=' . optional($atletaModel->updated_at)->timestamp;
+    $portfolioPublicUrl = 'https://expositoratletas.cestabaianabasquete.com.br/public/atletas/' . $atletaModel->id . '/portfolio';
     $iniciais = function ($nome) {
         return collect(explode(' ', trim((string) $nome)))
             ->filter()
@@ -25,15 +26,25 @@
 @section('content')
     <div class="portfolio-shell">
         <div class="portfolio-actions">
-            <a href="{{ route('atletas.index') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left me-1"></i> Voltar
-            </a>
-            <a href="{{ route('atletas.show', $atletaModel->id) }}" class="btn btn-outline-primary">
-                <i class="bi bi-person-vcard me-1"></i> Ver perfil
-            </a>
-            <button type="button" class="btn btn-primary" onclick="window.print()">
-                <i class="bi bi-printer me-1"></i> Imprimir
-            </button>
+            <div class="portfolio-actions-group">
+                <a href="{{ route('atletas.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Voltar
+                </a>
+                <a href="{{ route('atletas.show', $atletaModel->id) }}" class="btn btn-outline-primary">
+                    <i class="bi bi-person-vcard me-1"></i> Ver perfil
+                </a>
+            </div>
+            <div class="portfolio-actions-group">
+                <button type="button" class="btn btn-outline-primary" id="download-portfolio-png" data-file-name="portfolio-atleta-{{ $atletaModel->id }}.png">
+                    <i class="bi bi-filetype-png me-1"></i> Baixar PNG
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="share-portfolio-link" data-share-url="{{ $portfolioPublicUrl }}">
+                    <i class="bi bi-link-45deg me-1"></i> Compartilhar link
+                </button>
+                <button type="button" class="btn btn-primary" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Imprimir
+                </button>
+            </div>
         </div>
 
         <article class="portfolio-card">
@@ -196,6 +207,12 @@
             justify-content: space-between;
             gap: 0.6rem;
             margin-bottom: 0.65rem;
+        }
+
+        .portfolio-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
 
         .portfolio-card {
@@ -700,6 +717,11 @@
                 flex-direction: column;
             }
 
+            .portfolio-actions-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
             .portfolio-actions .btn {
                 width: 100%;
                 font-size: 0.9rem;
@@ -836,23 +858,346 @@
 
         /* PRINT */
         @media print {
-            .portfolio-actions {
-                display: none;
-            }
-
-            .portfolio-shell {
+            @page {
+                size: 210mm 297mm;
                 margin: 0;
             }
 
+            html,
+            body {
+                width: auto;
+                height: auto;
+                margin: 0;
+                background: #fff !important;
+                display: block;
+            }
+
+            body,
+            .pagina-tema,
+            .portfolio-shell,
+            .portfolio-card,
+            .portfolio-card * {
+                box-sizing: border-box;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .navbar,
+            .site-footer,
+            .portfolio-actions {
+                display: none !important;
+            }
+
+            body > .d-flex,
+            body > .d-flex > .container {
+                display: block !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .portfolio-shell {
+                width: 210mm;
+                height: 297mm;
+                max-width: none;
+                margin: 0;
+                padding: 5mm;
+                background: #fff;
+            }
+
             .portfolio-card {
+                width: 100%;
+                height: 100%;
+                display: grid;
+                grid-template-rows: 72mm 43mm 42mm 58mm 32mm 40mm;
+                overflow: hidden;
                 box-shadow: none;
                 border-radius: 0;
+                background: #fff;
+            }
+
+            .portfolio-hero {
+                min-height: 0;
+                grid-template-columns: 38% 62%;
+            }
+
+            .portfolio-photo {
+                min-height: 0;
+                border-right-width: 5px;
+            }
+
+            .portfolio-photo img {
+                object-fit: contain;
+                object-position: center center;
+                background: #000;
+            }
+
+            .portfolio-identity {
+                padding: 8mm;
+            }
+
+            .portfolio-name-block {
+                padding-bottom: 3mm;
+            }
+
+            .portfolio-identity h1 {
+                font-size: 27pt;
+                line-height: 0.88;
+            }
+
+            .portfolio-meta {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                margin-top: 3mm;
+            }
+
+            .portfolio-meta-item {
+                min-height: 7mm;
+                justify-content: flex-start;
+                padding: 0 2mm;
+                gap: 2mm;
+                font-size: 7.2pt;
+            }
+
+            .portfolio-meta-item:nth-child(odd) {
+                padding-left: 0;
+                border-left: none;
+            }
+
+            .portfolio-flag-br {
+                width: 20px;
+                height: 14px;
+            }
+
+            .portfolio-role {
+                margin-top: 3mm;
+                padding-left: 0;
+                font-size: 11pt;
+            }
+
+            .portfolio-section {
+                padding: 3mm 4mm;
+                border-top-width: 2px;
+                overflow: hidden;
+            }
+
+            .portfolio-section,
+            .portfolio-footer,
+            .portfolio-season-info,
+            .portfolio-stats,
+            .portfolio-club-head,
+            .portfolio-timeline {
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .portfolio-section-title {
+                margin-bottom: 1.5mm;
+                gap: 3mm;
+                font-size: 7.5pt;
+                line-height: 1;
+            }
+
+            .portfolio-season-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 2mm;
+                height: calc(100% - 5mm);
+            }
+
+            .portfolio-season {
+                display: grid;
+                grid-template-rows: 12mm 1fr;
+                min-height: 0;
+                border-radius: 3px;
+            }
+
+            .portfolio-season header {
+                gap: 2mm;
+                min-width: 0;
+                padding: 1.5mm 2mm;
+            }
+
+            .portfolio-season-info strong {
+                max-width: 100%;
+                font-size: 7.5pt;
+                line-height: 1.05;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-season-info small {
+                font-size: 6.5pt;
+                line-height: 1.05;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-shield {
+                width: 8mm;
+                height: 8mm;
+                border-width: 1px;
+                font-size: 6pt;
+            }
+
+            .portfolio-stats div {
+                min-width: 0;
+                padding: 2mm 1mm 1.5mm;
+            }
+
+            .portfolio-stats strong {
+                max-width: 100%;
+                font-size: 12pt;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-stats span {
+                font-size: 6pt;
+            }
+
+            .portfolio-split {
+                grid-template-columns: 1fr 1fr;
+                gap: 2mm;
+            }
+
+            .portfolio-panel {
+                min-height: 0;
+                padding: 2.5mm;
+                border-radius: 3px;
+                overflow: hidden;
+            }
+
+            .portfolio-panel h2,
+            .portfolio-footer h2 {
+                margin-bottom: 2mm;
+                font-size: 8pt;
+            }
+
+            .portfolio-panel p,
+            .portfolio-list,
+            .portfolio-footer p {
+                font-size: 7.5pt;
+                line-height: 1.25;
+            }
+
+            .portfolio-list {
+                gap: 1.2mm;
+            }
+
+            .portfolio-panel p {
+                display: -webkit-box;
+                -webkit-line-clamp: 5;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .portfolio-list li {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-achievements {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 2mm;
+                height: calc(100% - 5mm);
+            }
+
+            .portfolio-achievements article {
+                min-width: 0;
+                padding-right: 1.5mm;
+                overflow: hidden;
+            }
+
+            .portfolio-club-head {
+                gap: 2mm;
+                min-width: 0;
+                margin-bottom: 1.5mm;
+            }
+
+            .portfolio-club-head strong {
+                font-size: 7pt;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-club-head small {
+                font-size: 6.5pt;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-timeline {
+                grid-template-columns: repeat(auto-fit, minmax(15mm, 1fr));
+                gap: 1.5mm;
+                height: calc(100% - 5mm);
+                align-items: start;
+            }
+
+            .portfolio-timeline article {
+                min-width: 0;
+                padding-top: 4mm;
+                overflow: hidden;
+            }
+
+            .portfolio-timeline article::before {
+                top: 2mm;
+            }
+
+            .portfolio-dot {
+                width: 2mm;
+                height: 2mm;
+                margin-bottom: 1mm;
+            }
+
+            .portfolio-timeline strong {
+                font-size: 7pt;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-timeline small {
+                margin-top: 1mm;
+                font-size: 6pt;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .portfolio-footer {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 2.5mm;
+                padding: 3.5mm 4mm;
+                overflow: hidden;
+            }
+
+            .portfolio-footer section {
+                padding-right: 3mm;
+            }
+
+            .portfolio-footer p {
+                margin: 1mm 0;
+            }
+
+            .portfolio-empty {
+                padding: 2mm;
+            }
+
+            .portfolio-empty p {
+                font-size: 7.5pt;
             }
         }
     </style>
 @endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Inicializar tooltips do Bootstrap
@@ -861,6 +1206,79 @@
                     new window.bootstrap.Tooltip(el);
                 }
             });
+
+            const shareButton = document.getElementById('share-portfolio-link');
+            if (shareButton) {
+                const originalHtml = shareButton.innerHTML;
+                const shareUrl = shareButton.dataset.shareUrl || window.location.href;
+
+                shareButton.addEventListener('click', async function() {
+                    try {
+                        if (navigator.share) {
+                            await navigator.share({
+                                title: document.title,
+                                url: shareUrl
+                            });
+                            return;
+                        }
+
+                        await navigator.clipboard.writeText(shareUrl);
+                        shareButton.innerHTML = '<i class="bi bi-check2-circle me-1"></i> Link copiado';
+                        setTimeout(function() {
+                            shareButton.innerHTML = originalHtml;
+                        }, 2500);
+                    } catch (error) {
+                        shareButton.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> Nao foi possivel copiar';
+                        setTimeout(function() {
+                            shareButton.innerHTML = originalHtml;
+                        }, 2500);
+                    }
+                });
+            }
+
+            const downloadPngButton = document.getElementById('download-portfolio-png');
+            if (downloadPngButton) {
+                const originalHtml = downloadPngButton.innerHTML;
+
+                downloadPngButton.addEventListener('click', async function() {
+                    const portfolioCard = document.querySelector('.portfolio-card');
+                    if (!portfolioCard || !window.html2canvas) {
+                        downloadPngButton.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> PNG indisponivel';
+                        setTimeout(function() {
+                            downloadPngButton.innerHTML = originalHtml;
+                        }, 2500);
+                        return;
+                    }
+
+                    try {
+                        downloadPngButton.disabled = true;
+                        downloadPngButton.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Gerando PNG';
+
+                        const canvas = await window.html2canvas(portfolioCard, {
+                            backgroundColor: '#ffffff',
+                            scale: 2,
+                            useCORS: true,
+                            allowTaint: true,
+                            logging: false,
+                            windowWidth: document.documentElement.scrollWidth
+                        });
+
+                        const link = document.createElement('a');
+                        link.download = downloadPngButton.dataset.fileName || 'portfolio-atleta.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+
+                        downloadPngButton.innerHTML = '<i class="bi bi-check2-circle me-1"></i> PNG baixado';
+                    } catch (error) {
+                        downloadPngButton.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> Erro ao gerar';
+                    } finally {
+                        setTimeout(function() {
+                            downloadPngButton.disabled = false;
+                            downloadPngButton.innerHTML = originalHtml;
+                        }, 2500);
+                    }
+                });
+            }
         });
     </script>
 @endpush
