@@ -28,7 +28,7 @@
                     <div class="import-step">
                         <span class="step-badge">2</span>
                         <strong>Preencha os dados</strong>
-                        <small>Mantenha os nomes de colunas do template. O campo email e opcional.</small>
+                        <small>Mantenha os nomes de colunas. Os campos de portfolio sao opcionais.</small>
                     </div>
                     <div class="import-step">
                         <span class="step-badge">3</span>
@@ -41,6 +41,11 @@
                     <a href="{{ route('atletas.template') }}" class="btn btn-template">
                         Baixar Template XLS
                     </a>
+                </div>
+
+                <div class="import-notes mt-3">
+                    <strong>Campos opcionais do portfolio</strong>
+                    <p>Use uma informacao por linha quando houver varios itens. Para colunas compostas, separe os dados com <code>|</code>.</p>
                 </div>
             </div>
         </div>
@@ -143,6 +148,30 @@
             background: #1f2b4f;
             border-color: #1f2b4f;
             color: #fff;
+        }
+
+        .import-notes {
+            padding: 0.75rem;
+            border: 1px solid #d7deea;
+            border-radius: 10px;
+            background: #f9fbff;
+            color: #28365f;
+            font-size: 0.88rem;
+        }
+
+        .import-notes p {
+            margin: 0.35rem 0;
+            color: #4a5878;
+        }
+
+        .import-notes ul {
+            margin: 0.5rem 0;
+            padding-left: 1.1rem;
+        }
+
+        .import-notes code {
+            color: #28365f;
+            font-size: 0.82rem;
         }
 
         .btn-import {

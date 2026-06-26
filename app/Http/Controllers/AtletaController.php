@@ -392,7 +392,7 @@ class AtletaController extends Controller
         $ignoredDetails = [];
 
         foreach ($rows as $index => $row) {
-            $data     = array_combine($header, $row);
+            $data     = $this->combinarLinhaImportacao($header, $row);
             $nome     = trim($data['nome_completo'] ?? '');
             $entidade = trim($data['entidade']     ?? '');
 
@@ -442,6 +442,15 @@ class AtletaController extends Controller
                 'email'           => $emailImport,
                 'resumo'          => $data['resumo']       ?? null,
                 'imagem_base64'   => $data['imagem_base64'] ?? null,
+                'nacionalidade'   => $this->valorImportacaoOpcional($data, 'nacionalidade'),
+                'estilo_jogo'     => $this->valorImportacaoOpcional($data, 'estilo_jogo'),
+                'perfil_profissional' => $this->valorImportacaoOpcional($data, 'perfil_profissional'),
+                'principais_qualidades' => $this->linhasParaArray($this->valorImportacaoOpcional($data, 'principais_qualidades_texto')),
+                'portfolio_temporadas' => $this->linhasTemporadasParaArray($this->valorImportacaoOpcional($data, 'portfolio_temporadas_texto')),
+                'portfolio_conquistas' => $this->linhasConquistasParaArray($this->valorImportacaoOpcional($data, 'portfolio_conquistas_texto')),
+                'portfolio_historico_clubes' => $this->linhasHistoricoParaArray($this->valorImportacaoOpcional($data, 'portfolio_historico_clubes_texto')),
+                'instagram'       => $this->valorImportacaoOpcional($data, 'instagram'),
+                'highlights_texto' => $this->valorImportacaoOpcional($data, 'highlights_texto'),
             ];
 
             Atleta::create($attrs);
@@ -612,6 +621,20 @@ class AtletaController extends Controller
         return $linhas->isEmpty() ? null : $linhas->all();
     }
 
+    private function valorImportacaoOpcional(array $data, string $campo): ?string
+    {
+        $valor = trim((string) ($data[$campo] ?? ''));
+
+        return $valor !== '' ? $valor : null;
+    }
+
+    private function combinarLinhaImportacao(array $header, array $row): array
+    {
+        $row = array_slice(array_pad($row, count($header), null), 0, count($header));
+
+        return array_combine($header, $row) ?: [];
+    }
+
     private function iconePortfolioParaArray(Request $request, string $grupo, int $idx): ?string
     {
         $arquivo = $request->file("$grupo.icone.$idx");
@@ -634,6 +657,7 @@ class AtletaController extends Controller
                 'ppg' => $colunas[2] ?? '--',
                 'rpg' => $colunas[3] ?? '--',
                 'apg' => $colunas[4] ?? '--',
+                'icone' => $colunas[5] ?? null,
             ];
         })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['temporada']))->values();
 
@@ -657,6 +681,7 @@ class AtletaController extends Controller
                 'equipe' => $colunas[0] ?? null,
                 'periodo' => $colunas[1] ?? null,
                 'itens' => $itens,
+                'icone' => $colunas[3] ?? null,
             ];
         })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['periodo']) || !empty($linha['itens']))->values();
 
@@ -673,6 +698,7 @@ class AtletaController extends Controller
             return [
                 'ano' => $colunas[0] ?? null,
                 'equipe' => $colunas[1] ?? null,
+                'icone' => $colunas[2] ?? null,
             ];
         })->filter(fn(array $linha) => !empty($linha['ano']) || !empty($linha['equipe']))->values();
 
