@@ -21,6 +21,23 @@
             ->take(3)
             ->implode('');
     };
+    $classeTrofeu = function ($item) {
+        $texto = \Illuminate\Support\Str::lower(\Illuminate\Support\Str::ascii((string) $item));
+
+        if (str_contains($texto, 'segundo') || str_contains($texto, '2') || str_contains($texto, 'prata')) {
+            return 'portfolio-trophy-silver';
+        }
+
+        if (str_contains($texto, 'terceiro') || str_contains($texto, '3') || str_contains($texto, 'bronze')) {
+            return 'portfolio-trophy-bronze';
+        }
+
+        if (str_contains($texto, 'campe') || str_contains($texto, 'primeiro') || str_contains($texto, '1') || str_contains($texto, 'mvp') || str_contains($texto, 'ouro')) {
+            return 'portfolio-trophy-gold';
+        }
+
+        return 'portfolio-trophy-default';
+    };
 @endphp
 
 @section('content')
@@ -79,7 +96,13 @@
                         <article class="portfolio-season">
                             <header>
                                 <span class="portfolio-shield" title="{{ $temporada['equipe'] ?? 'Equipe' }}"
-                                    data-bs-toggle="tooltip">{{ $iniciais($temporada['equipe'] ?? 'Equipe') }}</span>
+                                    data-bs-toggle="tooltip">
+                                    @if (!empty($temporada['icone']))
+                                        <img src="{{ $temporada['icone'] }}" alt="Icone de {{ $temporada['equipe'] ?? 'Equipe' }}">
+                                    @else
+                                        <i class="bi bi-shield-fill-check"></i>
+                                    @endif
+                                </span>
                                 <div class="portfolio-season-info">
                                     <strong>{{ $temporada['equipe'] ?? 'Equipe' }}</strong>
                                     <small>{{ $temporada['temporada'] ?? '-' }}</small>
@@ -122,7 +145,13 @@
                         <article>
                             <div class="portfolio-club-head">
                                 <span class="portfolio-shield" title="{{ $conquista['equipe'] ?? 'Equipe' }}"
-                                    data-bs-toggle="tooltip">{{ $iniciais($conquista['equipe'] ?? 'Equipe') }}</span>
+                                    data-bs-toggle="tooltip">
+                                    @if (!empty($conquista['icone']))
+                                        <img src="{{ $conquista['icone'] }}" alt="Icone de {{ $conquista['equipe'] ?? 'Equipe' }}">
+                                    @else
+                                        <i class="bi bi-shield-fill-check"></i>
+                                    @endif
+                                </span>
                                 <div>
                                     <strong>{{ $conquista['equipe'] ?? 'Equipe' }}</strong>
                                     <small>{{ $conquista['periodo'] ?? '-' }}</small>
@@ -130,7 +159,7 @@
                             </div>
                             <ul class="portfolio-list">
                                 @forelse (($conquista['itens'] ?? []) as $item)
-                                    <li><i class="bi bi-trophy-fill"></i> {{ $item }}</li>
+                                    <li><i class="bi bi-trophy-fill {{ $classeTrofeu($item) }}"></i> {{ $item }}</li>
                                 @empty
                                     <li><i class="bi bi-info-circle"></i> Sem conquistas registradas</li>
                                 @endforelse
@@ -153,7 +182,13 @@
                             <span class="portfolio-dot"></span>
                             <strong>{{ $clube['ano'] ?? '-' }}</strong>
                             <span class="portfolio-shield" title="{{ $clube['equipe'] ?? 'Equipe' }}"
-                                data-bs-toggle="tooltip">{{ $iniciais($clube['equipe'] ?? 'Equipe') }}</span>
+                                data-bs-toggle="tooltip">
+                                @if (!empty($clube['icone']))
+                                    <img src="{{ $clube['icone'] }}" alt="Icone de {{ $clube['equipe'] ?? 'Equipe' }}">
+                                @else
+                                    <i class="bi bi-shield-fill-check"></i>
+                                @endif
+                            </span>
                             <small>{{ $clube['equipe'] ?? 'Equipe' }}</small>
                         </article>
                     @empty
@@ -412,6 +447,19 @@
             color: #1f2d4f;
             font-weight: 900;
             font-size: 0.82rem;
+            overflow: hidden;
+        }
+
+        .portfolio-shield img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .portfolio-shield i {
+            color: #1f66b7;
+            font-size: 1.35rem;
         }
 
         .portfolio-stats {
@@ -486,6 +534,22 @@
         }
 
         .portfolio-list i {
+            color: #1f66b7;
+        }
+
+        .portfolio-list i.portfolio-trophy-gold {
+            color: #d89a12;
+        }
+
+        .portfolio-list i.portfolio-trophy-silver {
+            color: #9aa4b2;
+        }
+
+        .portfolio-list i.portfolio-trophy-bronze {
+            color: #b36a2e;
+        }
+
+        .portfolio-list i.portfolio-trophy-default {
             color: #1f66b7;
         }
 

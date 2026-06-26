@@ -208,8 +208,14 @@ class AtletaController extends Controller
                 'instagram' => 'nullable|string|max:120',
                 'highlights_texto' => 'nullable|string|max:160',
                 'temporadas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
+                'temporadas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
+                'temporadas.icone.*' => 'nullable|image|max:512',
                 'conquistas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
+                'conquistas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
+                'conquistas.icone.*' => 'nullable|image|max:512',
                 'historico.ano' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
+                'historico.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
+                'historico.icone.*' => 'nullable|image|max:512',
             ];
 
             // Definição das mensagens de erro personalizadas
@@ -288,8 +294,14 @@ class AtletaController extends Controller
                 'highlights_texto' => 'nullable|string|max:160',
                 'imagem' => 'nullable|image|max:2048',
                 'temporadas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
+                'temporadas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
+                'temporadas.icone.*' => 'nullable|image|max:512',
                 'conquistas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
+                'conquistas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
+                'conquistas.icone.*' => 'nullable|image|max:512',
                 'historico.ano' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
+                'historico.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
+                'historico.icone.*' => 'nullable|image|max:512',
             ]);
 
             $data = $request->all();
@@ -522,6 +534,7 @@ class AtletaController extends Controller
                         'ppg' => trim($request->input("temporadas.ppg.$idx") ?? '--'),
                         'rpg' => trim($request->input("temporadas.rpg.$idx") ?? '--'),
                         'apg' => trim($request->input("temporadas.apg.$idx") ?? '--'),
+                        'icone' => $this->iconePortfolioParaArray($request, 'temporadas', $idx),
                     ];
                 }
             }
@@ -545,8 +558,9 @@ class AtletaController extends Controller
                     
                     $conquistas[] = [
                         'equipe' => trim($equipe),
-                        'periodo' => trim($request->input("conquistas.periodo.$idx") ?? ''),
+                        'periodo' => trim($request->input("conquistas.periodo.$idx") ?? $request->input("conquistas.ano.$idx") ?? ''),
                         'itens' => $itens,
+                        'icone' => $this->iconePortfolioParaArray($request, 'conquistas', $idx),
                     ];
                 }
             }
@@ -564,6 +578,7 @@ class AtletaController extends Controller
                     $historico[] = [
                         'ano' => trim($ano),
                         'equipe' => trim($request->input("historico.equipe.$idx") ?? ''),
+                        'icone' => $this->iconePortfolioParaArray($request, 'historico', $idx),
                     ];
                 }
             }
@@ -595,6 +610,18 @@ class AtletaController extends Controller
             ->values();
 
         return $linhas->isEmpty() ? null : $linhas->all();
+    }
+
+    private function iconePortfolioParaArray(Request $request, string $grupo, int $idx): ?string
+    {
+        $arquivo = $request->file("$grupo.icone.$idx");
+        if ($arquivo && $arquivo->isValid()) {
+            $mime = $arquivo->getMimeType() ?: 'image/png';
+            return 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($arquivo->getPathname()));
+        }
+
+        $atual = trim((string) $request->input("$grupo.icone_atual.$idx", ''));
+        return $atual !== '' ? $atual : null;
     }
 
     private function linhasTemporadasParaArray(?string $texto): ?array
