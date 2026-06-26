@@ -44,12 +44,17 @@
                 </div>
 
                 <div class="portfolio-identity">
-                    <h1>{{ $primeiroNome }} <span>{{ $restanteNome }}</span></h1>
+                    <div class="portfolio-name-block">
+                        <h1>{{ $primeiroNome }} <span>{{ $restanteNome }}</span></h1>
+                    </div>
                     <div class="portfolio-meta">
-                        <span><i class="bi bi-flag-fill"></i> {{ $nacionalidade }}</span>
-                        <span><i class="bi bi-rulers"></i> {{ $altura }}</span>
-                        <span><i class="bi bi-person-fill"></i> {{ $peso }}</span>
-                        <span><i class="bi bi-dribbble"></i> {{ $posicao }}</span>
+                        <span class="portfolio-meta-item">
+                            <img class="portfolio-flag-br" src="{{ asset('img/brasil.png') }}" alt="Bandeira do Brasil">
+                            {{ $nacionalidade }}
+                        </span>
+                        <span class="portfolio-meta-item"><i class="bi bi-rulers"></i> {{ $altura }}</span>
+                        <span class="portfolio-meta-item"><i class="bi bi-person-fill"></i> {{ $peso }}</span>
+                        <span class="portfolio-meta-item"><i class="bi bi-dribbble"></i> {{ $posicao }}</span>
                     </div>
                     <strong class="portfolio-role">{{ $estiloJogo }}</strong>
                 </div>
@@ -202,16 +207,20 @@
 
         /* HERO SECTION */
         .portfolio-hero {
+            position: relative;
             display: grid;
-            grid-template-columns: 38% 62%;
-            min-height: 350px;
+            grid-template-columns: 36% 64%;
+            min-height: 330px;
             color: #fff;
-            background: #07111f;
+            background: #030812;
         }
 
         .portfolio-photo {
-            background: #111b2b;
-            min-height: 350px;
+            position: relative;
+            z-index: 1;
+            background: #000;
+            min-height: 330px;
+            border-right: 7px solid #1f66b7;
         }
 
         .portfolio-photo img {
@@ -223,18 +232,30 @@
         }
 
         .portfolio-identity {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, #07111f 0%, #101b31 62%, #164ea1 100%);
+            min-width: 0;
+            margin-left: 0;
+            padding: 2.1rem 2.2rem;
+            background: linear-gradient(135deg, #07111f 0%, #07111f 52%, #112e5c 100%);
+            clip-path: none;
+        }
+
+        .portfolio-name-block {
+            padding-bottom: 0.85rem;
+            border-bottom: 2px solid rgba(35, 123, 220, 0.45);
         }
 
         .portfolio-identity h1 {
             margin: 0;
-            font-size: clamp(2.3rem, 5vw, 5rem);
-            line-height: 0.98;
+            color: #f8fbff;
+            font-size: clamp(2.8rem, 5.2vw, 5.4rem);
+            line-height: 0.9;
             font-weight: 900;
+            letter-spacing: 0;
             text-transform: uppercase;
         }
 
@@ -244,26 +265,50 @@
         }
 
         .portfolio-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.7rem 1rem;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, auto));
+            align-items: center;
+            gap: 0;
             margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 100%;
         }
 
-        .portfolio-meta span {
+        .portfolio-meta-item {
             display: inline-flex;
             align-items: center;
-            gap: 0.42rem;
+            justify-content: center;
+            gap: 0.48rem;
+            min-height: 32px;
+            padding: 0 0.9rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.28);
+            color: #f8fbff;
             font-weight: 800;
             font-size: 0.9rem;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .portfolio-meta-item:first-child {
+            justify-content: flex-start;
+            padding-left: 0;
+            border-left: none;
+        }
+
+        .portfolio-flag-br {
+            width: 28px;
+            height: 19px;
+            flex: 0 0 auto;
+            border-radius: 2px;
+            object-fit: cover;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22);
         }
 
         .portfolio-role {
             margin-top: 0.85rem;
+            padding-left: calc(25% + 0.9rem);
             color: #58a1ff;
-            font-size: 1.25rem;
+            font-size: 1.45rem;
+            font-weight: 900;
             text-transform: uppercase;
         }
 
@@ -596,6 +641,27 @@
 
             .portfolio-photo {
                 min-height: 300px;
+                border-right: none;
+                border-bottom: 6px solid #1f66b7;
+            }
+
+            .portfolio-identity {
+                padding: 1.6rem;
+            }
+
+            .portfolio-meta {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.7rem 0;
+            }
+
+            .portfolio-meta-item:nth-child(odd) {
+                justify-content: flex-start;
+                padding-left: 0;
+                border-left: none;
+            }
+
+            .portfolio-role {
+                padding-left: 0;
             }
 
             .portfolio-season-grid {
@@ -645,19 +711,23 @@
             }
 
             .portfolio-identity {
-                padding: 1.2rem;
+                padding: 1.15rem;
             }
 
             .portfolio-identity h1 {
-                font-size: clamp(1.8rem, 4vw, 2.5rem);
+                font-size: 2.2rem;
             }
 
             .portfolio-meta {
-                gap: 0.45rem 0.8rem;
-                font-size: 0.8rem;
+                grid-template-columns: 1fr;
+                gap: 0.45rem;
             }
 
-            .portfolio-meta span {
+            .portfolio-meta-item {
+                justify-content: flex-start;
+                min-height: 28px;
+                padding: 0;
+                border-left: none;
                 font-size: 0.8rem;
             }
 
