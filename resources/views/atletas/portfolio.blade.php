@@ -12,7 +12,7 @@
     $nacionalidade = $atletaModel->nacionalidade ?: 'Brasileiro';
     $estiloJogo = $atletaModel->estilo_jogo ?: $posicao;
     $dataNascimento = $atletaModel->data_nascimento ? \Carbon\Carbon::parse($atletaModel->data_nascimento)->format('d/m/Y') : '-';
-    $fotoPortfolio = route('atletas.og-image', $atletaModel->id);
+    $fotoPortfolio = route('atletas.og-image', $atletaModel->id) . '?v=' . optional($atletaModel->updated_at)->timestamp;
     $iniciais = function ($nome) {
         return collect(explode(' ', trim((string) $nome)))
             ->filter()
@@ -73,7 +73,6 @@
                                 <div><strong>{{ $temporada['ppg'] ?? '-' }}</strong><span>PPG</span></div>
                                 <div><strong>{{ $temporada['rpg'] ?? '-' }}</strong><span>RPG</span></div>
                                 <div><strong>{{ $temporada['apg'] ?? '-' }}</strong><span>APG</span></div>
-                                <div><strong>{{ $temporada['eff'] ?? '-' }}</strong><span>EFF</span></div>
                             </div>
                         </article>
                     @endforeach
@@ -355,7 +354,7 @@
 
         .portfolio-stats {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             text-align: center;
         }
 

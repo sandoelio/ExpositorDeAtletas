@@ -130,7 +130,7 @@ class AtletaController extends Controller
     public function ogImage($id)
     {
         $atleta = Atleta::findOrFail($id);
-        $cacheControl = 'public, max-age=86400';
+        $cacheControl = 'no-cache, max-age=0, must-revalidate';
 
         $raw = trim((string) ($atleta->imagem_base64 ?? ''));
         if ($raw !== '') {
@@ -192,7 +192,7 @@ class AtletaController extends Controller
                 'posicao_jogo' => 'required|string|max:50',
                 'cidade' => 'required|string|max:255',
                 'entidade' => 'required|string|max:255',
-                'imagem_base64' => 'nullable|image|max:2048',
+                'imagem' => 'nullable|image|max:2048',
                 'resumo' => 'nullable|string|max:1000',
                 'nacionalidade' => 'nullable|string|max:80',
                 'estilo_jogo' => 'nullable|string|max:120',
@@ -222,8 +222,8 @@ class AtletaController extends Controller
                 'cidade.string' => 'O campo "Cidade" deve ser uma string.',
                 'entidade.required' => 'O campo "Entidade" é obrigatório.',
                 'entidade.string' => 'O campo "Entidade" deve ser uma string.',
-                'imagem_base64.image' => 'O arquivo enviado deve ser uma imagem.',
-                'imagem_base64.max' => 'O tamanho da imagem não pode ser maior que 2MB.',
+                'imagem.image' => 'O arquivo enviado deve ser uma imagem.',
+                'imagem.max' => 'O tamanho da imagem não pode ser maior que 2MB.',
                 'resumo.string' => 'O campo "Resumo" deve ser uma string.',
                 'resumo.max' => 'O campo "Resumo" não pode ter mais de 1000 caracteres.',
             ];
@@ -279,6 +279,7 @@ class AtletaController extends Controller
                 'portfolio_historico_clubes_texto' => 'nullable|string|max:5000',
                 'instagram' => 'nullable|string|max:120',
                 'highlights_texto' => 'nullable|string|max:160',
+                'imagem' => 'nullable|image|max:2048',
             ]);
 
             $data = $request->all();
@@ -507,11 +508,10 @@ class AtletaController extends Controller
                 if (trim($equipe)) {
                     $temporadas[] = [
                         'equipe' => trim($equipe),
-                        'temporada' => trim($request->input("temporadas.temporada.$idx") ?? ''),
+                        'temporada' => trim($request->input("temporadas.temporada.$idx") ?? $request->input("temporadas.ano.$idx") ?? ''),
                         'ppg' => trim($request->input("temporadas.ppg.$idx") ?? '--'),
                         'rpg' => trim($request->input("temporadas.rpg.$idx") ?? '--'),
                         'apg' => trim($request->input("temporadas.apg.$idx") ?? '--'),
-                        'eff' => trim($request->input("temporadas.eff.$idx") ?? '--'),
                     ];
                 }
             }
@@ -598,7 +598,6 @@ class AtletaController extends Controller
                 'ppg' => $colunas[2] ?? '--',
                 'rpg' => $colunas[3] ?? '--',
                 'apg' => $colunas[4] ?? '--',
-                'eff' => $colunas[5] ?? '--',
             ];
         })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['temporada']))->values();
 
@@ -661,7 +660,6 @@ class AtletaController extends Controller
             'ppg' => '--',
             'rpg' => '--',
             'apg' => '--',
-            'eff' => number_format((int) ($atleta->visualizacoes ?? 0), 0, ',', '.'),
         ]];
     }
 

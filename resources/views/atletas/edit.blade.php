@@ -25,7 +25,6 @@
                     $item['ppg'] ?? '',
                     $item['rpg'] ?? '',
                     $item['apg'] ?? '',
-                    $item['eff'] ?? '',
                 ]);
             })->implode("\n");
             $conquistasTextoPadrao = collect($atleta->portfolio_conquistas ?? [])->map(function ($item) {
@@ -44,6 +43,7 @@
             $temporadasTexto = old('portfolio_temporadas_texto', $temporadasTextoPadrao);
             $conquistasTexto = old('portfolio_conquistas_texto', $conquistasTextoPadrao);
             $historicoClubesTexto = old('portfolio_historico_clubes_texto', $historicoTextoPadrao);
+            $imagemPreviewUrl = route('atletas.og-image', $atleta->id) . '?v=' . optional($atleta->updated_at)->timestamp;
         @endphp
 
         <form id="formAtleta" action="{{ route('atletas.update', $atleta->id) }}" method="POST"
@@ -58,7 +58,7 @@
                         <label class="form-label d-block">Imagem atual</label>
                         <div class="image-preview-wrap">
                             <img id="imagem-preview"
-                                src="{{ $atleta->imagem_base64 ? 'data:image/png;base64,' . $atleta->imagem_base64 : asset('img/avatar.png') }}"
+                                src="{{ $imagemPreviewUrl }}"
                                 alt="Imagem do atleta" class="image-preview">
                         </div>
                         <label for="imagem" class="form-label mt-2">Nova imagem</label>
@@ -260,25 +260,21 @@
                                             </div>
                                             <div class="col-12 col-md-2">
                                                 <label class="form-label small">Ano</label>
-                                                <input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025" value="{{ $temporada['ano'] ?? '' }}">
+                                                <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025" value="{{ $temporada['temporada'] ?? $temporada['ano'] ?? '' }}">
                                             </div>
-                                            <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Pontos Por Jogo">PPG</label>
+                                            <div class="col-12 col-md-2">
+                                                <label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label>
                                                 <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5" value="{{ $temporada['ppg'] ?? '' }}">
                                             </div>
-                                            <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Rebotes Por Jogo">RPG</label>
+                                            <div class="col-12 col-md-2">
+                                                <label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label>
                                                 <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0" value="{{ $temporada['rpg'] ?? '' }}">
                                             </div>
-                                            <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Assistências Por Jogo">APG</label>
+                                            <div class="col-12 col-md-2">
+                                                <label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label>
                                                 <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4" value="{{ $temporada['apg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Eficiência">EFF</label>
-                                                <input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5" value="{{ $temporada['eff'] ?? '' }}">
-                                            </div>
-                                            <div class="col-12 col-md-3">
                                                 <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                             </div>
                                         </div>
@@ -292,25 +288,21 @@
                                             </div>
                                             <div class="col-12 col-md-2">
                                                 <label class="form-label small">Ano</label>
-                                                <input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025">
+                                                <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025">
                                             </div>
-                                            <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Pontos Por Jogo">PPG</label>
+                                            <div class="col-12 col-md-2">
+                                                <label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label>
                                                 <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5">
                                             </div>
-                                            <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Rebotes Por Jogo">RPG</label>
+                                            <div class="col-12 col-md-2">
+                                                <label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label>
                                                 <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0">
                                             </div>
-                                            <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Assistências Por Jogo">APG</label>
+                                            <div class="col-12 col-md-2">
+                                                <label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label>
                                                 <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4">
                                             </div>
                                             <div class="col-12 col-md-1">
-                                                <label class="form-label small" title="Eficiência">EFF</label>
-                                                <input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5">
-                                            </div>
-                                            <div class="col-12 col-md-3">
                                                 <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                             </div>
                                         </div>
@@ -807,11 +799,10 @@
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe"></div>' +
                 '<div class="col-12 col-md-2"><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
-                '<div class="col-12 col-md-1"><input type="text" class="form-control" name="temporadas[eff][]" placeholder="EFF"></div>' +
-                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
+                '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
 
@@ -833,6 +824,12 @@
                 '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
+
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+                if (window.bootstrap && window.bootstrap.Tooltip) {
+                    new window.bootstrap.Tooltip(el);
+                }
+            });
         });
     </script>
 @endpush

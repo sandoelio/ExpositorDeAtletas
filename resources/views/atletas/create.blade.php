@@ -212,25 +212,21 @@
                                         </div>
                                         <div class="col-12 col-md-2">
                                             <label class="form-label small">Ano</label>
-                                            <input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025">
+                                            <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025">
                                         </div>
-                                        <div class="col-12 col-md-1">
-                                            <label class="form-label small" title="Pontos Por Jogo">PPG</label>
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label>
                                             <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5">
                                         </div>
-                                        <div class="col-12 col-md-1">
-                                            <label class="form-label small" title="Rebotes Por Jogo">RPG</label>
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label>
                                             <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0">
                                         </div>
-                                        <div class="col-12 col-md-1">
-                                            <label class="form-label small" title="Assistências Por Jogo">APG</label>
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label>
                                             <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4">
                                         </div>
                                         <div class="col-12 col-md-1">
-                                            <label class="form-label small" title="Eficiência">EFF</label>
-                                            <input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5">
-                                        </div>
-                                        <div class="col-12 col-md-3">
                                             <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none; margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button>
                                         </div>
                                     </div>
@@ -694,12 +690,11 @@
             setupDynamicFields('temporadas-container', 'add-temporada-btn',
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><label class="form-label small">Equipe</label><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia"></div>' +
-                '<div class="col-12 col-md-2"><label class="form-label small">Ano</label><input type="text" class="form-control" name="temporadas[ano][]" placeholder="Ex: 2025"></div>' +
-                '<div class="col-12 col-md-1"><label class="form-label small" title="Pontos Por Jogo">PPG</label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5"></div>' +
-                '<div class="col-12 col-md-1"><label class="form-label small" title="Rebotes Por Jogo">RPG</label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0"></div>' +
-                '<div class="col-12 col-md-1"><label class="form-label small" title="Assistencias Por Jogo">APG</label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4"></div>' +
-                '<div class="col-12 col-md-1"><label class="form-label small" title="Eficiencia">EFF</label><input type="text" class="form-control" name="temporadas[eff][]" placeholder="19.5"></div>' +
-                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small">Ano</label><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4"></div>' +
+                '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="margin-top: 1.5rem;"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
 
@@ -721,6 +716,12 @@
                 '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
+
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+                if (window.bootstrap && window.bootstrap.Tooltip) {
+                    new window.bootstrap.Tooltip(el);
+                }
+            });
         });
     </script>
 @endpush
