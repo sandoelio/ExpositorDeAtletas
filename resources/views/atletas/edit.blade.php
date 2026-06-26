@@ -263,15 +263,15 @@
                                                 <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025" value="{{ $temporada['temporada'] ?? $temporada['ano'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label>
+                                                <label class="form-label small">PPG <span class="stat-help" title="Pontos por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label>
                                                 <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5" value="{{ $temporada['ppg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label>
+                                                <label class="form-label small">RPG <span class="stat-help" title="Rebotes por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label>
                                                 <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0" value="{{ $temporada['rpg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label>
+                                                <label class="form-label small">APG <span class="stat-help" title="Assistencias por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label>
                                                 <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4" value="{{ $temporada['apg'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-1">
@@ -291,15 +291,15 @@
                                                 <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label>
+                                                <label class="form-label small">PPG <span class="stat-help" title="Pontos por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label>
                                                 <input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label>
+                                                <label class="form-label small">RPG <span class="stat-help" title="Rebotes por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label>
                                                 <input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label>
+                                                <label class="form-label small">APG <span class="stat-help" title="Assistencias por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label>
                                                 <input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4">
                                             </div>
                                             <div class="col-12 col-md-1">
@@ -528,6 +528,22 @@
 
         .dynamic-item .remove-item:not([style*="display: none"]) {
             display: inline-flex !important;
+        }
+
+        .stat-help {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            margin-left: 3px;
+            border-radius: 50%;
+            background: #28365f;
+            color: #fff;
+            font-size: 0.68rem;
+            font-weight: 800;
+            line-height: 1;
+            cursor: help;
         }
 
         .dynamic-item.temporada-item,
@@ -782,6 +798,7 @@
                     newItem.innerHTML = itemTemplate;
                     newItem.className = 'dynamic-item ' + container.querySelector('.dynamic-item').className.split(' ').slice(2).join(' ');
                     container.appendChild(newItem);
+                    initializeTooltips(newItem);
                     updateRemoveButtons();
                 });
 
@@ -799,9 +816,9 @@
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe"></div>' +
                 '<div class="col-12 col-md-2"><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Temporada"></div>' +
-                '<div class="col-12 col-md-2"><label class="form-label small" title="Pontos por jogo" data-bs-toggle="tooltip">PPG</label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
-                '<div class="col-12 col-md-2"><label class="form-label small" title="Rebotes por jogo" data-bs-toggle="tooltip">RPG</label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
-                '<div class="col-12 col-md-2"><label class="form-label small" title="Assistencias por jogo" data-bs-toggle="tooltip">APG</label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small">PPG <span class="stat-help" title="Pontos por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small">RPG <span class="stat-help" title="Rebotes por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
+                '<div class="col-12 col-md-2"><label class="form-label small">APG <span class="stat-help" title="Assistencias por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
                 '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
                 '</div>'
             );
@@ -825,11 +842,16 @@
                 '</div>'
             );
 
-            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
-                if (window.bootstrap && window.bootstrap.Tooltip) {
-                    new window.bootstrap.Tooltip(el);
-                }
-            });
+            function initializeTooltips(scope) {
+                const root = scope || document;
+                root.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+                    if (window.bootstrap && window.bootstrap.Tooltip) {
+                        window.bootstrap.Tooltip.getOrCreateInstance(el);
+                    }
+                });
+            }
+
+            initializeTooltips(document);
         });
     </script>
 @endpush
