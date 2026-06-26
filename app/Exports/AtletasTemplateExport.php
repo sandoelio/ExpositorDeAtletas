@@ -32,7 +32,16 @@ class AtletasTemplateExport implements FromArray, WithHeadings
             'posicao_jogo',
             'contato',
             'email',
-            'resumo'
+            'resumo',
+            'nacionalidade',
+            'estilo_jogo',
+            'perfil_profissional',
+            'principais_qualidades_texto',
+            'portfolio_temporadas_texto',
+            'portfolio_conquistas_texto',
+            'portfolio_historico_clubes_texto',
+            'instagram',
+            'highlights_texto',
         ];
     }
 }
