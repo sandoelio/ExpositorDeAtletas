@@ -251,7 +251,7 @@
                     <div class="tab-pane fade" id="portfolio-temporadas-edit">
                         <div class="dynamic-form-group">
                             <div id="temporadas-container-edit" class="dynamic-items-list">
-                                @forelse ($atleta->portfolio_temporadas ?? [] as $temporada)
+                                @forelse (collect($atleta->portfolio_temporadas ?? [])->take(2) as $temporada)
                                     <div class="dynamic-item temporada-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-3">
@@ -319,7 +319,7 @@
                     <div class="tab-pane fade" id="portfolio-conquistas-edit">
                         <div class="dynamic-form-group">
                             <div id="conquistas-container-edit" class="dynamic-items-list">
-                                @forelse ($atleta->portfolio_conquistas ?? [] as $conquista)
+                                @forelse (collect($atleta->portfolio_conquistas ?? [])->take(3) as $conquista)
                                     <div class="dynamic-item conquista-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-4">
@@ -371,7 +371,7 @@
                     <div class="tab-pane fade" id="portfolio-historico-edit">
                         <div class="dynamic-form-group">
                             <div id="historico-container-edit" class="dynamic-items-list">
-                                @forelse ($atleta->portfolio_historico_clubes ?? [] as $clube)
+                                @forelse (collect($atleta->portfolio_historico_clubes ?? [])->take(7) as $clube)
                                     <div class="dynamic-item historico-item">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-3">
@@ -767,7 +767,7 @@
             }
 
             // ===== GERENCIAMENTO DE CAMPOS DINÂMICOS =====
-            function setupDynamicFields(containerId, addButtonId, itemTemplate) {
+            function setupDynamicFields(containerId, addButtonId, itemTemplate, maxItems = null) {
                 const container = document.getElementById(containerId);
                 const addBtn = document.getElementById(addButtonId);
 
@@ -775,6 +775,11 @@
 
                 function updateRemoveButtons() {
                     const items = container.querySelectorAll('.dynamic-item');
+                    if (maxItems) {
+                        addBtn.disabled = items.length >= maxItems;
+                        addBtn.classList.toggle('disabled', items.length >= maxItems);
+                    }
+
                     items.forEach(item => {
                         const removeBtn = item.querySelector('.remove-item');
                         if (removeBtn) {
@@ -794,6 +799,11 @@
 
                 addBtn.addEventListener('click', function(e) {
                     e.preventDefault();
+                    if (maxItems && container.querySelectorAll('.dynamic-item').length >= maxItems) {
+                        updateRemoveButtons();
+                        return;
+                    }
+
                     const newItem = document.createElement('div');
                     newItem.innerHTML = itemTemplate;
                     newItem.className = 'dynamic-item ' + container.querySelector('.dynamic-item').className.split(' ').slice(2).join(' ');
@@ -820,7 +830,8 @@
                 '<div class="col-12 col-md-2"><label class="form-label small">RPG <span class="stat-help" title="Rebotes por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
                 '<div class="col-12 col-md-2"><label class="form-label small">APG <span class="stat-help" title="Assistencias por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
                 '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
-                '</div>'
+                '</div>',
+                2
             );
 
             // Conquistas
@@ -830,7 +841,8 @@
                 '<div class="col-12 col-md-2"><input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Período"></div>' +
                 '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)"></div>' +
                 '<div class="col-12 col-md-2"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
-                '</div>'
+                '</div>',
+                3
             );
 
             // Histórico
@@ -839,7 +851,8 @@
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="historico[ano][]" placeholder="Ano"></div>' +
                 '<div class="col-12 col-md-6"><input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe"></div>' +
                 '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
-                '</div>'
+                '</div>',
+                7
             );
 
             function initializeTooltips(scope) {

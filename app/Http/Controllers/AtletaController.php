@@ -16,6 +16,10 @@ use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class AtletaController extends Controller
 {
+    private const MAX_PORTFOLIO_TEMPORADAS = 2;
+    private const MAX_PORTFOLIO_CONQUISTAS = 3;
+    private const MAX_PORTFOLIO_HISTORICO = 7;
+
     protected $atletaService;
     protected $perfilAtletaService;
 
@@ -203,6 +207,9 @@ class AtletaController extends Controller
                 'portfolio_historico_clubes_texto' => 'nullable|string|max:5000',
                 'instagram' => 'nullable|string|max:120',
                 'highlights_texto' => 'nullable|string|max:160',
+                'temporadas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
+                'conquistas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
+                'historico.ano' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
             ];
 
             // Definição das mensagens de erro personalizadas
@@ -280,6 +287,9 @@ class AtletaController extends Controller
                 'instagram' => 'nullable|string|max:120',
                 'highlights_texto' => 'nullable|string|max:160',
                 'imagem' => 'nullable|image|max:2048',
+                'temporadas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
+                'conquistas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
+                'historico.ano' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
             ]);
 
             $data = $request->all();
@@ -515,7 +525,7 @@ class AtletaController extends Controller
                     ];
                 }
             }
-            $data['portfolio_temporadas'] = !empty($temporadas) ? $temporadas : null;
+            $data['portfolio_temporadas'] = !empty($temporadas) ? array_slice($temporadas, 0, self::MAX_PORTFOLIO_TEMPORADAS) : null;
         } else {
             $data['portfolio_temporadas'] = $this->linhasTemporadasParaArray($request->input('portfolio_temporadas_texto'));
         }
@@ -540,7 +550,7 @@ class AtletaController extends Controller
                     ];
                 }
             }
-            $data['portfolio_conquistas'] = !empty($conquistas) ? $conquistas : null;
+            $data['portfolio_conquistas'] = !empty($conquistas) ? array_slice($conquistas, 0, self::MAX_PORTFOLIO_CONQUISTAS) : null;
         } else {
             $data['portfolio_conquistas'] = $this->linhasConquistasParaArray($request->input('portfolio_conquistas_texto'));
         }
@@ -557,7 +567,7 @@ class AtletaController extends Controller
                     ];
                 }
             }
-            $data['portfolio_historico_clubes'] = !empty($historico) ? $historico : null;
+            $data['portfolio_historico_clubes'] = !empty($historico) ? array_slice($historico, 0, self::MAX_PORTFOLIO_HISTORICO) : null;
         } else {
             $data['portfolio_historico_clubes'] = $this->linhasHistoricoParaArray($request->input('portfolio_historico_clubes_texto'));
         }
@@ -601,6 +611,8 @@ class AtletaController extends Controller
             ];
         })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['temporada']))->values();
 
+        $dados = $dados->take(self::MAX_PORTFOLIO_TEMPORADAS);
+
         return $dados->isEmpty() ? null : $dados->all();
     }
 
@@ -622,6 +634,8 @@ class AtletaController extends Controller
             ];
         })->filter(fn(array $linha) => !empty($linha['equipe']) || !empty($linha['periodo']) || !empty($linha['itens']))->values();
 
+        $dados = $dados->take(self::MAX_PORTFOLIO_CONQUISTAS);
+
         return $dados->isEmpty() ? null : $dados->all();
     }
 
@@ -635,6 +649,8 @@ class AtletaController extends Controller
                 'equipe' => $colunas[1] ?? null,
             ];
         })->filter(fn(array $linha) => !empty($linha['ano']) || !empty($linha['equipe']))->values();
+
+        $dados = $dados->take(self::MAX_PORTFOLIO_HISTORICO);
 
         return $dados->isEmpty() ? null : $dados->all();
     }
@@ -651,7 +667,7 @@ class AtletaController extends Controller
     private function obterTemporadasPortfolio(Atleta $atleta): array
     {
         if (!empty($atleta->portfolio_temporadas)) {
-            return $atleta->portfolio_temporadas;
+            return array_slice($atleta->portfolio_temporadas, 0, self::MAX_PORTFOLIO_TEMPORADAS);
         }
 
         return [[
@@ -680,7 +696,7 @@ class AtletaController extends Controller
     private function obterConquistasPortfolio(Atleta $atleta): array
     {
         if (!empty($atleta->portfolio_conquistas)) {
-            return $atleta->portfolio_conquistas;
+            return array_slice($atleta->portfolio_conquistas, 0, self::MAX_PORTFOLIO_CONQUISTAS);
         }
 
         return [[
@@ -693,7 +709,7 @@ class AtletaController extends Controller
     private function obterHistoricoClubesPortfolio(Atleta $atleta): array
     {
         if (!empty($atleta->portfolio_historico_clubes)) {
-            return $atleta->portfolio_historico_clubes;
+            return array_slice($atleta->portfolio_historico_clubes, 0, self::MAX_PORTFOLIO_HISTORICO);
         }
 
         return [[
