@@ -449,15 +449,6 @@ class AtletaController extends Controller
                 'email'           => $emailImport,
                 'resumo'          => $data['resumo']       ?? null,
                 'imagem_base64'   => $data['imagem_base64'] ?? null,
-                'nacionalidade'   => $this->valorImportacaoOpcional($data, 'nacionalidade'),
-                'estilo_jogo'     => $this->valorImportacaoOpcional($data, 'estilo_jogo'),
-                'perfil_profissional' => $this->valorImportacaoOpcional($data, 'perfil_profissional'),
-                'principais_qualidades' => $this->linhasParaArray($this->valorImportacaoOpcional($data, 'principais_qualidades_texto')),
-                'portfolio_temporadas' => $this->linhasTemporadasParaArray($this->valorImportacaoOpcional($data, 'portfolio_temporadas_texto')),
-                'portfolio_conquistas' => $this->linhasConquistasParaArray($this->valorImportacaoOpcional($data, 'portfolio_conquistas_texto')),
-                'portfolio_historico_clubes' => $this->linhasHistoricoParaArray($this->valorImportacaoOpcional($data, 'portfolio_historico_clubes_texto')),
-                'instagram'       => $this->valorImportacaoOpcional($data, 'instagram'),
-                'highlights_texto' => $this->valorImportacaoOpcional($data, 'highlights_texto'),
             ];
 
             Atleta::create($attrs);
