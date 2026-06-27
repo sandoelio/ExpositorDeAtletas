@@ -191,7 +191,7 @@
                             <div id="qualidades-container" class="dynamic-items-list">
                                 <div class="dynamic-item">
                                     <input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite">
-                                    <button type="button" class="btn btn-sm btn-outline-danger remove-item" style="display: none;"><i class="bi bi-trash"></i></button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" style="display: none;"><i class="bi bi-trash"></i></button>
                                 </div>
                             </div>
                             <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="add-qualidade-btn">
@@ -211,10 +211,10 @@
                                             <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia">
                                         </div>
                                         <div class="col-12 col-md-2">
-                                            <label class="form-label small">Icone</label>
+                                            <label class="form-label small">Ícone</label>
                                             <input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*">
                                         </div>
-                                        <div class="col-6 col-md-1">
+                                        <div class="col-6 col-md-2">
                                             <label class="form-label small">Ano</label>
                                             <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025">
                                         </div>
@@ -248,19 +248,21 @@
                             <div id="conquistas-container" class="dynamic-items-list">
                                 <div class="dynamic-item conquista-item">
                                     <div class="row g-2">
-                                        <div class="col-12 col-md-3">
+                                        <div class="col-12 col-md-4">
                                             <label class="form-label small">Equipe</label>
                                             <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia">
                                         </div>
                                         <div class="col-12 col-md-2">
-                                            <label class="form-label small">Icone</label>
-                                            <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
+                                            <label class="form-label small">Ícone</label>
+                                            <div class="d-flex flex-column align-items-center">
+                                                <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
+                                            </div>
                                         </div>
-                                        <div class="col-6 col-md-1">
+                                        <div class="col-12 col-md-2">
                                             <label class="form-label small">Ano</label>
                                             <input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025">
                                         </div>
-                                        <div class="col-12 col-md-5">
+                                        <div class="col-12 col-md-3">
                                             <label class="form-label small">Conquistas</label>
                                             <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)">
                                         </div>
@@ -289,10 +291,12 @@
                                             <input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe">
                                         </div>
                                         <div class="col-12 col-md-2">
-                                            <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
+                                            <div class="d-flex flex-column align-items-center">
+                                                <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
+                                            </div>
                                         </div>
                                         <div class="col-12 col-md-3">
-                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" style="display: none;" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -411,6 +415,9 @@
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 6px;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
 
         .dynamic-item input {
@@ -445,11 +452,12 @@
             width: 34px;
             height: 34px;
             display: block;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
             border: 1px solid #d7deea;
             border-radius: 50%;
             object-fit: cover;
             background: #fff;
+            order: -1;
         }
 
         .stat-help {
@@ -747,7 +755,7 @@
             // Qualidades
             setupDynamicFields('qualidades-container', 'add-qualidade-btn', 
                 '<input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite">' +
-                '<button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="bi bi-trash"></i></button>'
+                '<button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon"><i class="bi bi-trash"></i></button>'
             );
 
             // Temporadas
@@ -755,7 +763,7 @@
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><label class="form-label small">Equipe</label><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia"></div>' +
                 '<div class="col-12 col-md-2"><label class="form-label small">Icone</label><input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*"></div>' +
-                '<div class="col-6 col-md-1"><label class="form-label small">Ano</label><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025"></div>' +
+                '<div class="col-6 col-md-2"><label class="form-label small">Ano</label><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025"></div>' +
                 '<div class="col-6 col-md-1"><label class="form-label small">PPG <span class="stat-help" title="Pontos por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="21.5"></div>' +
                 '<div class="col-6 col-md-1"><label class="form-label small">RPG <span class="stat-help" title="Rebotes por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="12.0"></div>' +
                 '<div class="col-6 col-md-1"><label class="form-label small">APG <span class="stat-help" title="Assistencias por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="3.4"></div>' +
@@ -767,10 +775,10 @@
             // Conquistas
             setupDynamicFields('conquistas-container', 'add-conquista-btn',
                 '<div class="row g-2">' +
-                '<div class="col-12 col-md-3"><label class="form-label small">Equipe</label><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia"></div>' +
-                '<div class="col-12 col-md-2"><label class="form-label small">Icone</label><input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*"></div>' +
-                '<div class="col-6 col-md-1"><label class="form-label small">Ano</label><input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025"></div>' +
-                '<div class="col-12 col-md-5"><label class="form-label small">Conquistas</label><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
+                '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe"></div>' +
+                '<div class="col-12 col-md-2"><div class="d-flex flex-column align-items-center"><input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*"></div></div>' +
+                '<div class="col-12 col-md-2"><input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025"></div>' +
+                '<div class="col-12 col-md-3"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
                 '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button></div>' +
                 '</div>',
                 3
@@ -781,8 +789,8 @@
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="historico[ano][]" placeholder="Ano"></div>' +
                 '<div class="col-12 col-md-4"><input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe"></div>' +
-                '<div class="col-12 col-md-2"><input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time"></div>' +
-                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '<div class="col-12 col-md-2"><div class="d-flex flex-column align-items-center"><input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time"></div></div>' +
+                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button></div>' +
                 '</div>',
                 7
             );

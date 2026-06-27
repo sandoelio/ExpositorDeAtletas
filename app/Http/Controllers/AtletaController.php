@@ -19,6 +19,7 @@ class AtletaController extends Controller
     private const MAX_PORTFOLIO_TEMPORADAS = 2;
     private const MAX_PORTFOLIO_CONQUISTAS = 3;
     private const MAX_PORTFOLIO_HISTORICO = 7;
+    private const MAX_PORTFOLIO_ICONE_KB = 2048;
 
     protected $atletaService;
     protected $perfilAtletaService;
@@ -209,13 +210,13 @@ class AtletaController extends Controller
                 'highlights_texto' => 'nullable|string|max:160',
                 'temporadas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
                 'temporadas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
-                'temporadas.icone.*' => 'nullable|image|max:512',
+                'temporadas.icone.*' => 'nullable|image|max:' . self::MAX_PORTFOLIO_ICONE_KB,
                 'conquistas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
                 'conquistas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
-                'conquistas.icone.*' => 'nullable|image|max:512',
+                'conquistas.icone.*' => 'nullable|image|max:' . self::MAX_PORTFOLIO_ICONE_KB,
                 'historico.ano' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
                 'historico.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
-                'historico.icone.*' => 'nullable|image|max:512',
+                'historico.icone.*' => 'nullable|image|max:' . self::MAX_PORTFOLIO_ICONE_KB,
             ];
 
             // Definição das mensagens de erro personalizadas
@@ -239,6 +240,12 @@ class AtletaController extends Controller
                 'imagem.max' => 'O tamanho da imagem não pode ser maior que 2MB.',
                 'resumo.string' => 'O campo "Resumo" deve ser uma string.',
                 'resumo.max' => 'O campo "Resumo" não pode ter mais de 1000 caracteres.',
+                'temporadas.icone.*.image' => 'O icone da temporada deve ser uma imagem.',
+                'temporadas.icone.*.max' => 'O icone da temporada nao pode ser maior que 2MB.',
+                'conquistas.icone.*.image' => 'O icone da conquista deve ser uma imagem.',
+                'conquistas.icone.*.max' => 'O icone da conquista nao pode ser maior que 2MB.',
+                'historico.icone.*.image' => 'O icone do historico deve ser uma imagem.',
+                'historico.icone.*.max' => 'O icone do historico nao pode ser maior que 2MB.',
             ];
 
             // Aplicando a validação
@@ -295,13 +302,13 @@ class AtletaController extends Controller
                 'imagem' => 'nullable|image|max:2048',
                 'temporadas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
                 'temporadas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_TEMPORADAS,
-                'temporadas.icone.*' => 'nullable|image|max:512',
+                'temporadas.icone.*' => 'nullable|image|max:' . self::MAX_PORTFOLIO_ICONE_KB,
                 'conquistas.equipe' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
                 'conquistas.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_CONQUISTAS,
-                'conquistas.icone.*' => 'nullable|image|max:512',
+                'conquistas.icone.*' => 'nullable|image|max:' . self::MAX_PORTFOLIO_ICONE_KB,
                 'historico.ano' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
                 'historico.icone' => 'nullable|array|max:' . self::MAX_PORTFOLIO_HISTORICO,
-                'historico.icone.*' => 'nullable|image|max:512',
+                'historico.icone.*' => 'nullable|image|max:' . self::MAX_PORTFOLIO_ICONE_KB,
             ]);
 
             $data = $request->all();

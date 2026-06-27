@@ -244,12 +244,12 @@
                                 @forelse ($atleta->principais_qualidades ?? [] as $qualidade)
                                     <div class="dynamic-item">
                                         <input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite" value="{{ $qualidade }}">
-                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item" style="display: none;"><i class="bi bi-trash"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" style="display: none;"><i class="bi bi-trash"></i></button>
                                     </div>
                                 @empty
                                     <div class="dynamic-item">
                                         <input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite">
-                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item" style="display: none;"><i class="bi bi-trash"></i></button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" style="display: none;"><i class="bi bi-trash"></i></button>
                                     </div>
                                 @endforelse
                             </div>
@@ -271,14 +271,16 @@
                                                 <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia" value="{{ $temporada['equipe'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small">Icone</label>
-                                                <input type="hidden" name="temporadas[icone_atual][]" value="{{ $temporada['icone'] ?? '' }}">
-                                                @if (!empty($temporada['icone']))
-                                                    <img class="team-icon-preview" src="{{ $iconePortfolioUrl($temporada['icone']) }}" alt="Icone atual de {{ $temporada['equipe'] ?? 'Equipe' }}">
-                                                @endif
-                                                <input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*">
+                                                <label class="form-label small">Ícone</label>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    @if (!empty($temporada['icone']))
+                                                        <img class="team-icon-preview" src="{{ $iconePortfolioUrl($temporada['icone']) }}" alt="Icone atual de {{ $temporada['equipe'] ?? 'Equipe' }}">
+                                                    @endif
+                                                    <input type="hidden" name="temporadas[icone_atual][]" value="{{ $temporada['icone'] ?? '' }}">
+                                                    <input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*">
+                                                </div>
                                             </div>
-                                            <div class="col-6 col-md-1">
+                                            <div class="col-6 col-md-2">
                                                 <label class="form-label small">Ano</label>
                                                 <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025" value="{{ $temporada['temporada'] ?? $temporada['ano'] ?? '' }}">
                                             </div>
@@ -307,11 +309,13 @@
                                                 <input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Ex: EC Bahia">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small">Icone</label>
-                                                <input type="hidden" name="temporadas[icone_atual][]" value="">
-                                                <input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*">
+                                                <label class="form-label small">Ícone</label>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <input type="hidden" name="temporadas[icone_atual][]" value="">
+                                                    <input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*">
+                                                </div>
                                             </div>
-                                            <div class="col-6 col-md-1">
+                                            <div class="col-6 col-md-2">
                                                 <label class="form-label small">Ano</label>
                                                 <input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ex: 2025">
                                             </div>
@@ -346,24 +350,26 @@
                             <div id="conquistas-container-edit" class="dynamic-items-list">
                                 @forelse (collect($atleta->portfolio_conquistas ?? [])->take(3) as $conquista)
                                     <div class="dynamic-item conquista-item">
-                                        <div class="row g-2">
-                                            <div class="col-12 col-md-3">
+                                    <div class="row g-2">
+                                            <div class="col-12 col-md-4">
                                                 <label class="form-label small">Equipe</label>
                                                 <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia" value="{{ $conquista['equipe'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small">Icone</label>
-                                                <input type="hidden" name="conquistas[icone_atual][]" value="{{ $conquista['icone'] ?? '' }}">
-                                                <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
-                                                @if (!empty($conquista['icone']))
-                                                    <img class="team-icon-preview" src="{{ $iconePortfolioUrl($conquista['icone']) }}" alt="Icone atual de {{ $conquista['equipe'] ?? 'Equipe' }}">
-                                                @endif
+                                                <label class="form-label small">Ícone</label>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    @if (!empty($conquista['icone']))
+                                                        <img class="team-icon-preview" src="{{ $iconePortfolioUrl($conquista['icone']) }}" alt="Icone atual de {{ $conquista['equipe'] ?? 'Equipe' }}">
+                                                    @endif
+                                                    <input type="hidden" name="conquistas[icone_atual][]" value="{{ $conquista['icone'] ?? '' }}">
+                                                    <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
+                                                </div>
                                             </div>
-                                            <div class="col-6 col-md-1">
+                                            <div class="col-12 col-md-2">
                                                 <label class="form-label small">Ano</label>
                                                 <input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025" value="{{ $conquista['periodo'] ?? $conquista['ano'] ?? '' }}">
                                             </div>
-                                            <div class="col-12 col-md-5">
+                                            <div class="col-12 col-md-3">
                                                 <label class="form-label small">Conquistas</label>
                                                 <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)" value="{{ implode('; ', $conquista['itens'] ?? []) }}">
                                             </div>
@@ -375,20 +381,22 @@
                                 @empty
                                     <div class="dynamic-item conquista-item">
                                         <div class="row g-2">
-                                            <div class="col-12 col-md-3">
+                                            <div class="col-12 col-md-4">
                                                 <label class="form-label small">Equipe</label>
                                                 <input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Ex: EC Bahia">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <label class="form-label small">Icone</label>
-                                                <input type="hidden" name="conquistas[icone_atual][]" value="">
-                                                <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
+                                                <label class="form-label small">Ícone</label>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <input type="hidden" name="conquistas[icone_atual][]" value="">
+                                                    <input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*">
+                                                </div>
                                             </div>
-                                            <div class="col-6 col-md-1">
+                                            <div class="col-12 col-md-2">
                                                 <label class="form-label small">Ano</label>
                                                 <input type="text" class="form-control" name="conquistas[ano][]" placeholder="Ex: 2025">
                                             </div>
-                                            <div class="col-12 col-md-5">
+                                            <div class="col-12 col-md-3">
                                                 <label class="form-label small">Conquistas</label>
                                                 <input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeão; MVP; Melhor ala (separar com ;)">
                                             </div>
@@ -419,14 +427,16 @@
                                                 <input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe" value="{{ $clube['equipe'] ?? '' }}">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <input type="hidden" name="historico[icone_atual][]" value="{{ $clube['icone'] ?? '' }}">
-                                                <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
-                                                @if (!empty($clube['icone']))
-                                                    <img class="team-icon-preview" src="{{ $iconePortfolioUrl($clube['icone']) }}" alt="Icone atual de {{ $clube['equipe'] ?? 'Equipe' }}">
-                                                @endif
+                                                <div class="d-flex flex-column align-items-center">
+                                                    @if (!empty($clube['icone']))
+                                                        <img class="team-icon-preview" src="{{ $iconePortfolioUrl($clube['icone']) }}" alt="Icone atual de {{ $clube['equipe'] ?? 'Equipe' }}">
+                                                    @endif
+                                                    <input type="hidden" name="historico[icone_atual][]" value="{{ $clube['icone'] ?? '' }}">
+                                                    <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
+                                                </div>
                                             </div>
                                             <div class="col-12 col-md-3">
-                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" style="display: none;" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -440,11 +450,13 @@
                                                 <input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe">
                                             </div>
                                             <div class="col-12 col-md-2">
-                                                <input type="hidden" name="historico[icone_atual][]" value="">
-                                                <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <input type="hidden" name="historico[icone_atual][]" value="">
+                                                    <input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time">
+                                                </div>
                                             </div>
                                             <div class="col-12 col-md-3">
-                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item w-100" style="display: none;"><i class="bi bi-trash"></i> Remover</button>
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" style="display: none;" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -564,6 +576,9 @@
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 6px;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
         }
 
         .dynamic-item input {
@@ -598,11 +613,12 @@
             width: 34px;
             height: 34px;
             display: block;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
             border: 1px solid #d7deea;
             border-radius: 50%;
             object-fit: cover;
             background: #fff;
+            order: -1;
         }
 
         .stat-help {
@@ -893,7 +909,7 @@
             // Qualidades
             setupDynamicFields('qualidades-container-edit', 'add-qualidade-btn-edit', 
                 '<input type="text" class="form-control" name="qualidades[]" placeholder="Ex: Defensor de elite">' +
-                '<button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="bi bi-trash"></i></button>'
+                '<button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon"><i class="bi bi-trash"></i></button>'
             );
 
             // Temporadas
@@ -901,7 +917,7 @@
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="temporadas[equipe][]" placeholder="Equipe"></div>' +
                 '<div class="col-12 col-md-2"><input type="hidden" name="temporadas[icone_atual][]" value=""><input type="file" class="form-control team-icon-input" name="temporadas[icone][]" accept="image/*" aria-label="Icone do time"></div>' +
-                '<div class="col-6 col-md-1"><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ano"></div>' +
+                '<div class="col-6 col-md-2"><input type="text" class="form-control" name="temporadas[temporada][]" placeholder="Ano"></div>' +
                 '<div class="col-6 col-md-1"><label class="form-label small">PPG <span class="stat-help" title="Pontos por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[ppg][]" placeholder="PPG"></div>' +
                 '<div class="col-6 col-md-1"><label class="form-label small">RPG <span class="stat-help" title="Rebotes por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[rpg][]" placeholder="RPG"></div>' +
                 '<div class="col-6 col-md-1"><label class="form-label small">APG <span class="stat-help" title="Assistencias por jogo" data-bs-toggle="tooltip" tabindex="0">?</span></label><input type="text" class="form-control" name="temporadas[apg][]" placeholder="APG"></div>' +
@@ -913,10 +929,10 @@
             // Conquistas
             setupDynamicFields('conquistas-container-edit', 'add-conquista-btn-edit',
                 '<div class="row g-2">' +
-                '<div class="col-12 col-md-3"><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe"></div>' +
-                '<div class="col-12 col-md-2"><input type="hidden" name="conquistas[icone_atual][]" value=""><input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*" aria-label="Icone do time"></div>' +
-                '<div class="col-6 col-md-1"><input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Ano"></div>' +
-                '<div class="col-12 col-md-5"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
+                '<div class="col-12 col-md-4"><input type="text" class="form-control" name="conquistas[equipe][]" placeholder="Equipe"></div>' +
+                '<div class="col-12 col-md-2"><div class="d-flex flex-column align-items-center"><input type="hidden" name="conquistas[icone_atual][]" value=""><input type="file" class="form-control team-icon-input" name="conquistas[icone][]" accept="image/*" aria-label="Icone do time"></div></div>' +
+                '<div class="col-12 col-md-2"><input type="text" class="form-control" name="conquistas[periodo][]" placeholder="Ano"></div>' +
+                '<div class="col-12 col-md-3"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
                 '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button></div>' +
                 '</div>',
                 3
@@ -927,8 +943,8 @@
                 '<div class="row g-2">' +
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="historico[ano][]" placeholder="Ano"></div>' +
                 '<div class="col-12 col-md-4"><input type="text" class="form-control" name="historico[equipe][]" placeholder="Equipe"></div>' +
-                '<div class="col-12 col-md-2"><input type="hidden" name="historico[icone_atual][]" value=""><input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time"></div>' +
-                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item w-100"><i class="bi bi-trash"></i> Remover</button></div>' +
+                '<div class="col-12 col-md-2"><div class="d-flex flex-column align-items-center"><input type="hidden" name="historico[icone_atual][]" value=""><input type="file" class="form-control" name="historico[icone][]" accept="image/*" aria-label="Icone do time"></div></div>' +
+                '<div class="col-12 col-md-3"><button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button></div>' +
                 '</div>',
                 7
             );
