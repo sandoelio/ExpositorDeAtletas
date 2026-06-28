@@ -557,7 +557,8 @@
                                     </div>
                                     <div class="perfil-open-wrap">
                                         <a href="{{ route('atletas.portfolio', $atleta->id) }}"
-                                            class="btn btn-sm perfil-action-btn portfolio-action-btn">
+                                            class="btn btn-sm perfil-action-btn portfolio-action-btn portfolio-open-link"
+                                            data-track-url="{{ url('/atleta/visualizar/' . $atleta->id) }}">
                                             Ver portfolio
                                         </a>
                                         <a href="{{ route('atletas.show', $atleta->id) }}"
@@ -596,7 +597,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const formFiltros = document.getElementById('form-filtros');
-            document.querySelectorAll('.perfil-open-link').forEach(link => {
+            document.querySelectorAll('.perfil-open-link, .portfolio-open-link').forEach(link => {
                 link.addEventListener('click', () => {
                     const trackUrl = link.dataset.trackUrl;
                     if (!trackUrl) {
@@ -614,6 +615,7 @@
                     }).catch(() => {});
                 });
             });
+
 
             // Controle de desativação de filtros
             const nomeEl = document.getElementById('nome');
