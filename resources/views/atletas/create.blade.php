@@ -781,8 +781,8 @@
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
                 '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button></div>' +
                 '</div>',
-                3
-            );
+	                4
+	            );
 
             // Histórico
             setupDynamicFields('historico-container', 'add-historico-btn',

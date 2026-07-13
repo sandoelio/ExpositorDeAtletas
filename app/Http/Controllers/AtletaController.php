@@ -17,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 class AtletaController extends Controller
 {
     private const MAX_PORTFOLIO_TEMPORADAS = 2;
-    private const MAX_PORTFOLIO_CONQUISTAS = 3;
+    private const MAX_PORTFOLIO_CONQUISTAS = 4;
     private const MAX_PORTFOLIO_HISTORICO = 7;
     private const MAX_PORTFOLIO_ICONE_KB = 2048;
 

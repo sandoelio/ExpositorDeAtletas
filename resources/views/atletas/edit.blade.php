@@ -348,7 +348,7 @@
                     <div class="tab-pane fade" id="portfolio-conquistas-edit">
                         <div class="dynamic-form-group">
                             <div id="conquistas-container-edit" class="dynamic-items-list">
-                                @forelse (collect($atleta->portfolio_conquistas ?? [])->take(3) as $conquista)
+                                @forelse (collect($atleta->portfolio_conquistas ?? [])->take(4) as $conquista)
                                     <div class="dynamic-item conquista-item">
                                     <div class="row g-2">
                                             <div class="col-12 col-md-4">
@@ -935,8 +935,8 @@
                 '<div class="col-12 col-md-3"><input type="text" class="form-control" name="conquistas[itens][]" placeholder="Ex: Campeao; MVP; Melhor ala (separar com ;)"></div>' +
                 '<div class="col-12 col-md-1"><button type="button" class="btn btn-sm btn-outline-danger remove-item btn-remove-icon" title="Remover" aria-label="Remover"><i class="bi bi-trash"></i></button></div>' +
                 '</div>',
-                3
-            );
+	                4
+	            );
 
             // Histórico
             setupDynamicFields('historico-container-edit', 'add-historico-btn-edit',
