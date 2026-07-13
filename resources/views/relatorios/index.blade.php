@@ -93,7 +93,11 @@
                 <div class="row g-3 mb-4">
                     @foreach ($stats as $card)
                         <div class="col-12 col-md-6 col-lg-4 d-flex">
-                            <div class="card report-card w-100">
+                            @if ($card['key'] === 'crescimento')
+                                <div class="card report-card w-100 cursor-pointer" data-bs-toggle="modal" data-bs-target="#modalNovosAtletas" style="cursor: pointer;">
+                            @else
+                                <div class="card report-card w-100">
+                            @endif
                                 <div class="card-body d-flex flex-column">
                                     <div class="d-flex align-items-start gap-3">
                                         <div class="icon fs-3">{{ $card['icon'] }}</div>
@@ -1085,3 +1089,90 @@
 
 
 
+
+<!-- Modal de Novos Atletas -->
+<div class="modal fade" id="modalNovosAtletas" tabindex="-1" aria-labelledby="modalNovosAtletasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNovosAtletasLabel">Novos Atletas Inseridos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="novosAtletasContainer">
+                    @if ($novosAtletas && count($novosAtletas) > 0)
+                        <div class="list-group">
+                            @foreach ($novosAtletas as $atleta)
+                                <div class="list-group-item d-flex justify-content-between align-items-center" id="atleta-{{ $atleta->id }}">
+                                    <div>
+                                        <h6 class="mb-1">{{ $atleta->nome_completo }}</h6>
+                                        <small class="text-muted">{{ $atleta->entidade }}</small>
+                                    </div>
+                                    <a href="{{ route('atletas.edit', $atleta->id) }}" class="btn btn-sm btn-primary btn-editar-atleta" data-atleta-id="{{ $atleta->id }}">Editar</a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted text-center">Nenhum atleta inserido recentemente.</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    document.querySelectorAll('.btn-editar-atleta').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const atletaId = this.getAttribute('data-atleta-id');
+            sessionStorage.setItem('atletaEditado', atletaId);
+        });
+    });
+    
+    // Verificar se voltamos de uma edição
+    window.addEventListener('pageshow', function() {
+        const atletaEditado = sessionStorage.getItem('atletaEditado');
+        if (atletaEditado) {
+            const elemento = document.getElementById('atleta-' + atletaEditado);
+            if (elemento) {
+                elemento.style.animation = 'fadeOut 0.5s ease-in-out';
+                setTimeout(() => {
+                    elemento.remove();
+                    
+                    // Verificar se a lista está vazia
+                    const container = document.getElementById('novosAtletasContainer');
+                    const items = container.querySelectorAll('.list-group-item');
+                    if (items.length === 0) {
+                        container.innerHTML = '<p class="text-muted text-center">Nenhum atleta inserido recentemente.</p>';
+                    }
+                }, 500);
+            }
+            sessionStorage.removeItem('atletaEditado');
+        }
+    });
+</script>
+@endpush
+
+@push('styles')
+<style>
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+    }
+    
+    .list-group-item {
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+@endpush

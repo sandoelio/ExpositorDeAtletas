@@ -28,7 +28,7 @@
                     <div class="import-step">
                         <span class="step-badge">2</span>
                         <strong>Preencha os dados</strong>
-                        <small>Mantenha os nomes de colunas. Os campos de portfolio sao opcionais.</small>
+                        <small>Mantenha os nomes de colunas exatamente como no template.</small>
                     </div>
                     <div class="import-step">
                         <span class="step-badge">3</span>
@@ -43,10 +43,7 @@
                     </a>
                 </div>
 
-                <div class="import-notes mt-3">
-                    <strong>Campos opcionais do portfolio</strong>
-                    <p>Use uma informacao por linha quando houver varios itens. Para colunas compostas, separe os dados com <code>|</code>.</p>
-                </div>
+
             </div>
         </div>
 

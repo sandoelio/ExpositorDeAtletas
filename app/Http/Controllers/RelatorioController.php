@@ -157,6 +157,13 @@ class RelatorioController extends Controller
         }
 
         $crescimentoPct = round($deltaPct, 1);
+        
+        // Atletas inseridos hoje
+        $novosAtletas = DB::table('atletas')
+            ->select('id', 'nome_completo', 'entidade')
+            ->whereDate('created_at', $today)
+            ->orderByDesc('created_at')
+            ->get();
 
         ///-----------------------------------------------------------
 
@@ -392,6 +399,7 @@ class RelatorioController extends Controller
             'novosHoje',
             'novosOntem',
             'crescimentoPct',
+            'novosAtletas',
             'porAltura',
             'alturaMax',
             'faixaDaMaior',
