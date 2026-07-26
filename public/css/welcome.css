@@ -1,0 +1,207 @@
+/* Container */
+
+.welcome-page * {
+    box-sizing: border-box;
+}
+
+.welcome-page p,
+.welcome-page li,
+.welcome-page h1,
+.welcome-page h3,
+.welcome-page h4, h5{
+    text-align: center !important;
+}
+
+.welcome-page img {
+    display: block;
+    margin: 0 auto;
+}
+
+
+.welcome-page{
+    max-width:900px;
+    margin:auto;
+}
+
+/* Hero */
+
+.welcome-hero{
+    text-align:center;
+    padding:25px 15px;
+}
+
+.welcome-hero img{
+    width:180px;
+    max-width:100%;
+    margin-bottom:20px;
+}
+
+.welcome-hero h1{
+    color:#FFA500;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.welcome-hero p{
+    color:#fff;
+    font-size:1.15rem;
+    line-height:1.8;
+}
+
+/* Card */
+
+.welcome-box{
+
+   background:#fff;
+
+    border-radius:18px;
+
+    padding:35px;
+
+    color:#333;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.20);
+
+    margin-bottom:40px; 
+
+}
+
+.welcome-box h3,
+.welcome-box h4{
+
+    color:#28365F;
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+}
+
+.welcome-box p{
+
+    color:#444;
+
+    text-align:center;
+
+    line-height:1.8;
+
+}
+
+.welcome-box ul{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+.welcome-box li{
+
+    color:#444;
+
+    text-align:center;
+
+    margin:12px 0;
+
+}
+
+.welcome-frase{
+
+    font-size:1.4rem;
+
+    font-weight:bold;
+
+    color:#FF7209;
+
+    text-align:center;
+
+    margin:35px 0;
+
+}
+
+.welcome-alert{
+
+    background:#FFF7E5;
+
+    border-left:5px solid #FF7209;
+
+    padding:20px;
+
+    border-radius:10px;
+
+    color:#333;
+
+    text-align:center;
+
+}
+
+.welcome-btn{
+
+    display:inline-block;
+
+    background:#FF7209;
+
+    color:#fff;
+
+    padding:14px 35px;
+
+    border-radius:8px;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+}
+
+.welcome-btn:hover{
+
+    background:#d86100;
+
+    color:#fff;
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+    .welcome-page{
+
+        padding:0 10px;
+
+    }
+
+    .welcome-hero img{
+
+        width:130px;
+
+    }
+
+    .welcome-hero h1{
+
+        font-size:1.8rem;
+
+    }
+
+    .welcome-box{
+
+        padding:20px;
+
+    }
+
+    .welcome-box p,
+    .welcome-box li{
+
+        font-size:1rem;
+
+    }
+
+    .welcome-btn{
+
+        display:block;
+
+        width:100%;
+
+    }
+
+}

@@ -164,6 +164,7 @@
                 @else
                     <a href="{{ route('olheiro.login.form') }}" class="btn-olheiro">Técnico / Olheiro</a>
                 @endif
+                <a href="{{ url('https://cestabaianabasquete.com.br') }}" class="btn-custom">Voltar ao Site</a>
             </div>
 
             <div class="mt-3">
