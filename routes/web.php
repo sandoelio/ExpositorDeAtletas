@@ -10,7 +10,10 @@ use App\Http\Controllers\AdminOlheiroController;
 use App\Http\Controllers\OlheiroAuthController;
 use App\Http\Controllers\OlheiroAreaController;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/', function () {return view('welcome');})->name('welcome');
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // rota de login
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
